@@ -1,0 +1,27 @@
+#!/bin/bash
+
+ARG=$1
+amixer -D pulse sset Master "$ARG" > /dev/null
+
+# Display the notification
+killall notify-osd 2>/dev/null
+
+on_or_off() {
+  amixer -D pulse sget Master | grep -o "\[off\]" | tr -d '[%]' | head -n 1
+}
+if [ "$ARG" = "toggle" -a "$(on_or_off)" = "off" ]; then
+  MESSAGE=" "
+  ICON=~/Downloads/speaker-off.png
+else
+  PERC="$(amixer -D pulse sget Master | grep -o "[0-9]*%" | head -n 1 | tr -d '%')"
+  echo "$PERC"
+  NUM_TICKS="$(($PERC / 10))"
+  echo $NUM_TICKS
+
+  MESSAGE="$PERC%    $(printf ' ∎ %.0s' $(seq 1 $NUM_TICKS))"
+  if [ $NUM_TICKS -ne 10 ]; then
+    MESSAGE=" $MESSAGE"
+  fi
+  ICON=~/Downloads/speaker-on.png
+fi
+notify-send "$MESSAGE" -i "$ICON"

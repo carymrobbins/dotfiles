@@ -1,0 +1,18 @@
+[user]
+	email = carymrobbins@gmail.com
+	name = Cary M. Robbins
+[push]
+	default = current
+[pull]
+	default = current
+[merge]
+	tool = kdiff3
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+[core]
+	commentchar = "#"
+	excludesfile = ~/.gitignore

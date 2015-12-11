@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 2 ]; then
+  >&2 echo "Usage: $0 <database> <new-name>"
+  exit 1
+fi
+
+psql template1 -c "alter database $1 rename to $2"

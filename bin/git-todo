@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Finds your TODO comments added since a particular revision.
+#
+# Usage: git todo [revision]
+#
+# If revision is not specified, defaults to origin/master.
+
+BRANCH=${1:-origin/master}
+
+for file in $(git diff "$BRANCH".. --name-only); do
+  todos=$(git diff "$BRANCH".. -- "$file" | grep '^\+' | grep TODO | cut -c 3-)
+  if [ -n "$todos" ]; then
+    echo -e "\e[1m\e[32m$file\e[39m\e[0m"
+    while read -r todo; do
+      grep -n "$todo" "$file"
+    # Using `| sort | uniq` to avoid duplicate matches.
+    done <<< "$todos" | sort | uniq
+    echo
+  fi
+done

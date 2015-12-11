@@ -1,0 +1,115 @@
+#!/bin/bash
+
+set -e
+
+TOKEN_PATH=$HOME/tokens/github
+GITHUB_API_PREFIX="https://api.github.com"
+
+# Require jq
+command -v jq >/dev/null 2>&1 || {
+  >&2 echo "The program 'jq' is required for $0 but it's not installed; aborting."
+  exit 1
+}
+
+if [ $# -eq 0 ]; then
+  >&2 echo "Usage: $0 <command>"
+  >&2 echo ""
+  >&2 echo "Commands:"
+  >&2 echo "  new <file> [file, ...] [-d description] [--public]"
+  exit 1
+fi
+
+TOKEN=""
+
+# Lazily get github token
+get_token() {
+  if [ -z "$TOKEN" ]; then
+    TOKEN="$(cat $HOME/tokens/github)"
+  fi
+  echo "$TOKEN"
+}
+
+# Issue a github api request
+github_api() {
+  local path=$1
+  shift
+  curl -H "Authorization: token $(get_token)" "$@" "$GITHUB_API_PREFIX/$path"
+}
+
+COMMAND="$1"
+shift
+case "$COMMAND" in
+
+  "new")
+    # Default values
+    FILES=()
+    DESCRIPTION=""
+    PUBLIC="false"
+    # Consume flags
+    while true; do
+      if [ -z "$1" ]; then
+        break
+      fi
+      ARG="$1"
+      shift
+      case "$ARG" in
+        "-d")
+          DESCRIPTION="$1"
+          shift
+          ;;
+        "--public")
+          PUBLIC="true"
+          ;;
+        *)
+          if [ ! -f "$ARG" ]; then
+            >&2 echo "Invalid file '$ARG'"
+            exit 1
+          fi
+          FILES+=("$ARG")
+          ;;
+      esac
+    done
+
+    CONTENT_ARGS=()
+    FILES_JSON=""
+    for ((i = 0; i < ${#FILES[@]}; ++i)); do
+      name=${FILES[$i]}
+      CONTENT_ARGS+=("--arg" "content$i" "$(cat "$name")")
+      if [ $i -ne 0 ]; then
+        FILES_JSON="$FILES_JSON ,"
+      fi
+      FILES_JSON="$FILES_JSON
+        \"$(basename "$name")\": {
+          content: \$content$i
+        }
+      "
+    done
+
+    # Note: can't seem to use dynamic keys, so have to interpolate
+    # $FILE directly.  Also, $PUBLIC needs to be a bool literal, so
+    # interpolating that directly as well.
+    JSON=$(
+      jq -n \
+        --arg description "$DESCRIPTION" \
+        "${CONTENT_ARGS[@]}" \
+        " {
+            description: \$description,
+            public: $PUBLIC,
+            files: { $FILES_JSON }
+          }
+        "
+    )
+
+    ID="$(github_api gists --data "$JSON" | jq '.id' --raw-output)"
+
+    echo "Gist ID: $ID"
+    echo "Gist URL: https://gist.github.com/$ID"
+    echo "SSH URL: git@gist.github.com:${ID}.git"
+    exit
+    ;;
+
+  *)
+    >&2 echo "Invalid command: $1"
+    exit 1
+    ;;
+esac

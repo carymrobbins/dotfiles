@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Flips the last two arguments
+
+usage() {
+    echo "Usage: $0 <command arg1 arg2> [... argN]"
+    echo
+    echo "Flips the last two arguments of a command."
+    echo
+    echo "Example: \$ flip echo foo bar baz"
+    echo "         foo baz bar"
+}
+
+if [ -z "$1" ]; then >&2 usage ; exit 1 ; fi
+if [ "$1" = "--help" -o "$1" = "-h" -o "$1" = "-?" ]; then usage ; exit ; fi
+
+ARG1=$#
+ARG2=$(($# - 1))
+
+"${@:1:$(($#-2))}" "${!ARG1}" "${!ARG2}"

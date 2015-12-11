@@ -1,0 +1,18 @@
+#!/bin/bash
+
+usage() {
+  echo "Evaluate simple Haskell expressions"
+  echo "Usage: $0 '<expr>'"
+}
+
+if [ -z "$1" ]; then
+  >&2 usage
+  exit 1
+fi
+
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+  usage
+  exit
+fi
+
+echo "main = print \$ $@" | runhaskell

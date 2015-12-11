@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    >&2 echo "Usage: $0 <file>"
+    exit 1
+fi
+
+touch "$1"
+idea "$1"

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ANTLR_JAR="$HOME/bin/antlr-4.4-complete.jar"
+export CLASSPATH=".:$ANTLR_JAR:$CLASSPATH"
+java -jar "$ANTLR_JAR" "$@"

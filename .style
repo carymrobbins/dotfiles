@@ -1,0 +1,3 @@
+scala: scalastyle
+js: jshint
+hs: hlint

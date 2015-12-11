@@ -1,0 +1,23 @@
+"set-volume toggle"
+  XF86AudioMute
+
+"set-volume 10%-"
+  XF86AudioLowerVolume
+
+"set-volume 10%+"
+  XF86AudioRaiseVolume
+
+"xbacklight -dec 10 -time 0 -steps 1"
+  XF86MonBrightnessDown
+
+"xbacklight -inc 10 -time 0 -steps 1"
+  XF86MonBrightnessUp
+
+"xleds -dec 10"
+  XF86KbdBrightnessDown
+
+"xleds -inc 10"
+  XF86KbdBrightnessUp
+
+"gnome-screenshot -i"
+  XF86LaunchB

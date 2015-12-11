@@ -1,0 +1,30 @@
+#!/bin/bash
+
+case $# in
+  1)
+    rev2=HEAD
+    ;;
+  2)
+    rev2=$2
+    ;;
+  *)
+    >&2 echo "Usage: git eq <revision> [revision=HEAD]"
+    exit 1
+    ;;
+esac
+
+rev1=$1
+
+hash1=$(git rev-parse $rev1)
+hash2=$(git rev-parse $rev2)
+
+echo "$hash1 $rev1"
+echo "$hash2 $rev2"
+
+if [ "$hash1" = "$hash2" ]; then
+  echo true
+  exit 0
+else
+  echo false
+  exit 1
+fi

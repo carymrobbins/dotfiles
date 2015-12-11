@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+if [ "$#" -ne 2 ]; then
+  >&2 echo "git fix-mv <src> <dst>"
+  exit 1
+fi
+
+SRC=$1
+DST=$2
+
+git checkout -- "$1"
+mv "$2" "$1"
+git mv "$1" "$2"
