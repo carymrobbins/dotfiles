@@ -25,6 +25,7 @@ FILES=(
   .xinitrc
   .Xmodmap
   .xmonad
+  .zshrc
 )
 
 # Loop through each file in dotfiles and add to HOME.

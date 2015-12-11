@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# This is aliased as `wo` in .zshrc
+
+_do_workon() {
+  if [ -z "$1" ]; then
+    >&2 echo "Usage: workon <project>"
+    return
+  fi
+
+  case "$1" in
+    theseus|thes)
+      cd $HOME/work/theseus
+      ;;
+    presta|pres)
+      cd $HOME/work/presta
+      ;;
+    haskforce|hf)
+      cd $HOME/projects/intellij-haskforce
+      ;;
+    *)
+      local d
+      for d in "$HOME/work" "$HOME/projects"; do
+        # Pipe through `cat` to coalesce error from empty grep result.
+        guess="$(ls "$d" | grep $1 | cat | head)"
+        if [ -n "$guess" ]; then
+          echo -n "Change to '$guess'? [Y/n] "
+          read -n 1 choice
+          if [ "$?" -eq 0 ]; then
+            if [[ "$choice" == "" || "$choice" =~ "^[Yy]$" ]]; then
+              cd "$d/$guess"
+            fi
+          fi
+          return
+        fi
+      done
+      >&2 echo "Unknown project: $1"
+      ;;
+  esac
+}
+
+_do_workon "$1"
