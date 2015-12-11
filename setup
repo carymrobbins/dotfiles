@@ -6,6 +6,9 @@ set -e
 BASE_DIR=$(cd $(dirname $0) && echo $PWD)
 cd "$BASE_DIR"
 
+echo "Updating submodules..."
+git submodule update --init --recursive
+
 # Files and dirs to symlink in HOME.
 FILES=(
   bin
