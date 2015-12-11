@@ -1,3 +1,27 @@
 [submodule ".xmonad"]
 	path = .xmonad
 	url = git@github.com:carymrobbins/xmonad-ubuntu-conf.git
+[submodule ".oh-my-zsh"]
+	path = .oh-my-zsh
+	url = git@github.com:carymrobbins/oh-my-zsh.git
+[submodule ".vim/bundle/ctrlp.vim"]
+	path = .vim/bundle/ctrlp.vim
+	url = https://github.com/kien/ctrlp.vim
+[submodule ".vim/bundle/nerdtree"]
+	path = .vim/bundle/nerdtree
+	url = https://github.com/scrooloose/nerdtree
+[submodule ".vim/bundle/purescript-vim"]
+	path = .vim/bundle/purescript-vim
+	url = https://github.com/raichoo/purescript-vim.git
+[submodule ".vim/bundle/vim-fugitive"]
+	path = .vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule ".vim/bundle/vim-markdown"]
+	path = .vim/bundle/vim-markdown
+	url = https://github.com/plasticboy/vim-markdown.git
+[submodule ".vim/bundle/vim-sbt"]
+	path = .vim/bundle/vim-sbt
+	url = https://github.com/derekwyatt/vim-sbt
+[submodule ".vim/bundle/vim-scala"]
+	path = .vim/bundle/vim-scala
+	url = https://github.com/derekwyatt/vim-scala

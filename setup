@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+
+# Start in dotfiles dir.
+BASE_DIR=$(cd $(dirname $0) && echo $PWD)
+cd "$BASE_DIR"
+
+# Files and dirs to symlink in HOME.
+FILES=(
+  bin
+  .ghci
+  .gitconfig
+  .gitignore
+  .ideavimrc
+  .oh-my-zsh
+  .path
+  .psqlrc
+  .style
+  .vimrc
+  .xbindkeysrc
+  .xinitrc
+  .Xmodmap
+  .xmonad
+)
+
+# Loop through each file in dotfiles and add to HOME.
+cd $HOME
+for f in "${FILES[@]}"; do
+  if [ "$(readlink "$f")" = "$BASE_DIR/$f" ]; then
+    # Already symlinked.
+    continue;
+  fi
+
+  if [ -f "$f" -o -d "$f" ]; then
+    >&2 echo "WARNING: '$PWD/$f' already exists, skipping"
+    continue;
+  fi
+
+  if [ -f "$BASE_DIR/$f" -o -d "$BASE_DIR/$f" ]; then
+    echo "Symlinking $BASE_DIR/$f to $HOME/$f"
+    ln -s "$BASE_DIR/$f"
+    continue;
+  fi
+
+  >&2 echo "ERROR: '$BASE_DIR/$f' not found!"
+  exit 1
+done
+
+echo "------------------------"
+echo "dotfiles setup complete!"
