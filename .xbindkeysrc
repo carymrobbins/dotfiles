@@ -7,17 +7,35 @@
 "set-volume 10%+"
   XF86AudioRaiseVolume
 
+"set-volume 1%-"
+  Shift + XF86AudioLowerVolume
+
+"set-volume 1%+"
+  Shift + XF86AudioRaiseVolume
+
 "xbacklight -dec 10 -time 0 -steps 1"
   XF86MonBrightnessDown
 
 "xbacklight -inc 10 -time 0 -steps 1"
   XF86MonBrightnessUp
 
+"xbacklight -dec 1 -time 0 -steps 1"
+  Shift + XF86MonBrightnessDown
+
+"xbacklight -inc 1 -time 0 -steps 1"
+  Shift + XF86MonBrightnessUp
+
 "xleds -dec 10"
   XF86KbdBrightnessDown
 
 "xleds -inc 10"
   XF86KbdBrightnessUp
+
+"xleds -dec 1"
+  Shift + XF86KbdBrightnessDown
+
+"xleds -inc 1"
+  Shift + XF86KbdBrightnessUp
 
 "gnome-screenshot -i"
   XF86LaunchB
