@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+SCALASTYLE_JAR_DIR=$HOME/bin
+SCALA_VERSION=2.11
+SCALASTYLE_VERSION=0.8.0
+JAR_NAME=scalastyle_$SCALA_VERSION-$SCALASTYLE_VERSION-batch.jar
+SCALASTYLE_JAR=$SCALASTYLE_JAR_DIR/$JAR_NAME
+REPO="https://oss.sonatype.org/content/repositories/releases/org/scalastyle"
+
+# If we don't have the jar, download it.
+if [ ! -f "$SCALASTYLE_JAR" ]; then
+  echo "Downoading scalastyle jar to $SCALASTYLE_JAR"
+  curl -o "$SCALASTYLE_JAR" "$REPO/scalastyle_$SCALA_VERSION/$SCALASTYLE_VERSION/$JAR_NAME"
+fi
+
+# Check to see if the user supplied the config file.
+CONFIG_SUPPLIED=0
+for arg in "$@"; do
+  if [ "$arg" = "-c" -o "$arg" = "--config" ]; then
+    CONFIG_SUPPLIED=1
+  fi
+done
+
+# If the config file is not supplied and one exists in this directory, use it.
+EXTRA_ARGS=""
+if [ "$CONFIG_SUPPLIED" = "0" -a -f scalastyle-config.xml ]; then
+  EXTRA_ARGS="-c scalastyle-config.xml"
+fi
+
+java -jar "$SCALASTYLE_JAR" $EXTRA_ARGS "$@"

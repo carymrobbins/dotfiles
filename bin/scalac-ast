@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  >&2 echo "Usage: $0 <file.scala>"
+  exit 1
+fi
+
+scalac -Xplugin lib/paradise_2.11.6-2.1.0-M5.jar -deprecation -Xprint:parser -Ystop-after:parser -Yshow-trees-compact "$1"
