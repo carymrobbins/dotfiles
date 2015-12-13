@@ -21,8 +21,7 @@ _do_workon() {
     *)
       local d
       for d in "$HOME/work" "$HOME/projects"; do
-        # Pipe through `cat` to coalesce error from empty grep result.
-        guess="$(ls "$d" | grep $1 | cat | head)"
+        guess="$(ls "$d" | grep "^$1" | head -n1)"
         if [ -n "$guess" ]; then
           echo -n "Change to '$guess'? [Y/n] "
           read -n 1 choice
