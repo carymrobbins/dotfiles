@@ -25,3 +25,6 @@
 [submodule ".vim/bundle/vim-scala"]
 	path = .vim/bundle/vim-scala
 	url = https://github.com/derekwyatt/vim-scala
+[submodule ".vim/bundle/vim-tmux-navigator"]
+	path = .vim/bundle/vim-tmux-navigator
+	url = https://github.com/christoomey/vim-tmux-navigator

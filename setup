@@ -20,6 +20,8 @@ FILES=(
   .path
   .psqlrc
   .style
+  .tmux.conf
+  .vim
   .vimrc
   .xbindkeysrc
   .xinitrc
