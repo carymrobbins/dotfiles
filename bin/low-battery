@@ -1,0 +1,39 @@
+#!/bin/bash
+
+MIN_PERC=15
+BAT_PATH=/sys/class/power_supply/BAT0
+
+get_battery_perc() {
+  cat /sys/class/power_supply/BAT0/capacity
+}
+
+discharging() {
+  if [ "$(cat $BAT_PATH/status)" != "Charging" ]; then
+    echo 1
+  fi
+}
+
+show_notification() {
+  BAT_PERC=$(get_battery_perc)
+  killall notify-osd 2>/dev/null
+  notify-send -u critical "${BAT_PERC}%  Low battery" -i ~/Downloads/low-battery.png
+  echo done
+}
+
+if [ "$1" = "--debug" ]; then
+  show_notification
+  exit
+fi
+
+if [ "$(pgrep $(basename $0) --count)" -gt 1 ]; then
+  >&2 echo "Existing $0 process already running"
+  exit 1
+fi
+
+while true; do
+  BAT_PERC=$(get_battery_perc)
+  if [ discharging -a $BAT_PERC -lt $MIN_PERC ]; then
+    show_notification
+  fi
+  sleep 60
+done
