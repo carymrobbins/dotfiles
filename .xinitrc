@@ -5,7 +5,8 @@ synclient HorizTwoFingerScroll=1
 # Prevent tap to click
 synclient MaxTapTime=0
 # Set default screen brightness
-xbacklight -set 50
+xbacklight -set 10
+xleds -set 10
 # Start xbindkeys
 xbindkeys
 # Prevent clicking while typing
