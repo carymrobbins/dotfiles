@@ -2,7 +2,7 @@
 
 WORD="$1"
 
-RESULT=$(curl -s --data "dictWord=$WORD" http://www.hasbro.com/scrabble-2/en_US/search.cfm\#dictionary \
+RESULT=$(curl -s --data "dictWord=$WORD" http://scrabble.hasbro.com/en-us/tools\#dictionary \
   | grep -A 5 word-definition \
   | grep -e "^[^<]" \
   | sed -e 's/<.*//' 2> /dev/null)
@@ -11,7 +11,7 @@ GREEN="\033[01;32m"
 YELLOW="\033[01;33m"
 RESET="\033[0m"
 
-if [ "$RESULT" = "Check out the spelling of your word and try again." ]; then
+if [ "$RESULT" = "*Check out the spelling of your word and try again*" ]; then
   echo -e "${YELLOW}Invalid word '${WORD}': ${RESULT}${RESET}"
 else
   echo -e "${GREEN}${WORD}: ${RESULT}${RESET}"
