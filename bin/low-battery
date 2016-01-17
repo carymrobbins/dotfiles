@@ -7,8 +7,8 @@ get_battery_perc() {
   cat /sys/class/power_supply/BAT0/capacity
 }
 
-discharging() {
-  if [ "$(cat $BAT_PATH/status)" != "Charging" ]; then
+is_charging() {
+  if [ "$(cat $BAT_PATH/status)" = "Charging" ]; then
     echo 1
   fi
 }
@@ -32,7 +32,7 @@ fi
 
 while true; do
   BAT_PERC=$(get_battery_perc)
-  if [ discharging -a $BAT_PERC -lt $MIN_PERC ]; then
+  if [ -z $(is_charging) -a $BAT_PERC -lt $MIN_PERC ]; then
     show_notification
   fi
   sleep 60
