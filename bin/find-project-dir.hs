@@ -13,6 +13,11 @@ import System.Exit
 import System.FilePath
 import System.IO
 
+(=:) = (,)
+
+aliases =
+  [ "hf" =: "projects/intellij-haskforce" ]
+
 usage = "Usage: find-project-dir.hs <pattern>"
 
 -- Relative to $HOME
@@ -31,7 +36,13 @@ main = getArgs >>= \case
 
   _ -> hPutStrLn stderr usage
 
-run pat = do
+run pat = case lookup pat aliases of
+  Just found -> do
+    home <- getHomeDirectory
+    return $ [[Just $ home </> found]]
+  Nothing -> search pat
+
+search pat = do
   home <- getHomeDirectory
   for dirs $ \dir -> do
     let path = home </> dir
