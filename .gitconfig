@@ -13,6 +13,7 @@
 	ci = commit
 	st = status
 	unstage = reset HEAD --
+	autosquash = rebase -i --autosquash
 [core]
 	commentchar = "#"
 	excludesfile = ~/.gitignore
