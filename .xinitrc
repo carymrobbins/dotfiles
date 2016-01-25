@@ -15,5 +15,3 @@ xbindkeys
 xmodmap -e 'keycode 66 = Caps_Lock'
 # Load our actual xmodmap config
 xmodmap $HOME/.Xmodmap
-# Notify if the battery gets too low
-~/bin/low-battery &

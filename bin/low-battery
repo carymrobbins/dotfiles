@@ -1,39 +1,44 @@
 #!/bin/bash
 
+# It's best to add this to your crontab.  To have this run every minute, add the following -
+# * * * * * env DISPLAY=:0 /home/crobbins/bin/low-battery
+# The `env DISPLAY` is for ensuring it runs within the context of the desktop GUI.
+
+# You may want check that notify-osd is set to display on your "focused" monitor:
+# $ gsettings get com.canonical.notify-osd multihead-mode
+# The above command should return 'focus-follow'.  If not, you can use `gsettings set` to set it.
+
 MIN_PERC=15
 BAT_PATH=/sys/class/power_supply/BAT0
 
-get_battery_perc() {
-  cat /sys/class/power_supply/BAT0/capacity
-}
+if [ "$1" == "--debug" ]; then
+  DEBUG=1
+fi
 
-is_charging() {
-  if [ "$(cat $BAT_PATH/status)" = "Charging" ]; then
-    echo 1
-  fi
-}
+battery_perc=$(cat "$BAT_PATH/capacity")
+
+if [ "$(cat $BAT_PATH/status)" = "Charging" ]; then
+  is_charging=1
+fi
+
+if [ "$battery_perc" -le "$MIN_PERC" ]; then
+  is_low_state=1
+fi
 
 show_notification() {
-  BAT_PERC=$(get_battery_perc)
   killall notify-osd 2>/dev/null
-  notify-send -u critical "${BAT_PERC}%  Low battery" -i ~/Downloads/low-battery.png
-  echo done
+  notify-send -u critical "${battery_perc}%  Low battery" -i ~/Downloads/low-battery.png
 }
 
-if [ "$1" = "--debug" ]; then
+
+if [ -n "$DEBUG" ]; then
+  echo "Status: $([ -n "$is_charging" ] && echo "Charging" || echo "Discharging")"
+  echo "Capacity: ${battery_perc}%"
+  echo "Is low state: $([ -n "$is_low_state" ] && echo "true" || echo "false")"
   show_notification
   exit
 fi
 
-if [ "$(pgrep $(basename $0) --count)" -gt 1 ]; then
-  >&2 echo "Existing $0 process already running"
-  exit 1
+if [ -z "$is_charging" -a -n "$is_low_state" ]; then
+  show_notification
 fi
-
-while true; do
-  BAT_PERC=$(get_battery_perc)
-  if [ -z $(is_charging) -a $BAT_PERC -lt $MIN_PERC ]; then
-    show_notification
-  fi
-  sleep 60
-done
