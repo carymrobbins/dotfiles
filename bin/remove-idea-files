@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+find . -name .idea
+find . -name \*.iml
+
+echo
+read -p "Delete the files listed above? " -n 1 -r
+echo
+
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+  find . -name .idea -exec rm -rf {} \; 2> /dev/null
+  find . -name \*.iml -exec rm -rf {} \; 2> /dev/null
+else
+  exit 1
+fi
