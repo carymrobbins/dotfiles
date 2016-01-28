@@ -1,0 +1,118 @@
+#!/usr/bin/env python2
+
+from itertools import takewhile
+import os
+import re
+from subprocess import Popen, PIPE, STDOUT
+import sys
+import textwrap
+
+COPY_DEFAULT = 'pbcopy'
+
+USAGE = textwrap.dedent("""
+    Usage: {me} <file.sql> [--copy]
+
+    The provided SQL file should contain a top-level comment specifying
+    a database -
+
+        -- DATABASE: dbname
+
+    Template variables can be specified as follows -
+
+        -- VAR: foo='bar'
+        -- VAR: baz=12
+
+    If these variable names are found in the provided SQL file and are
+    surrounded by word boundaries (e.g. they are not *contained* in another
+    word, so, given the VARs above, `afooble` will not become `a'bar'ble`)
+    they are replaced with the specified value literal.  For example -
+        
+        select a from b where c = foo and d = baz;
+
+    Will become -
+
+        select a from b where c = 'bar' and d = 12;
+
+    You can use the --copy argument to copy to the output to the clipboard.
+    By default, this uses the command '{COPY_DEFAULT}'; however, this can be
+    specified via the COPY environment variable.
+""".format(
+    me=os.path.basename(__file__),
+    COPY_DEFAULT=COPY_DEFAULT
+)).strip()
+
+DATABASE_REGEX = re.compile(r'^-- DATABASE: (\w+)$')
+VAR_REGEX = re.compile(r'^-- VAR: (\w+)=(.*)$')
+
+
+def main():
+    if len(sys.argv) < 2:
+        error(USAGE)
+
+    if {'-h', '--help'}.intersection(sys.argv):
+        print USAGE
+        exit()
+
+    filename = sys.argv[1]
+
+    copy = '--copy' in sys.argv
+
+    state = {
+        'database': None,
+        'varmap': {},
+        'lines': []
+    }
+
+    with open(filename) as f:
+        for line in f:
+            process(state, line)
+
+    if state['database'] is None:
+        error("No '--DATABASE: <dbname>' line found in " + filename)
+
+    content = ''.join(state['lines'])
+    for k, v in state['varmap'].iteritems():
+        content = v['regex'].sub(v['value'], content)
+
+    p = Popen(
+        ['psql', '-X', state['database']],
+        stdout=PIPE, stdin=PIPE, stderr=PIPE
+    )
+
+    (out, err) = p.communicate(input=content)
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+
+    if copy:
+        copy_command = os.environ.get('COPY', COPY_DEFAULT)
+        p = Popen([copy_command], stdin=PIPE)
+        p.communicate(out)
+
+
+def error(msg):
+    sys.stderr.write(msg + '\n')
+    exit(1)
+
+
+def process(state, line):
+    m = DATABASE_REGEX.match(line)
+    if m:
+        state['database'] = m.group(1)
+        return
+
+    m = VAR_REGEX.match(line)
+    if m:
+        k = m.group(1)
+        if k in state['varmap']:
+            error('VAR "{0}" already defined in varmap'.format(k))
+        state['varmap'][k] = {
+            'regex': re.compile(r'\b' + k + r'\b'),
+            'value': m.group(2)
+        }
+        return
+
+    state['lines'].append(line)
+
+
+if __name__ == '__main__':
+    main()
