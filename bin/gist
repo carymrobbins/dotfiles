@@ -2,7 +2,6 @@
 
 set -e
 
-TOKEN_PATH=$HOME/tokens/github
 GITHUB_API_PREFIX="https://api.github.com"
 
 # Require jq
