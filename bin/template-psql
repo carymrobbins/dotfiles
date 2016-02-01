@@ -10,7 +10,7 @@ import textwrap
 COPY_DEFAULT = 'pbcopy'
 
 USAGE = textwrap.dedent("""
-    Usage: {me} <file.sql> [--copy]
+    Usage: {me} <file.sql> [--copy] [--expand-only]
 
     The provided SQL file should contain a top-level comment specifying
     a database -
@@ -26,7 +26,7 @@ USAGE = textwrap.dedent("""
     surrounded by word boundaries (e.g. they are not *contained* in another
     word, so, given the VARs above, `afooble` will not become `a'bar'ble`)
     they are replaced with the specified value literal.  For example -
-        
+
         select a from b where c = foo and d = baz;
 
     Will become -
@@ -56,6 +56,7 @@ def main():
     filename = sys.argv[1]
 
     copy = '--copy' in sys.argv
+    expand_only = '--expand-only' in sys.argv
 
     state = {
         'database': None,
@@ -74,24 +75,33 @@ def main():
     for k, v in state['varmap'].iteritems():
         content = v['regex'].sub(v['value'], content)
 
+    if expand_only:
+        print content
+        if copy:
+            copy_to_clipboard(content)
+        return
+
     p = Popen(
         ['psql', '-X', state['database']],
         stdout=PIPE, stdin=PIPE, stderr=PIPE
     )
-
     (out, err) = p.communicate(input=content)
     sys.stdout.write(out)
     sys.stderr.write(err)
 
     if copy:
-        copy_command = os.environ.get('COPY', COPY_DEFAULT)
-        p = Popen([copy_command], stdin=PIPE)
-        p.communicate(out)
+        copy_to_clipboard(out)
 
 
 def error(msg):
     sys.stderr.write(msg + '\n')
     exit(1)
+
+
+def copy_to_clipboard(text):
+    copy_command = os.environ.get('COPY', COPY_DEFAULT)
+    p = Popen([copy_command], stdin=PIPE)
+    p.communicate(text)
 
 
 def process(state, line):
