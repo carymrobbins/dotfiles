@@ -1,16 +1,17 @@
 #!/usr/bin/env python2
 
-from itertools import takewhile
+import datetime as dt
+from itertools import dropwhile, takewhile
 import os
 import re
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE
 import sys
 import textwrap
 
 COPY_DEFAULT = 'pbcopy'
 
 USAGE = textwrap.dedent("""
-    Usage: {me} <file.sql> [--copy] [--expand-only]
+    Usage: {me} <file.sql> [--var <expr>] [--copy] [--expand-only] [--log [file]]
 
     The provided SQL file should contain a top-level comment specifying
     a database -
@@ -33,16 +34,26 @@ USAGE = textwrap.dedent("""
 
         select a from b where c = 'bar' and d = 12;
 
+    Instead of specifying VARs from within the SQL file itself, you can
+    also do so via the --var flag.
+
+        {me} --var foo='bar' --var baz=12
+
     You can use the --copy argument to copy to the output to the clipboard.
     By default, this uses the command '{COPY_DEFAULT}'; however, this can be
     specified via the COPY environment variable.
+
+    The --log command logs the query, its VARs, and the query output to a file,
+    which defaults to '<file.sql>.log'.  Logs are appended to the file starting with
+    two newlines to separate log entries.
 """.format(
     me=os.path.basename(__file__),
     COPY_DEFAULT=COPY_DEFAULT
 )).strip()
 
-DATABASE_REGEX = re.compile(r'^-- DATABASE: (\w+)$')
-VAR_REGEX = re.compile(r'^-- VAR: (\w+)=(.*)$')
+DATABASE_COMMENT_REGEX = re.compile(r'^-- DATABASE: (\w+)$')
+VAR_COMMENT_REGEX = re.compile(r'^-- VAR: (.*)$')
+VAR_REGEX = re.compile(r'^(\w+)=(.*)$')
 
 
 def main():
@@ -57,12 +68,24 @@ def main():
 
     copy = '--copy' in sys.argv
     expand_only = '--expand-only' in sys.argv
+    log_args = list(dropwhile(lambda x: x != '--log', sys.argv))[:2]
+    log = len(log_args) > 0
+    log_filename = filename + '.log'
+    if len(log_args) > 1 and not log_args[1].startswith('-'):
+        log_filename = log_args[1]
 
     state = {
         'database': None,
         'varmap': {},
         'lines': []
     }
+
+    for i, arg in enumerate(sys.argv):
+        arg_len = len(sys.argv)
+        if arg == '--var':
+            if i + 1 >= arg_len:
+                error('--var requires an expression')
+            put_var(state, sys.argv[i + 1])
 
     with open(filename) as f:
         for line in f:
@@ -71,31 +94,51 @@ def main():
     if state['database'] is None:
         error("No '--DATABASE: <dbname>' line found in " + filename)
 
-    content = ''.join(state['lines'])
+    raw_query = ''.join(state['lines'])
+    rendered_query = raw_query
     for k, v in state['varmap'].iteritems():
-        content = v['regex'].sub(v['value'], content)
+        rendered_query = v['regex'].sub(v['value'], rendered_query)
 
     if expand_only:
-        print content
+        print rendered_query
         if copy:
-            copy_to_clipboard(content)
+            copy_to_clipboard(rendered_query)
         return
 
     p = Popen(
         ['psql', '-X', state['database']],
         stdout=PIPE, stdin=PIPE, stderr=PIPE
     )
-    (out, err) = p.communicate(input=content)
+    (out, err) = p.communicate(input=rendered_query)
     sys.stdout.write(out)
     sys.stderr.write(err)
 
     if copy:
         copy_to_clipboard(out)
 
+    if log:
+        with open(log_filename, 'a') as log_file:
+            log_file.write(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n'))
+            if state['varmap']:
+                log_file.write('DEFINED VARS:\n')
+                for (k, v) in state['varmap'].iteritems():
+                    log_file.write('    {0}: {1}\n'.format(k, v['value']))
+            log_file.write('\n')
+            log_file.write(strip_leading_sql_comments(raw_query))
+            log_file.write(err)
+            log_file.write(out)
+            log_file.write("\n\n")
+
 
 def error(msg):
     sys.stderr.write(msg + '\n')
     exit(1)
+
+
+def strip_leading_sql_comments(query):
+    def should_strip(line):
+        return line.startswith('--') or len(line.strip()) == 0
+    return '\n'.join(dropwhile(should_strip, query.splitlines()))
 
 
 def copy_to_clipboard(text):
@@ -105,23 +148,34 @@ def copy_to_clipboard(text):
 
 
 def process(state, line):
-    m = DATABASE_REGEX.match(line)
+    m = DATABASE_COMMENT_REGEX.match(line)
     if m:
         state['database'] = m.group(1)
         return
 
-    m = VAR_REGEX.match(line)
+    m = VAR_COMMENT_REGEX.match(line)
     if m:
-        k = m.group(1)
-        if k in state['varmap']:
-            error('VAR "{0}" already defined in varmap'.format(k))
-        state['varmap'][k] = {
-            'regex': re.compile(r'\b' + k + r'\b'),
-            'value': m.group(2)
-        }
+        put_var(state, m.group(1))
         return
 
     state['lines'].append(line)
+
+
+def put_var(state, expr):
+    m = VAR_REGEX.match(expr)
+    if not m:
+        error('Invalid VAR expression: ' + expr)
+    k = m.group(1)
+    if k in state['varmap']:
+        error('VAR "{0}" already defined in varmap'.format(k))
+    v = m.group(2)
+    # Ensure var value is quoted.
+    if not v.startswith("'"):
+        v = "'{0}'".format(v)
+    state['varmap'][k] = {
+        'regex': re.compile(r'\b' + k + r'\b'),
+        'value': v
+    }
 
 
 if __name__ == '__main__':
