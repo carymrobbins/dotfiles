@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from itertools import dropwhile
+from itertools import dropwhile, islice
 import os
 import re
 import requests
@@ -22,10 +22,7 @@ def main():
 
 
 def get_title():
-    maybe_title = list(dropwhile(lambda arg: arg != '--title', sys.argv))[1:2]
-    if maybe_title:
-        return maybe_title[0]
-    return ''
+    return next(islice(dropwhile(lambda arg: arg != '--title', sys.argv), 1, 2), '')
 
 
 def post_explain(cookie, title, plan):

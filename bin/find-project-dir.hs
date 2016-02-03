@@ -16,7 +16,9 @@ import System.IO
 (=:) = (,)
 
 aliases =
-  [ "hf" =: "projects/intellij-haskforce" ]
+  [ "hf" =: "projects/intellij-haskforce"
+  , "dot" =: "dotfiles"
+  ]
 
 usage = "Usage: find-project-dir.hs <pattern>"
 
