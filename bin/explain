@@ -1,0 +1,105 @@
+#!/usr/bin/env python2
+
+from itertools import dropwhile
+import os
+import re
+import requests
+import sys
+
+
+EXPLAIN_DIR = os.path.expanduser('~/.explain.depesz.com')
+CREDS_FILE = os.path.join(EXPLAIN_DIR, 'credentials')
+CREDS_USER_REGEX = re.compile('^username=(.*)$')
+CREDS_PASS_REGEX = re.compile('^password=(.*)$')
+COOKIE_FILE = os.path.join(EXPLAIN_DIR, 'cookie')
+
+
+def main():
+    cookie = get_cookie()
+    plan = sys.stdin.read()
+    url = post_explain(cookie, get_title(), plan)
+    print explain_url(url)
+
+
+def get_title():
+    maybe_title = list(dropwhile(lambda arg: arg != '--title', sys.argv))[1:2]
+    if maybe_title:
+        return maybe_title[0]
+    return ''
+
+
+def post_explain(cookie, title, plan):
+    r = requests.post(
+        explain_url(),
+        headers={'cookie': cookie},
+        data={'title': title, 'plan': plan},
+        allow_redirects=False
+    )
+    location = r.headers.get('location')
+    if location is None:
+        error(u'Error posting query plan:\nResponse: {0}\nText: {1}'.format(
+            r.status_code, r.text
+        ))
+    return location
+
+
+def explain_url(path=''):
+    if path.startswith('/'):
+        path = path[1:]
+    return 'http://explain.depesz.com/' + path
+
+
+def read_creds():
+    creds = {}
+    try:
+        with open(CREDS_FILE) as f:
+            for line in f:
+                m = CREDS_USER_REGEX.match(line)
+                if m:
+                    creds['username'] = m.group(1)
+                    continue
+                m = CREDS_PASS_REGEX.match(line)
+                if m:
+                    creds['password'] = m.group(1)
+                    continue
+        if not creds.get('username') or not creds.get('password'):
+            error('Missing username or password in ' + CREDS_FILE)
+        return creds
+    except IOError as e:
+        error('Please create a credentials file at: ' + CREDS_FILE)
+
+
+def get_cookie():
+    return read_cookie() or fetch_cookie()
+
+
+def read_cookie():
+    try:
+        with open(COOKIE_FILE) as f:
+            return f.read().strip()
+    except IOError as e:
+        return None
+
+
+def fetch_cookie():
+    creds = read_creds()
+    r = requests.post(
+        explain_url('login'),
+        allow_redirects=False,
+        data=creds
+    )
+    cookie = r.headers.get('set-cookie')
+    if cookie is None:
+        error('No cookie returned, check username and password in ' + CREDS_FILE)
+    with open(COOKIE_FILE, 'w') as f:
+        f.write(cookie)
+    return cookie
+
+
+def error(msg):
+    sys.stderr.write(msg + '\n')
+    exit(1)
+
+
+if __name__ == '__main__':
+    main()
