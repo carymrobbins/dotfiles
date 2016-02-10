@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 import datetime as dt
-from itertools import dropwhile, takewhile
+from itertools import dropwhile, islice, takewhile
 import os
 import re
 import shlex
@@ -39,7 +39,6 @@ USAGE = textwrap.dedent("""
     also do so via the --var flag.
 
         {me} --var foo='bar' --var baz=12
-
     You can use the --copy argument to copy to the output to the clipboard.
     By default, this uses the command '{COPY_DEFAULT}'; however, this can be
     specified via the COPY environment variable.
@@ -60,6 +59,7 @@ USAGE = textwrap.dedent("""
 DATABASE_COMMENT_REGEX = re.compile(r'^-- DATABASE: (\w+)$')
 VAR_COMMENT_REGEX = re.compile(r'^-- VAR: (.*)$')
 VAR_REGEX = re.compile(r'^(\w+)=(.*)$')
+DOUBLE_NEWLINE_REGEX = re.compile('\n\n+', re.MULTILINE)
 
 
 def main():
@@ -74,12 +74,13 @@ def main():
 
     copy = '--copy' in sys.argv
     expand_only = '--expand-only' in sys.argv
-    explain = '--explain' in sys.argv
     log_args = list(dropwhile(lambda x: x != '--log', sys.argv))[:2]
     log = len(log_args) > 0
     log_filename = filename + '.log'
     if len(log_args) > 1 and not log_args[1].startswith('-'):
         log_filename = log_args[1]
+
+    (explain, explain_title) = get_explain_args()
 
     state = {
         'database': None,
@@ -105,6 +106,7 @@ def main():
     rendered_query = raw_query
     for k, v in state['varmap'].iteritems():
         rendered_query = v['regex'].sub(v['value'], rendered_query)
+    rendered_query = cleanup_sql(rendered_query)
 
     if expand_only:
         print rendered_query
@@ -113,31 +115,38 @@ def main():
         return
 
     p = Popen(
-        ['psql', '-X', state['database']],
+        ['psql', state['database']],
         stdout=PIPE, stdin=PIPE, stderr=PIPE
     )
-    (out, err) = p.communicate(input=rendered_query)
-    sys.stdout.write(out)
-    sys.stderr.write(err)
+    (query_out, query_err) = p.communicate(input=rendered_query)
+    sys.stdout.write(query_out)
+    sys.stderr.write(query_err)
 
     if copy:
-        copy_to_clipboard(out)
+        copy_to_clipboard(query_out)
 
+    explain_url = None
     if explain:
-        pipe_to_command('explain', out)
+        (explain_out, explain_err) = pipe_to_command('explain', query_out)
+        if explain_err:
+            explain_url = "ERROR POSTING EXPLAIN"
+        else:
+            explain_url = explain_out.strip()
+        print explain_url
 
     if log:
         with open(log_filename, 'a') as log_file:
             log_file.write(dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S\n'))
             if state['varmap']:
-                log_file.write('DEFINED VARS:\n')
+                log_file.write('-- DEFINED VARS:\n')
                 for (k, v) in state['varmap'].iteritems():
-                    log_file.write('    {0}: {1}\n'.format(k, v['value']))
+                    log_file.write('--     {0}: {1}\n'.format(k, v['value']))
             log_file.write('\n')
-            log_file.write(strip_leading_sql_comments(raw_query))
-            log_file.write(err)
-            log_file.write(out)
-            log_file.write("\n\n")
+            log_file.write(cleanup_sql(raw_query) + '\n')
+            log_file.write(query_err + '\n')
+            log_file.write(query_out + '\n\n')
+            if explain_url:
+                log_file.write('-- EXPLAIN URL: ' + explain_url)
 
 
 def error(msg):
@@ -145,15 +154,18 @@ def error(msg):
     exit(1)
 
 
-def strip_leading_sql_comments(query):
-    def should_strip(line):
-        return line.startswith('--') or len(line.strip()) == 0
-    return '\n'.join(dropwhile(should_strip, query.splitlines()))
+def cleanup_sql(query):
+    def should_not_strip(line):
+        return not line.startswith('--')
+    return DOUBLE_NEWLINE_REGEX.sub(
+        '\n\n',
+        '\n'.join(filter(should_not_strip, query.splitlines()))
+    ).strip()
 
 
 def pipe_to_command(cmd, inp):
-    p = Popen(shlex.split(cmd), stdin=PIPE)
-    p.communicate(inp)
+    p = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE)
+    return p.communicate(inp)
 
 
 def copy_to_clipboard(text):
@@ -189,6 +201,18 @@ def put_var(state, expr):
         'regex': re.compile(r'\b' + k + r'\b'),
         'value': v
     }
+
+
+def get_explain_args():
+    args = list(islice(dropwhile(lambda arg: arg != '--explain', sys.argv), 2))
+    if not args:
+        return (False, '')
+    maybe_title = args[1:]
+    if maybe_title:
+        title = maybe_title[0]
+    else:
+        title = ''
+    return (True, title)
 
 
 if __name__ == '__main__':
