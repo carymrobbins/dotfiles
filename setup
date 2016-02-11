@@ -12,6 +12,7 @@ git submodule update --init --recursive
 # Files and dirs to symlink in HOME.
 FILES=(
   bin
+  .config/terminator/config
   .ghci
   .gitconfig
   .gitignore
@@ -45,7 +46,7 @@ for f in "${FILES[@]}"; do
 
   if [ -f "$BASE_DIR/$f" -o -d "$BASE_DIR/$f" ]; then
     echo "Symlinking $BASE_DIR/$f to $HOME/$f"
-    ln -s "$BASE_DIR/$f"
+    (cd "$(dirname $f)" && ln -s "$BASE_DIR/$f")
     continue;
   fi
 
