@@ -21,6 +21,7 @@ FILES=(
   .path
   .psqlrc
   .style
+  .tmux
   .tmux.conf
   .vim
   .vimrc
