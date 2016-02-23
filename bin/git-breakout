@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -e
+
+if [ "$#" -lt 2 ]; then
+  >&2 echo "Usage: $(basename $0) [--verbose] <rev> <file>"
+  exit 1
+fi
+
+if [ "$1" = "--verbose" ]; then
+  verbose=1
+  shift
+fi
+
+rev=$1; shift
+file=$1; shift
+
+log() {
+  if [ -n "$verbose" ]; then
+    >&2 echo "$@"
+  fi
+}
+
+exec_and_log() {
+  log "exec:" "$@"
+  "$@"
+}
+
+staged_found="$(git diff --cached | wc -l)"
+log "staged_found: $staged_found"
+if [ "$staged_found" -ne 0 ]; then
+  >&2 echo "You have staged changes, clean working tree required to use $(basename $0)"
+  exit 1
+fi
+
+dirty_found="$(git diff | wc -l)"
+log "dirty_found: $dirty_found"
+if [ "$dirty_found" -ne 0 ]; then
+  >&2 echo "You have unstaged changes, clean working tree required to $(basename $0)"
+  exit 1
+fi
+
+delete_to_breakout="$(git show -R "$rev" -- "$file" | grep 'deleted file mode' | wc -l)"
+log "delete_to_breakout: $delete_to_breakout"
+if [ "$delete_to_breakout" -gt 1 ]; then
+  >&2 echo "Multiple 'delete file mode' entries found in reverse patch!"
+  exit 1
+fi
+
+log "Applying reverse diff..."
+git show -R "$rev" -- "$file" | git apply
+if [ "$delete_to_breakout" -ne 0 ]; then
+  exec_and_log git rm "$file"
+else
+  exec_and_log git add "$file"
+fi
+exec_and_log git commit --fixup "$rev"
+log "Applying diff..."
+git show "$rev" -- "$file" | git apply
+exec_and_log git add "$file"
+exec_and_log git commit
