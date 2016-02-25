@@ -11,11 +11,12 @@
     font = Ubuntu Mono 12
     background_color = "#002b36"
   [[light]]
-    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#786c45:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
-    font = Ubuntu Mono 12
-    background_color = "#fdf6e3"
+    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#3bb5ff:#002b36:#cb4b16:#586e75:#c8eefc:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    background_image = None
     use_system_font = False
     foreground_color = "#657b83"
+    font = Ubuntu Mono 12
+    background_color = "#fdf6e3"
 [layouts]
   [[default]]
     [[[child1]]]
