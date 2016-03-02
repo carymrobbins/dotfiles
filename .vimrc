@@ -13,9 +13,6 @@ command ClearSearch :let @/ = ""
 "Look for tags starting with current directory traversing upwards.
 set tags=./tags,tags,codex.tags;
 
-"Prevent mouse scroll from moving cursor
-set mouse=a
-
 "Use line numbers, color them grey.
 set number
 highlight LineNr ctermfg=grey

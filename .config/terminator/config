@@ -5,16 +5,22 @@
 [profiles]
   [[default]]
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    alternate_screen_scroll = False
     background_image = None
     use_system_font = False
     foreground_color = "#839496"
+    scroll_on_output = False
+    scroll_on_keystroke = False
     font = Ubuntu Mono 12
     background_color = "#002b36"
   [[light]]
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#3bb5ff:#002b36:#cb4b16:#586e75:#c8eefc:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    alternate_screen_scroll = False
     background_image = None
     use_system_font = False
     foreground_color = "#657b83"
+    scroll_on_output = False
+    scroll_on_keystroke = False
     font = Ubuntu Mono 12
     background_color = "#fdf6e3"
 [layouts]
