@@ -14,6 +14,8 @@
 	st = status
 	unstage = reset HEAD --
 	autosquash = rebase -i --autosquash
+	pf = push --force-with-lease
 [core]
 	commentchar = "#"
 	excludesfile = ~/.gitignore
+	pager = less -F -X
