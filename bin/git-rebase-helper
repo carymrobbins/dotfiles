@@ -1,0 +1,118 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  echo "Usage: $0 [--verbose] [--simple] <base_rev>"
+  echo
+  echo "Flags:"
+  echo "  --verbose       Output debugging info"
+  echo "  --simple        Only output suggested commands"
+}
+
+text_bold="$(tput bold)"
+text_reset="$(tput sgr0)"
+text_red="$(tput setaf 1)"
+text_yellow="$(tput setaf 3)"
+text_magenta="$(tput setaf 5)"
+
+if [ "$1" = "--verbose" ]; then
+  verbose=1
+  shift
+fi
+
+if [ "$1" = "--simple" ]; then
+  simple=1
+  shift
+fi
+
+log() {
+  if [ -n "$verbose" ]; then
+    >&2 echo "${text_yellow}LOG:" "$@" "${text_reset}"
+  fi
+}
+
+base_rev="$1"
+
+if [ -n "$2" ]; then
+  >&2 echo "Unexpected argument: $2"
+  >&2 usage
+  exit 1
+fi
+
+if [ -z "$base_rev" ]; then
+  >&2 usage
+  exit 1
+fi
+
+# TODO: Is there a better way to ensure a revision exists?
+if [ -z "$(git show "$base_rev" | head -n1)" ]; then
+  >&2 echo "Revision does not exist: $base_rev"
+  exit 1
+fi
+
+lines_to_array() {
+  local varname="$1"
+  shift
+  eval "${varname}=()"
+  while IFS= read -r -d $'\n'; do
+    eval "${varname}+=(\"$REPLY\")"
+  done < <("$@")
+}
+
+lines_to_array dirty_files \
+  git diff-files --name-only
+
+log "Dirty files: ${dirty_files[@]}"
+
+if [ "${#dirty_files[@]}" -eq 0 ]; then
+  >&2 echo "${text_red}No dirty files found.${text_reset}"
+  exit 1
+fi
+
+lines_to_array revs \
+  git rev-list "${base_rev}.."
+
+log "Revisions found since $base_rev: ${revs[@]}"
+
+array_to_lines() {
+  local varname="$1"
+  eval "printf '%s\n' \"\${${varname}[@]}\""
+}
+
+array_intersection() {
+  comm -12 <(array_to_lines "$1" | sort) <(array_to_lines "$2" | sort)
+}
+
+files_suggested=()
+intersection=()
+
+for rev in "${revs[@]}"; do
+  log "Checking revision: $rev"
+  lines_to_array files_found \
+    git diff-tree "$rev" --name-only --no-commit-id -r -- "${dirty_files[@]}"
+  if [ "${#files_found[@]}" -gt 0 ]; then
+    log "Files found: ${files_found[@]}"
+
+    lines_to_array intersection \
+      array_intersection files_suggested files_found
+
+    if [ "${#intersection[@]}" -gt 0 ]; then
+      >&2 echo "${text_red}WARNING: Files below have already been suggested, proceed with caution!"
+      for f in "${intersection[@]}"; do
+        >&2 echo "  - $f"
+      done
+      >&2 printf "${text_reset}"
+    fi
+
+    [ -n "$simple" ] || printf '%s %s\n' \
+      "${text_bold}${text_magenta}Rebase suggestion:${text_reset}" \
+      "${text_magenta}$(git show -s --format=%s "$rev")${text_reset}"
+    echo "  git add ${files_found[@]}"
+    echo "  git commit --fixup $rev"
+    files_suggested+=("${files_found[@]}")
+  fi
+done
+
+[ -n "$simple" ] || echo "${text_bold}${text_magenta}To squash changes:${text_reset}"
+echo "  git rebase -i $base_rev --autosquash"
