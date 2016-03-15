@@ -1,2 +1,8 @@
 #!/bin/bash
-rm -rf /home/crobbins/.IntelliJIdea14/system/plugins-sandbox/plugins/intellij-haskforce
+
+if [ -z "$1" ]; then
+  >&2 echo "Usage: $0 <plugin>"
+  exit 1
+fi
+
+rm -rf "/home/crobbins/.IntelliJIdea15/system/plugins-sandbox/plugins/$1"
