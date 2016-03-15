@@ -37,3 +37,9 @@
 [submodule ".tmux/plugins/tpm"]
 	path = .tmux/plugins/tpm
 	url = git@github.com:tmux-plugins/tpm
+[submodule ".vim/bundle/vim-frege-syntax"]
+	path = .vim/bundle/vim-frege-syntax
+	url = https://github.com/melrief/vim-frege-syntax
+[submodule ".vim/bundle/vim-syntax-extra"]
+	path = .vim/bundle/vim-syntax-extra
+	url = https://github.com/justinmk/vim-syntax-extra
