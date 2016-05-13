@@ -8,6 +8,8 @@ usage() {
   echo "Flags:"
   echo "  --verbose       Output debugging info"
   echo "  --simple        Only output suggested commands"
+  echo "  --squash        Squash commits instead of fixup"
+  # echo "  --exec          Execute suggested commands"
 }
 
 text_bold="$(tput bold)"
@@ -16,14 +18,28 @@ text_red="$(tput setaf 1)"
 text_yellow="$(tput setaf 3)"
 text_magenta="$(tput setaf 5)"
 
-if [ "$1" = "--verbose" ]; then
-  verbose=1
-  shift
-fi
+for arg in "$@"; do
+  case "$arg" in
+    --help|-h) usage; exit ;;
+    --verbose) verbose=1 ;;
+    --simple) simple=1 ;;
+    --squash) squash=1 ;;
+    --exec) execute=1 ;;
+    *)
+      if [ -n "$base_rev" ]; then
+        >&2 echo "${text_red}Unexpected argument: $arg"
+        >&2 usage
+        exit 1
+      fi
+      base_rev=$arg
+      ;;
+  esac
+done
 
-if [ "$1" = "--simple" ]; then
-  simple=1
-  shift
+if [ -n "$squash" ]; then
+  squash_type="--squash"
+else
+  squash_type="--fixup"
 fi
 
 log() {
@@ -32,17 +48,16 @@ log() {
   fi
 }
 
-base_rev="$1"
-
-if [ -n "$2" ]; then
-  >&2 echo "Unexpected argument: $2"
-  >&2 usage
-  exit 1
-fi
-
+default_base_rev="origin/master"
 if [ -z "$base_rev" ]; then
-  >&2 usage
-  exit 1
+  read -p "No revision given, use ${default_base_rev}? [y/N] " -n 1 -r
+  echo
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    base_rev="$default_base_rev"
+  else
+    >&2 echo "Exiting per user request"
+    exit 1
+  fi
 fi
 
 # TODO: Is there a better way to ensure a revision exists?
@@ -84,6 +99,21 @@ array_intersection() {
   comm -12 <(array_to_lines "$1" | sort) <(array_to_lines "$2" | sort)
 }
 
+if [ -n "$execute" ]; then
+  >&2 echo "--exec not implemented!"
+  exit 1
+  while IFS= read -r -d $'\n'; do
+    if grep 'git rebase' <<< "$REPLY" >/dev/null; then
+      echo "To squash your commits:"
+      echo "$REPLY"
+    else
+      log "Executing: $REPLY"
+      $REPLY
+    fi
+  done < <(verbose=$verbose squash=$squash $0 "$base_rev" --simple)
+  exit
+fi
+
 files_suggested=()
 intersection=()
 
@@ -109,7 +139,7 @@ for rev in "${revs[@]}"; do
       "${text_bold}${text_magenta}Rebase suggestion:${text_reset}" \
       "${text_magenta}$(git show -s --format=%s "$rev")${text_reset}"
     echo "  git add ${files_found[@]}"
-    echo "  git commit --fixup $rev"
+    echo "  git commit $squash_type $rev"
     files_suggested+=("${files_found[@]}")
   fi
 done

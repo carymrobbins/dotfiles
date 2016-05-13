@@ -1,0 +1,97 @@
+#!/bin/bash
+
+source common.bash
+
+lines_to_array cabal_files find *.cabal
+
+if [ "${#cabal_files[@]}" -eq 0 ]; then
+  >&2 echo "No cabal file found!"
+  exit 1
+fi
+
+if [ "${#cabal_files[@]}" -gt 1 ]; then
+  >&2 echo "Too many cabal files!"
+  >&2 echo "$(array_to_lines cabal_files)"
+  exit 1
+fi
+
+cabal_file="${cabal_files[0]}"
+
+extensions=()
+packages=()
+ghc_options=()
+
+in_extensions=
+in_packages=
+in_ghc_options=
+
+while read line; do
+  if [ -n "$(grep -i 'test-suite' <<< "$line")" ]; then
+    # All done
+    break
+  fi
+  if [ -n "$(grep 'default-extensions' <<< "$line")" ]; then
+    in_extensions=1
+    in_packages=
+    in_ghc_options=
+    continue
+  fi
+  if [ -n "$(grep 'build-depends' <<< "$line")" ]; then
+    in_extensions=
+    in_packages=1
+    in_ghc_options=
+    continue
+  fi
+  if [ -n "$(grep 'ghc-options' <<< "$line")" ]; then
+    in_extensions=
+    in_packages=
+    in_ghc_options=1
+    continue
+  fi
+  # Ignore comments, then check for unhandled sections
+  if [ -n "$(echo "$line" | egrep -v '\ *\-\-' | egrep '\ *(\w|[\-])+\ *\:')" ]; then
+    in_extensions=
+    in_packages=
+    in_ghc_options=
+    continue
+  fi
+  if [ -n "$in_extensions" ]; then
+    # Ignore commented lines
+    extension="$(echo "$line" | egrep -v '^\ *\-\-' | egrep '\w+' -o | head -n1)"
+    if [ -n "$extension" ]; then
+      extensions+=("$extension")
+    fi
+    continue
+  fi
+  if [ -n "$in_packages" ]; then
+    # Ignore commented lines
+    package="$(echo "$line" | egrep -v '^\ *\-\-' | egrep -o '([\-]|\w)+' | head -n1)"
+    if [ -n "$package" ]; then
+      packages+=("$package")
+    fi
+    continue
+  fi
+  if [ -n "$in_ghc_options" ]; then
+    # Ignore commented lines
+    ghc_option="$(echo "$line" | egrep -v '^\ *\-\-' | egrep -o '[^ ]+')"
+    if [ -n "$ghc_option" ]; then
+      ghc_options+=("$ghc_option")
+    fi
+    continue
+  fi
+done < "$cabal_file"
+
+flags=("-hide-all-packages")
+for x in "${extensions[@]}"; do
+  flags+=("-X$x")
+done
+for x in "${packages[@]}"; do
+  flags+=("-package" "$x")
+done
+for x in "${ghc_options[@]}"; do
+  flags+=("$x")
+done
+
+echo "FLAGS: ${flags[@]}"
+
+stack ghc -- --interactive  "${flags[@]}"

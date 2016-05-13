@@ -1,0 +1,25 @@
+#!/bin/bash
+
+: ${REMOTE_PATH:=/sdcard/DCIM/Camera}
+
+if [ -n "$1" ]; then
+  >&2 echo "Usage: adb-copy"
+  >&2 echo
+  >&2 echo "Copies files from android device to current directory"
+  >&2 echo
+  >&2 echo "Environment Variables:"
+  >&2 echo "  REMOTE_PATH     Default: $REMOTE_PATH"
+
+  exit 1
+fi
+
+for f in $(adb shell ls $REMOTE_PATH); do
+    # Remove nasty ^M character added by android.
+    f=${f/%$'\r'/}
+    if [ -f $f ]; then
+        echo "$f already exists, skipping..."
+    else
+        echo "Copying $f ..."
+        adb pull $REMOTE_PATH/$f
+    fi
+done

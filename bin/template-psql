@@ -100,7 +100,7 @@ def main():
             process(state, line)
 
     if state['database'] is None:
-        error("No '--DATABASE: <dbname>' line found in " + filename)
+        error("No '-- DATABASE: <dbname>' line found in " + filename)
 
     raw_query = ''.join(state['lines'])
     rendered_query = raw_query

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+heap_file=
+java_pid=
+
+usage() {
+  echo "Usage: $0 <cheap.bin> <pid>"
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    *.bin)
+      if [ -n "$heap_file" ]; then
+        >&2 echo "Heap file already supplied"
+        exit 1
+      fi
+      if [ -f "$arg" ]; then
+        read -p "File '$arg exists, overwrite? [y/N] " -n 1 -r
+        echo
+        if ! [[ $REPLY =~ ^[Yy]$ ]]; then
+          >&2 echo "Exiting to avoid overwriting file"
+          exit 1
+        fi
+      fi
+      heap_file=$arg
+      ;;
+
+    [0-9]*)
+      if [ -n "$java_pid" ]; then
+        >&2 echo "Java pid already supplied"
+        exit 1
+      fi
+      if ! jps | cut -d ' ' -f 1 | grep "^${arg}\$" >/dev/null; then
+        >&2 echo "Java pid does not exist: $arg"
+        exit 1
+      fi
+      java_pid=$arg
+      ;;
+
+    *)
+      >&2 echo "Unexpected argument: $arg"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$heap_file" -o -z "$java_pid" ]; then
+  >&2 usage
+  exit 1
+fi
+
+jmap -dump:format=b,file=$heap_file $java_pid

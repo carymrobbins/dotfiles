@@ -1,0 +1,39 @@
+#!/bin/bash
+
+elastic_host="localhost:9200"
+method=GET
+
+case "$1" in
+  GET)
+    method=GET
+    shift
+    ;;
+  PUT)
+    method=PUT
+    shift
+    ;;
+  POST)
+    method=POST
+    shift
+    ;;
+  DELETE)
+    method=DELETE
+    shift
+    ;;
+  *)
+    # noop
+    ;;
+esac
+
+if [ $# -eq 1 ]; then
+  curl -X${method} "${elastic_host}/${1}"
+  exit $?
+fi
+
+if [ $# -eq 2 ]; then
+  curl -X${method} --data "${2}" "${elastic_host}/${1}"
+  exit $?
+fi
+
+>&2 echo "Usage: $(basename $0) <endpoint> [query]"
+exit 1
