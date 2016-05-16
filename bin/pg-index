@@ -1,0 +1,44 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 <e|enable|d|disable> <database> <index-name [index-name ...]>"
+}
+
+if [ $# -lt 3 ]; then
+  >&2 usage
+  exit 1
+fi
+
+case "$1" in
+  e|enable) valid=true;;
+  d|disable) valid=false;;
+  --help|-h) usage; exit;;
+  *) >&2 usage; exit 1;;
+esac
+
+shift
+db=$1
+
+shift
+index_array=()
+for arg in "$@"; do
+  index_array+=("$arg")
+done
+
+index_names="{$(printf '"%s",' "${index_array[@]}" | head -c -1)}"
+
+result=$(psql -X "$db" -v index_names="$index_names" -v valid="$valid" <<'SQL'
+  update pg_index
+  set indisvalid = :valid
+  where indexrelid = any(:'index_names'::regclass[])
+SQL
+)
+
+if [ "$result" != "UPDATE ${#index_array[@]}" ]; then
+  >&2 echo "Error: expected 1 row to be updated, got: $result"
+  exit 1
+fi
+
+echo "Indexes:"
+printf '  * %s\n' "${index_array[@]}"
+echo "Valid status successfully set to '$valid'"
