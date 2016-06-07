@@ -9,3 +9,4 @@ $HOME/.cabal/bin
 /opt/scala/2.11.6/bin
 /usr/local/bin
 $HOME/build/ansible/bin
+$HOME/opt/terraform
