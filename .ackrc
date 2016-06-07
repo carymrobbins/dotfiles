@@ -1,0 +1,5 @@
+--pager=less -rFX
+--ignore-dir=.stack-work
+--ignore-dir=.idea
+--ignore-dir=out
+--ignore-file=ext:sqlite

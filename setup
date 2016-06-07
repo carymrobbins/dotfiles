@@ -12,6 +12,7 @@ git submodule update --init --recursive
 # Files and dirs to symlink in HOME.
 FILES=(
   bin
+  .ackrc
   .config/terminator/config
   .ghci
   .gitconfig
