@@ -12,8 +12,10 @@
 	br = branch
 	ci = commit
 	st = status
+	d = diff
 	unstage = reset HEAD --
 	autosquash = rebase -i --autosquash
+	p = push
 	pf = push --force-with-lease
         rh = rebase-helper
         rho = rebase-helper origin/master

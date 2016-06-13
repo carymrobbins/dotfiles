@@ -14,6 +14,9 @@ export TERM=xterm-256color
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/bin/workon"
+alias g=git
+alias v=vim
+alias lock="gnome-screensaver-command -l"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -88,3 +91,9 @@ export EDITOR='vim'
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
+
+# The aws plugin gives strange python errors, so manually adding the completion
+if command -v aws_zsh_completer.sh >/dev/null; then
+  compctl -K aws_profiles asp
+  source aws_zsh_completer.sh
+fi
