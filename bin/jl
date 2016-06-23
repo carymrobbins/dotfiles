@@ -1,0 +1,21 @@
+#!/bin/bash
+
+usage() { cat<<USAGE
+Helper to prettify json output from commands.
+
+Example:
+  $ fetch-json | $(basename $0)
+USAGE
+}
+
+if [ "$1" = "--help" ]; then
+  usage
+  exit
+fi
+
+if [ -n "$1" ]; then
+  >&2 usage
+  exit 1
+fi
+
+exec jq -C '.' | less -rFX
