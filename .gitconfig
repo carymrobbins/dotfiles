@@ -13,8 +13,11 @@
 	ci = commit
 	st = status
 	d = diff
+	l = log
+	f = fetch
 	unstage = reset HEAD --
 	autosquash = rebase -i --autosquash
+	as = rebase -i --autosquash
 	p = push
 	pf = push --force-with-lease
         rh = rebase-helper
