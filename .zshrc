@@ -18,6 +18,12 @@ alias g=git
 alias v=vim
 alias lock="gnome-screensaver-command -l"
 
+cx() { cat $(which "$1"); }
+
+vx() { vim $(which "$1"); }
+
+vcx() { vimcat $(which "$1"); }
+
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
