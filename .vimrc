@@ -69,3 +69,6 @@ set colorcolumn=101
 
 " Disable auto-folding in markdown files
 let g:vim_markdown_folding_disabled=1
+
+" Map // to search for visually selected text.
+vnoremap // y/<C-R>"<CR>

@@ -1,2 +1,5 @@
 set hlsearch
 let mapleader=" "
+
+" Map // to search for visually selected text.
+vnoremap // y/<C-R>"<CR>
