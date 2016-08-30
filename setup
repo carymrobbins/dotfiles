@@ -9,16 +9,14 @@ cd "$BASE_DIR"
 echo "Updating submodules..."
 git submodule update --init --recursive
 
-# Files and dirs to symlink in HOME.
+# Files and dirs to symlink in HOME for any OS.
 FILES=(
   bin
   .ackrc
-  .config/terminator/config
   .ghci
   .gitconfig
   .gitignore
   .ideavimrc
-  .IntelliJIdea15/config/colors
   .oh-my-zsh
   .path
   .psqlrc
@@ -27,12 +25,24 @@ FILES=(
   .tmux.conf
   .vim
   .vimrc
-  .xbindkeysrc
-  .xinitrc
-  .Xmodmap
-  .xmonad
   .zshrc
 )
+
+# Linux-only stuff
+if uname | grep -i linux >/dev/null; then
+  FILES+=(
+    .config/terminator/config
+    .IntelliJIdea15/config/colors
+    .xbindkeysrc
+    .xinitrc
+    .Xmodmap
+    .xmonad
+  )
+# Mac-only stuff
+elif uname | grep -i darwin >/dev/null; then
+  FILES+=(
+  )
+fi
 
 # Loop through each file in dotfiles and add to HOME.
 cd $HOME
