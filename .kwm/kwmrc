@@ -1,0 +1,52 @@
+// See https://koekeishiya.github.io/kwm/kwmc.html
+
+// Set default values for screen padding
+kwmc config padding 0 0 0 0
+
+// Set focus-follows-mouse-mode to autoraise
+kwmc config focus-follows-mouse on
+
+// The mouse will automatically move to the center of the focused window
+kwmc config mouse-follows-focus off
+
+// Focus-follows-mouse is temporarily disabled when a floating window has focus
+kwmc config standby-on-float on
+
+// Automatically resize the window to its container
+kwmc config lock-to-container off
+
+// Allow window focus to wrap-around
+kwmc config cycle-focus on
+
+define mod1 rcmd
+define mod2 rcmd+rshift
+
+// Give focus to screen
+kwmc bindsym mod1-w display -f 2
+kwmc bindsym mod1-e display -f 0
+kwmc bindsym mod1-r display -f 1
+
+// Move Focused Window To Screen
+kwmc bindsym mod2-w window -m display 2
+kwmc bindsym mod2-e window -m display 0
+kwmc bindsym mod2-r window -m display 1
+
+// Modify Container
+kwmc bindsym mod1-space window -c split-mode toggle
+kwmc bindsym mod1-h window -c reduce 0.05
+kwmc bindsym mod1-l window -c expand 0.05
+kwmc bindsym mod1-t window -c type toggle
+
+// Rotate Window-Tree By 90degrees (Clockwise)
+kwmc bindsym mod+shift-r tree rotate 90
+
+// Give Focus To Window
+kwmc bindsym mod1-k window -f prev
+kwmc bindsym mod1-j window -f next
+
+// Swap Window Position
+kwmc bindsym mod2-k window -s prev
+kwmc bindsym mod2-j window -s next
+
+// Toggle fullscreen zoom
+kwmc bindsym mod1-z window -z fullscreen

@@ -28,6 +28,9 @@ set smarttab      "Indent instead of tab at start of line
 set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
 
+"Highlighting for custom file types
+au BufNewFile,BufRead kwmrc set filetype=c
+
 "Prevent YouCompleteMe scratch preview from staying open.
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
