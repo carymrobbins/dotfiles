@@ -1,8 +1,6 @@
 $HOME/bin
 $HOME/.local/bin
-.cabal-sandbox/bin
-$HOME/opt/idris/.cabal-sandbox/bin
-$HOME/.cabal/bin
+$HOME/.stack/programs/*/ghc-7.10.3/bin
 /opt/ghc/7.10.2/bin
 /opt/cabal/1.22/bin
 /opt/scala/2.11.6/bin
