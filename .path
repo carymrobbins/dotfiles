@@ -5,5 +5,6 @@ $HOME/.stack/programs/*/ghc-7.10.3/bin
 /opt/cabal/1.22/bin
 /opt/scala/2.11.6/bin
 /usr/local/bin
+/usr/local/sbin
 $HOME/build/ansible/bin
 $HOME/opt/terraform
