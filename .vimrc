@@ -2,6 +2,8 @@ execute pathogen#infect()
 syntax on
 filetype plugin on
 filetype indent on
+set background=dark
+colorscheme solarized
 "Show line, column numbers in status bar.
 set ruler
 "Highlight search terms.
@@ -29,7 +31,9 @@ set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
 
 "Highlighting for custom file types
+
 au BufNewFile,BufRead kwmrc set filetype=c
+au BufNewFile,BufRead *.json set filetype=javascript
 
 "Prevent YouCompleteMe scratch preview from staying open.
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
@@ -66,6 +70,7 @@ match Todo /\s\+$/
 
 "Highlight long lines
 set colorcolumn=101
+"hi ColorColumn ctermbg=lightgrey guibg=lightgrey
 """Old implementation, using colorcolumn instead
 "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "match OverLength /\%101v.\+/

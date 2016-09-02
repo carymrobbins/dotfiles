@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+import ast
+import os
+import subprocess
+import sys
+
+SCRIPT_DIR = os.path.dirname(__file__)
+
+GITUSERS_FILENAME = os.path.join(SCRIPT_DIR, 'gitusers.py')
+
+try:
+  with open(GITUSERS_FILENAME) as f:
+    git_users = ast.literal_eval(f.read())
+except IOError as e:
+  print(e)
+  print("""
+You will need to create this file, here's an example:
+
+{
+  "foo": ("John Foo", "foo@example.com", "~/.ssh/foo_rsa"),
+  "bar": ("John Bar", "bar@example.com", "~/.ssh/bar_rsa"),
+}
+""")
+  exit(1)
+
+if not isinstance(git_users, dict):
+  sys.stderr.write("Expected dict from {0} but got {1} instead".format(
+    GITUSERS_FILENAME, type(git_users)
+  ))
+  exit(1)
+
+usage = """Usage: git set-user <key>
+Key can be one of: {0}
+See configuration in {1}
+""".format(
+  ', '.join(git_users.iterkeys()),
+  GITUSERS_FILENAME
+)
+
+if len(sys.argv) != 2:
+  sys.stderr.write(usage)
+  exit(1)
+
+key = sys.argv[1]
+user = git_users.get(key)
+if user is None:
+  sys.stderr.write("Invalid key: {0}\n".format(key))
+  sys.stderr.write(usage)
+  exit(1)
+
+(name, email, ssh_key) = user
+
+if '@' in name or '@' not in email:
+  sys.stderr.write("Invalid user, should be (name, email, ssh_key), got: {0}\n".format(user))
+  exit(1)
+
+commands = [
+  ["git", "config", "user.email", email],
+  ["git", "config", "user.name", name],
+  ["git", "config", "core.sshCommand", "ssh -i {} -F /dev/null".format(ssh_key)],
+]
+
+for c in commands:
+  sys.stderr.write("Executing: {0}\n".format(' '.join(map(repr, c))))
+  subprocess.Popen(c).wait()

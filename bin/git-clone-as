@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+import ast
+import os
+import re
+from subprocess import Popen, PIPE, STDOUT
+import sys
+
+# TODO: Remove this copy-pasta; unify with git-set-user
+
+SCRIPT_DIR = os.path.dirname(__file__)
+
+GITUSERS_FILENAME = os.path.join(SCRIPT_DIR, 'gitusers.py')
+
+try:
+  with open(GITUSERS_FILENAME) as f:
+    git_users = ast.literal_eval(f.read())
+except IOError as e:
+  print(e)
+  print("""
+You will need to create this file, here's an example:
+
+{
+  "foo": ("John Foo", "foo@example.com", "~/.ssh/foo_rsa"),
+  "bar": ("John Bar", "bar@example.com", "~/.ssh/bar_rsa"),
+}
+""")
+  exit(1)
+
+if not isinstance(git_users, dict):
+  sys.stderr.write("Expected dict from {0} but got {1} instead".format(
+    GITUSERS_FILENAME, type(git_users)
+  ))
+  exit(1)
+
+# TODO: End of copy-psta, don't forget to clean it up!
+
+usage = """Usage: git clone-as <key> [clone-args]
+Key can be one of: {0}
+See configuration in {1}
+""".format(
+  ', '.join(git_users.iterkeys()),
+  GITUSERS_FILENAME
+)
+
+if len(sys.argv) < 3:
+  sys.stderr.write(usage)
+  exit(1)
+
+key = sys.argv[1]
+user = git_users.get(key)
+if user is None:
+  sys.stderr.write("Invalid key: {}\n".format(key))
+  sys.stderr.write(usage)
+  exit(1)
+
+(_, _, ssh_key) = user
+
+# TODO: More copy-pasta from git set-user
+ssh_command = "ssh -i {} -F /dev/null".format(ssh_key)
+git_ssh_var = "GIT_SSH_COMMAND"
+
+env = os.environ.copy()
+env[git_ssh_var] = ssh_command
+
+command = ["git", "clone"] + sys.argv[2:]
+
+sys.stderr.write("Executing: {}={} {}\n".format(
+  git_ssh_var, repr(ssh_command), ' '.join(map(repr, command))
+))
+p = Popen(command, stderr=PIPE, env=env)
+stderr = p.stderr.read()
+sys.stderr.write(stderr)
+pat = re.compile(r"Cloning into '([^']+)'...")
+clone_dir = None
+for line in stderr.splitlines():
+  m = pat.match(line)
+  if m is not None:
+    clone_dir = m.group(1)
+    break
+p.wait()
+if clone_dir is None:
+  sys.stderr.write(
+    "Could not obtain cloned directory, be sure to 'git set-user {!r}' manually!\n".format(key)
+  )
+else:
+  sys.stderr.write("Executing: cd {} && git set-user {!r}\n".format(clone_dir, key))
+  Popen(["git", "set-user", key], cwd=clone_dir).wait()

@@ -7,6 +7,7 @@ import Data.Foldable
 import Data.List (elemIndex)
 import Data.Maybe
 import Data.Traversable
+import Debug.Trace
 import System.Directory
 import System.Environment
 import System.Exit
@@ -14,11 +15,6 @@ import System.FilePath
 import System.IO
 
 (=:) = (,)
-
-aliases =
-  [ "hf" =: "projects/intellij-haskforce"
-  , "dot" =: "dotfiles"
-  ]
 
 usage = "Usage: find-project-dir.hs <pattern>"
 
@@ -38,11 +34,30 @@ main = getArgs >>= \case
 
   _ -> hPutStrLn stderr usage
 
-run pat = case lookup pat aliases of
-  Just found -> do
-    home <- getHomeDirectory
-    return $ [[Just $ home </> found]]
-  Nothing -> search pat
+readAliases = do
+  home <- getHomeDirectory
+  let path = home </> ".find-project-dir"
+  exists <- doesFileExist path
+  if exists then
+    parse <$> readFile path
+  else
+    return []
+  where
+  parse :: String -> [(String, String)]
+  parse content = map pair . lines $ content
+
+  pair :: String -> (String, String)
+  pair s = case break (== '=') s of
+    (k, '=':v) -> (k, v)
+    _ -> error $ "Invalid pair: " ++ show s
+
+run pat = do
+  aliases <- readAliases
+  case lookup pat aliases of
+    Just found -> do
+      home <- getHomeDirectory
+      return $ [[Just $ home </> found]]
+    Nothing -> search pat
 
 search pat = do
   home <- getHomeDirectory

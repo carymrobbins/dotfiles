@@ -2,4 +2,5 @@
 --ignore-dir=.stack-work
 --ignore-dir=.idea
 --ignore-dir=out
+--ignore-dir=target
 --ignore-file=ext:sqlite

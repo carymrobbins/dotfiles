@@ -18,6 +18,13 @@ alias g=git
 alias v=vim
 alias lock="gnome-screensaver-command -l"
 
+# Mac-specific aliases
+if [ "$(uname -s)" = "Darwin" ]; then
+  # kwm helpers
+  alias vk="vim ~/.kwm/kwmrc"
+  alias kr="kwmc config reload"
+fi
+
 cx() { cat $(which "$1"); }
 
 vx() { vim $(which "$1"); }

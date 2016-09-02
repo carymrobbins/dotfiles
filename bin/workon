@@ -8,7 +8,7 @@ _do_workon() {
     return
   fi
 
-  local found=$(find-project-dir.hs "$1")
+  local found=$(find-project-dir "$1")
   if [ "$?" -eq 0 ]; then
     cd "$found"
   fi
