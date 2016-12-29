@@ -24,20 +24,24 @@ define screenkey4 p
 
 ////////// Rules ////////////
 
-kwmc rule owner="Finder" properties={float="true"}
-kwmc rule owner="System Preferences" properties={float="true"}
-kwmc rule owner="iTerm2" properties={role="AXDialog"}
-kwmc rule owner="iTerm2" title="Preferences" properties={float="true"}
+kwmc rule owner="Finder" properties={float=true}
+
+kwmc rule owner="System Preferences" properties={float=true}
+
+kwmc rule owner="iTerm2" properties={role="AXDialog", float=false}
+kwmc rule owner="iTerm2" title="Preferences" properties={float=true}
+
+kwmc rule owner="GIMP" properties={float=true}
 
 // Floats all IntelliJ windows by default so we can manually
 // "un-float" ourselves if needed.  Useful since most of IntelliJ's
 // pop-up windows shouldn't be tiled.
-//kwmc rule owner="IntelliJ IDEA" except=".*\[.*\]" properties={float="true"}
-//kwmc rule owner="IntelliJ IDEA" title=".*\[.*\]" properties={float="false"}
-kwmc rule owner="IntelliJ IDEA" title="Welcome to IntelliJ IDEA" properties={float="true"}
-kwmc rule owner="IntelliJ IDEA" title="New Project" properties={float="true"}
-kwmc rule owner="IntelliJ IDEA" title="Run/Debug Configurations" properties={float="true"}
-kwmc rule owner="IntelliJ IDEA" title="Evaluate Expression" properties={float="true"}
+kwmc rule owner="IntelliJ IDEA" title="Welcome to IntelliJ IDEA" properties={float=true}
+kwmc rule owner="IntelliJ IDEA" title="New Project" properties={float=true}
+kwmc rule owner="IntelliJ IDEA" title="Run/Debug Configurations" properties={float=true}
+kwmc rule owner="IntelliJ IDEA" title="Evaluate Expression" properties={float=true}
+kwmc rule owner="IntelliJ IDEA" title="Preferences" properties={float=true}
+kwmc rule owner="IntelliJ IDEA" title="Open File or Project" properties={float=true}
 
 ////////// Configuration ////////////
 
@@ -54,6 +58,26 @@ kwmc bindsym mod2+alt-n config mouse-follows-focus off
 
 // Focus-follows-mouse is temporarily disabled when a floating window has focus
 kwmc config standby-on-float on
+
+// Center window when made floating
+kwmc config center-on-float on
+
+// Automatically float non-resizable windows
+kwmc config float-non-resizable on
+
+// Allow windows to be moved by dragging with mod+left_mouse
+kwmc config mouse-drag on
+
+// Specify modifier keys to be used for initiating mouse-drag
+kwmc config mouse-drag mod mod1
+
+// Set default tiling mode for Kwm
+kwmc config tiling bsp
+// {mode}: bsp | monocle | float
+
+// Set default container gaps
+// kwmc config gap {gap}
+// {gap}: vertical horizontal
 
 // Automatically resize the window to its container
 kwmc config lock-to-container off
@@ -124,8 +148,11 @@ kwmc bindsym mod2-7 window -m space 7
 kwmc bindsym mod2-8 window -m space 8
 kwmc bindsym mod2-9 window -m space 9
 
-// Toggle fullscreen zoom
-kwmc bindsym mod1-z window -z fullscreen
+// Switch to monocle layout (zoom)
+kwmc bindsym mod1-z space -t monocle
+
+// Switch to bsp layout (un-zoom)
+kwmc bindsym mod2-z space -t bsp
 
 // Toggle floating
 kwmc bindsym mod2-t window -t focused
