@@ -2,6 +2,7 @@ $HOME/bin
 $HOME/.local/bin
 $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 /usr/local/bin
+/usr/local/sbin
 $HOME/build/ansible/bin
 $HOME/opt/terraform
 $HOME/Library/Python/2.7/bin
