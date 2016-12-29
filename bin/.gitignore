@@ -1,2 +1,4 @@
 *.jar
+*.hi
+*.o
 gitusers.py

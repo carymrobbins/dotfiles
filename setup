@@ -13,6 +13,7 @@ git submodule update --init --recursive
 FILES=(
   bin
   .ackrc
+  .config/nvim
   .ghci
   .gitconfig
   .gitignore

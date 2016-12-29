@@ -15,21 +15,47 @@ export TERM=xterm-256color
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/bin/workon"
 alias g=git
-alias v=vim
+alias v='$EDITOR'
 alias lock="gnome-screensaver-command -l"
+
+hl() {
+  if [ $# -ne 1 ]; then
+    >&2 echo "Convenience function for: <command> --help | less"
+    >&2 echo "Usage: $0 <command>"
+    return 1
+  fi
+  "$1" --help | less
+}
 
 # Mac-specific aliases
 if [ "$(uname -s)" = "Darwin" ]; then
   # kwm helpers
   alias vk="vim ~/.kwm/kwmrc"
   alias kr="kwmc config reload"
+
+  alias bs="brew services"
+
+  # Java helpers
+  for c in java javac; do alias "${c}7"='$(/usr/libexec/java_home -v 1.7)/bin/'$c; done
+  for c in java javac; do alias "${c}8"='$(/usr/libexec/java_home -v 1.8)/bin/'$c; done
 fi
 
-cx() { cat $(which "$1"); }
+ref_exec() {
+  local c=$1
+  shift
+  local loc=$(command -v "$@")
+  if [ $? -ne 0 ]; then
+    >&2 echo "Not found"
+    return 1
+  fi
+  $c $loc
+}
 
-vx() { vim $(which "$1"); }
+cx() { ref_exec cat "$@"; }
 
-vcx() { vimcat $(which "$1"); }
+vx() { ref_exec "$EDITOR" "$1"; }
+
+vcx() { ref_exec vimcat "$1"; }
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -70,6 +96,11 @@ DISABLE_AUTO_TITLE="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git last-working-dir path ssh-agent mvn)
 
+# Mac-specific plugins
+if [ "$(uname -s)" = "Darwin" ]; then
+  plugins+=(brew)
+fi
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -80,8 +111,21 @@ source $ZSH/oh-my-zsh.sh
 
 # Prevent `git status` on every prompt (fixes slow prompt).
 function git_prompt_info() {
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-    echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
+  git rev-parse >/dev/null 2>&1 || return
+  #ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  ref=$(git symbolic-ref -q --short HEAD || (printf "detached @ " && git name-rev --name-only HEAD))
+  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
+  # TODO: GET THIS WORKING
+  # Ensure we're in a git repo
+  #git rev-parse >/dev/null 2>&1 || return
+  #local ref=$(git symbolic-ref -q --short HEAD)
+  #if [ -n "$ref" ]; then
+  #  ref=$(tput setaf 25)${ref}
+  #else
+  #  ref=$(tput setaf 1)$(printf "detached @ " && git name-rev --name-only HEAD)
+  #fi
+  #ref+=$(tput sgr0)
+  #echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
 }
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
@@ -90,7 +134,11 @@ setopt interactivecomments
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-export EDITOR='vim'
+if command -v nvim >/dev/null; then
+  export EDITOR='nvim'
+else
+  export EDITOR='vim'
+fi
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then

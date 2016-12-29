@@ -136,7 +136,7 @@ for rev in "${revs[@]}"; do
     fi
 
     [ -n "$simple" ] || printf '%s %s\n' \
-      "${text_bold}${text_magenta}Rebase suggestion:${text_reset}" \
+      "${text_bold}${text_magenta}# Rebase suggestion:${text_reset}" \
       "${text_magenta}$(git show -s --format=%s "$rev")${text_reset}"
     echo "  git add ${files_found[@]}"
     echo "  git commit $squash_type $rev"
@@ -144,5 +144,5 @@ for rev in "${revs[@]}"; do
   fi
 done
 
-[ -n "$simple" ] || echo "${text_bold}${text_magenta}To squash changes:${text_reset}"
+[ -n "$simple" ] || echo "${text_bold}${text_magenta}# To squash changes:${text_reset}"
 echo "  git rebase -i $base_rev --autosquash"
