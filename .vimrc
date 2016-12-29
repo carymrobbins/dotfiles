@@ -2,8 +2,6 @@ execute pathogen#infect()
 syntax on
 filetype plugin on
 filetype indent on
-set background=dark
-colorscheme solarized
 "Show line, column numbers in status bar.
 set ruler
 "Highlight search terms.
@@ -29,6 +27,29 @@ set shiftwidth=2  "An indent is 4 spaces
 set smarttab      "Indent instead of tab at start of line
 set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
+
+"Customize for solarized dark/light
+
+colorscheme solarized
+"Store and read background state from a file
+let g:backgroundFile = expand("~/.vim/background.vim")
+if filereadable(g:backgroundFile)
+  execute 'source '.fnameescape(g:backgroundFile)
+endif
+
+fun Bgd()
+  silent execute '!echo "set background=dark" > '.fnameescape(g:backgroundFile)
+  set background=dark
+endfun
+
+com Bgd :call Bgd()
+
+fun Bgl()
+  silent execute '!echo "set background=light" > '.fnameescape(g:backgroundFile)
+  set background=light
+endfun
+
+com Bgl :call Bgl()
 
 "Highlighting for custom file types
 
