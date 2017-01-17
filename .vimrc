@@ -30,7 +30,7 @@ set nojoinspaces  "Don't convert spaces to tabs
 
 "Customize for solarized dark/light
 
-colorscheme solarized
+"TODO: FIXME colorscheme solarized
 "Store and read background state from a file
 let g:backgroundFile = expand("~/.vim/background.vim")
 if filereadable(g:backgroundFile)

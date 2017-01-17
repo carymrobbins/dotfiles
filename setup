@@ -28,6 +28,7 @@ FILES=(
   .vimrc
   .xbindkeysrc
   .xinitrc
+  .Xresources
   .Xmodmap
   .xmonad
   .zshrc

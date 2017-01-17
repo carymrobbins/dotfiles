@@ -19,12 +19,7 @@ alias v='$EDITOR'
 alias lock="gnome-screensaver-command -l"
 
 hl() {
-  if [ $# -ne 1 ]; then
-    >&2 echo "Convenience function for: <command> --help | less"
-    >&2 echo "Usage: $0 <command>"
-    return 1
-  fi
-  "$1" --help | less
+  "$@" --help | less
 }
 
 # Mac-specific aliases
@@ -94,7 +89,7 @@ DISABLE_AUTO_TITLE="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git last-working-dir path ssh-agent mvn)
+plugins=(git last-working-dir path ssh-agent)
 
 # Mac-specific plugins
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -158,3 +153,6 @@ if command -v aws_zsh_completer.sh >/dev/null; then
   compctl -K aws_profiles asp
   source aws_zsh_completer.sh
 fi
+
+# Attempt to start a tmux session. If we can't, don't error, just warn.
+# [ -n "$TMUX" ] || tmux a || tmux || >&2 echo "Warning, could not start a tmux session"

@@ -1,17 +1,19 @@
-"set-volume toggle"
+"set-volume -t"
   XF86AudioMute
 
-"set-volume 10%-"
+"set-volume -d 10"
   XF86AudioLowerVolume
 
-"set-volume 10%+"
+"set-volume -i 10"
   XF86AudioRaiseVolume
 
-"set-volume 1%-"
+"set-volume -d 1"
   Shift + XF86AudioLowerVolume
 
-"set-volume 1%+"
+"set-volume -i 1"
   Shift + XF86AudioRaiseVolume
+
+# TODO: xbacklight doesn't work...
 
 "xbacklight -dec 10 -time 0 -steps 1"
   XF86MonBrightnessDown

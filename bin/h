@@ -1,18 +1,24 @@
 #!/bin/bash
 
 usage() {
-  echo "Evaluate simple Haskell expressions"
-  echo "Usage: $0 '<expr>'"
+  cat <<HERE
+Evaluate simple Haskell expressions
+Usage: $0 [expr]
+HERE
 }
-
-if [ -z "$1" ]; then
-  >&2 usage
-  exit 1
-fi
 
 if [ "$1" = "-h" -o "$1" = "--help" ]; then
   usage
   exit
 fi
 
-echo "main = print \$ $@" | runhaskell
+if [ $# -eq 0 ]; then
+  ghci
+else
+  hask=""
+  for arg in "$@"; do
+    hask+="$arg "
+  done
+  ghc -e "$hask"
+fi
+

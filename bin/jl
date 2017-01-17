@@ -14,8 +14,7 @@ if [ "$1" = "--help" ]; then
 fi
 
 if [ -n "$1" ]; then
-  >&2 usage
-  exit 1
+  exec jq -C '.' "$1" | less -rFX
+else
+  exec jq -C '.' | less -rFX
 fi
-
-exec jq -C '.' | less -rFX

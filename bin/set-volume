@@ -1,19 +1,18 @@
 #!/bin/bash
 
-ARG=$1
-amixer -D pulse sset Master "$ARG" > /dev/null
+set -x
 
-# Display the notification
+ARG=$1
+pamixer "$@"
+
+# Kill any existing notifications so we can see the volume
 killall notify-osd 2>/dev/null
 
-on_or_off() {
-  amixer -D pulse sget Master | grep -o "\[off\]" | tr -d '[%]' | head -n 1
-}
-if [ "$ARG" = "toggle" -a "$(on_or_off)" = "off" ]; then
-  MESSAGE=" "
+if [ "$ARG" = "-t" -a "$(pamixer --get-mute)" = "true" ]; then
+  MESSAGE="Mute"
   ICON=~/Downloads/speaker-off.png
 else
-  PERC="$(amixer -D pulse sget Master | grep -o "[0-9]*%" | head -n 1 | tr -d '%')"
+  PERC=$(pamixer --get-volume)
   echo "$PERC"
   NUM_TICKS="$(($PERC / 10))"
   echo $NUM_TICKS
@@ -24,4 +23,6 @@ else
   fi
   ICON=~/Downloads/speaker-on.png
 fi
-notify-send "$MESSAGE" -i "$ICON"
+# Not using icon just yet, need to download one
+#notify-send "$MESSAGE" -i "$ICON"
+notify-send -a Volume -u low -t 1500 "$MESSAGE"
