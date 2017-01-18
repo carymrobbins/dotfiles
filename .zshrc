@@ -17,6 +17,7 @@ alias wo="source ~/bin/workon"
 alias g=git
 alias v='$EDITOR'
 alias lock="gnome-screensaver-command -l"
+alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 
 hl() {
   "$@" --help | less
