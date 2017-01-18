@@ -1,0 +1,12 @@
+<code_scheme name="Default (1)">
+  <ScalaCodeStyleSettings>
+    <option name="USE_SCALADOC2_FORMATTING" value="false" />
+    <option name="PUBLIC_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_METHOD_TYPE_ANNOTATION" value="0" />
+    <option name="ENABLE_SCALADOC_FORMATTING" value="false" />
+  </ScalaCodeStyleSettings>
+  <codeStyleSettings language="Scala">
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+  </codeStyleSettings>
+</code_scheme>

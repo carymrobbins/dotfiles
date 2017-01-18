@@ -1,0 +1,8 @@
+system/
+tasks/
+config/disabled_plugins.txt
+config/idea.key
+config/options/
+config/plugins/
+config/port
+config/port.lock
