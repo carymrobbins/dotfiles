@@ -55,6 +55,7 @@ com Bgl :call Bgl()
 
 au BufNewFile,BufRead kwmrc set filetype=c
 au BufNewFile,BufRead *.json set filetype=javascript
+au BufNewFile,BufRead xmobarrc set filetype=haskell
 
 "Prevent YouCompleteMe scratch preview from staying open.
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
