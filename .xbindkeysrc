@@ -41,3 +41,6 @@
 
 "gnome-screenshot -i"
   XF86LaunchB
+
+"xtrlock"
+  Shift+Mod4 + l
