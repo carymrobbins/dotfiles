@@ -3,9 +3,11 @@
     <property name="created">2017-01-16T15:39:41</property>
     <property name="ide">idea</property>
     <property name="ideVersion">2016.3.2.0.0</property>
-    <property name="modified">2017-01-16T15:40:20</property>
+    <property name="modified">2017-01-18T11:23:48</property>
     <property name="originalScheme">_@user_Darcula</property>
   </metaInfo>
-  <option name="EDITOR_FONT_SIZE" value="14" />
+  <option name="EDITOR_FONT_SIZE" value="13" />
+  <option name="CONSOLE_FONT_NAME" value="Source Code Pro" />
+  <option name="CONSOLE_FONT_SIZE" value="14" />
   <option name="EDITOR_FONT_NAME" value="Source Code Pro" />
 </scheme>
