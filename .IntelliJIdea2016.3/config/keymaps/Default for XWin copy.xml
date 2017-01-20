@@ -66,6 +66,7 @@
   <action id="PasteMultiple">
     <keyboard-shortcut first-keystroke="shift ctrl insert" />
   </action>
+  <action id="Resume" />
   <action id="ShowErrorDescription">
     <keyboard-shortcut first-keystroke="f1" />
   </action>
