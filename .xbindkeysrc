@@ -13,18 +13,16 @@
 "set-volume -i 1"
   Shift + XF86AudioRaiseVolume
 
-# TODO: xbacklight doesn't work...
-
-"xbacklight -dec 10 -time 0 -steps 1"
+"gmux_backlight -100"
   XF86MonBrightnessDown
 
-"xbacklight -inc 10 -time 0 -steps 1"
+"gmux_backlight +100"
   XF86MonBrightnessUp
 
-"xbacklight -dec 1 -time 0 -steps 1"
+"gmux_backlight -10"
   Shift + XF86MonBrightnessDown
 
-"xbacklight -inc 1 -time 0 -steps 1"
+"gmux_backlight +10"
   Shift + XF86MonBrightnessUp
 
 "xleds -dec 10"
