@@ -1,6 +1,7 @@
 system/
 tasks/
 config/disabled_plugins.txt
+config/extensions/
 config/idea.key
 config/plugins/
 config/port
