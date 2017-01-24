@@ -108,22 +108,10 @@ source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # Prevent `git status` on every prompt (fixes slow prompt).
-function git_prompt_info() {
+git_prompt_info() {
   git rev-parse >/dev/null 2>&1 || return
-  #ref=$(git symbolic-ref HEAD 2> /dev/null) || return
   ref=$(git symbolic-ref -q --short HEAD || (printf "detached @ " && git name-rev --name-only HEAD))
   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
-  # TODO: GET THIS WORKING
-  # Ensure we're in a git repo
-  #git rev-parse >/dev/null 2>&1 || return
-  #local ref=$(git symbolic-ref -q --short HEAD)
-  #if [ -n "$ref" ]; then
-  #  ref=$(tput setaf 25)${ref}
-  #else
-  #  ref=$(tput setaf 1)$(printf "detached @ " && git name-rev --name-only HEAD)
-  #fi
-  #ref+=$(tput sgr0)
-  #echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
 }
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
