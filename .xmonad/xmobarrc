@@ -1,11 +1,17 @@
 Config {
 
   -- Appeearance
-    font = "xft:DejaVuSans:size=9:antialias=true"
+    font = "xft:DejaVuSans:size=10:antialias=true"
   , bgColor = "black"
   , fgColor = "#646464"
-  , position = Top
-  , border = BottomB
+
+  -- Position is top left, taking up 95% of screen.
+  -- You are likely to have to tweak the width here based on the width
+  -- of your screen to make it play nicely with stalonetray, which we
+  -- want to be taking up the remainer of the space on the right side
+  -- of your screen.
+  , position = TopW L 95
+  , border = NoBorder
   , borderColor = "#646464"
 
   -- Layout
