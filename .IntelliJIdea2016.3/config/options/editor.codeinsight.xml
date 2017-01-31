@@ -1,5 +1,6 @@
 <application>
   <component name="CodeInsightSettings">
     <option name="SMART_BACKSPACE" value="0" />
+    <option name="REFORMAT_ON_PASTE" value="1" />
   </component>
 </application>
