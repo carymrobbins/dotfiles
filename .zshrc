@@ -145,5 +145,12 @@ if command -v aws_zsh_completer.sh >/dev/null; then
   source aws_zsh_completer.sh
 fi
 
+# Add all of our ssh keys to the agent.
+for key in $(find ~/.ssh -name '*_rsa'); do
+  if ! ssh-add -l | fgrep "$key" >/dev/null; then
+    ssh-add "$key"
+  fi
+done
+
 # Attempt to start a tmux session. If we can't, don't error, just warn.
 # [ -n "$TMUX" ] || tmux a || tmux || >&2 echo "Warning, could not start a tmux session"
