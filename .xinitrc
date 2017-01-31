@@ -17,5 +17,7 @@ xmodmap $HOME/.Xmodmap
 stalonetray -c ~/.xmonad/stalonetrayrc &
 nm-applet &
 
+gnome-screensaver &
+
 # Start xmonad with `startx` from a ttl
 exec xmonad
