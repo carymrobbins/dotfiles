@@ -16,7 +16,6 @@ export TERM=xterm-256color
 alias wo="source ~/bin/workon"
 alias g=git
 alias v='$EDITOR'
-alias lock="gnome-screensaver-command -l"
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias xmv='v ~/.xmonad/xmonad.hs'
 alias xmc='xmonad --recompile && cat ~/.xmonad/xmonad.errors'

@@ -40,5 +40,5 @@
 "gnome-screenshot -i"
   XF86LaunchB
 
-"gnome-screensaver-command -l"
-  Shift+Mod4 + l
+"lock"
+  Alt+Mod4 + l
