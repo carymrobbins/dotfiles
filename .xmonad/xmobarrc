@@ -1,7 +1,7 @@
 Config {
 
   -- Appeearance
-    font = "xft:DejaVuSans:size=10:antialias=true"
+    font = "xft:DejaVuSans:size=9:antialias=true"
   , bgColor = "black"
   , fgColor = "#646464"
 
@@ -10,14 +10,14 @@ Config {
   -- of your screen to make it play nicely with stalonetray, which we
   -- want to be taking up the remainer of the space on the right side
   -- of your screen.
-  , position = TopW L 95
+  , position = TopW L 90
   , border = NoBorder
   , borderColor = "#646464"
 
   -- Layout
   , sepChar = "%"
   , alignSep = "}{"
-  , template = "%StdinReader% } %battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% { %KATL% | %date% "
+  , template = "%StdinReader% } %battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% { %date% "
 
   -- General Behavior
   , lowerOnStart = True -- Send to bottom of window stack on start
@@ -46,11 +46,11 @@ Config {
     [
 
     -- weather monitor
-    Run Weather "KATL" [ "--template", "<skyCondition> | <fc=#4682B4><tempF></fc>°F | <fc=#4682B4><rh></fc>% | <fc=#4682B4><pressure></fc>hPa"
-                          ] 36000
+    -- Run Weather "KATL" [ "--template", "<skyCondition> | <fc=#4682B4><tempF></fc>°F | <fc=#4682B4><rh></fc>% | <fc=#4682B4><pressure></fc>hPa"
+    --                       ] 36000
 
     -- network activity monitor (dynamic interface resolution)
-    , Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
+    Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
                          , "--Low"      , "1000"       -- units: B/s
                          , "--High"     , "5000"       -- units: B/s
                          , "--low"      , "darkgreen"

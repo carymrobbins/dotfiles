@@ -30,7 +30,7 @@ grow_gravity NW
 icon_gravity E
 
 # icon_size <int>            # specifies dimensions of typical icon slot
-icon_size 20 # Make it xmobar-font-size*2
+icon_size 18 # Make it xmobar-font-size*2
 
 # log_level <level>          # controls the amount of logging output, level can
                              # be err (default), info, or trace (enabled only
@@ -50,7 +50,7 @@ log_level err
                              # * use_icon_hints - use icon window hints to
                              #     dtermine icon size
 
-kludges force_icons_size
+kludges force_icons_size,fix_window_pos
 
 # max_geometry <geometry>    # maximal tray dimensions; 0 in width/height means
                              # no limit
