@@ -30,6 +30,7 @@
 	pf = push --force-with-lease
         rh = rebase-helper
         rho = rebase-helper origin/master
+        tt = !git tag | sort -V
 [core]
 	commentchar = "#"
 	excludesfile = ~/.gitignore
