@@ -21,7 +21,7 @@ alias xmv='v ~/.xmonad/xmonad.hs'
 alias xmc='xmonad --recompile && cat ~/.xmonad/xmonad.errors'
 
 hl() {
-  "$@" --help | less
+  "$@" --help 2>&1 | less
 }
 
 # Mac-specific aliases
