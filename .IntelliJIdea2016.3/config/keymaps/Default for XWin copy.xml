@@ -15,9 +15,13 @@
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="shift alt q" />
   </action>
+  <action id="Compile" />
   <action id="CompileDirty">
     <keyboard-shortcut first-keystroke="ctrl f9" />
     <keyboard-shortcut first-keystroke="f9" />
+  </action>
+  <action id="CompileProject">
+    <keyboard-shortcut first-keystroke="shift ctrl f9" />
   </action>
   <action id="ContextHelp" />
   <action id="Editor Copy">
@@ -59,6 +63,7 @@
     <keyboard-shortcut first-keystroke="alt slash" />
     <keyboard-shortcut first-keystroke="alt space" />
   </action>
+  <action id="PackageFile" />
   <action id="ParameterInfo">
     <keyboard-shortcut first-keystroke="ctrl p" />
     <keyboard-shortcut first-keystroke="alt p" />
