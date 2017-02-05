@@ -1,16 +1,16 @@
-"set-volume -t"
+"pamixer -t"
   XF86AudioMute
 
-"set-volume -d 10"
+"pamixer -d 10"
   XF86AudioLowerVolume
 
-"set-volume -i 10"
+"pamixer -i 10"
   XF86AudioRaiseVolume
 
-"set-volume -d 1"
+"pamixer -d 1"
   Shift + XF86AudioLowerVolume
 
-"set-volume -i 1"
+"pamixer -i 1"
   Shift + XF86AudioRaiseVolume
 
 "gmux_backlight -100"

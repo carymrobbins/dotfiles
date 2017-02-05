@@ -17,7 +17,7 @@ Config {
   -- Layout
   , sepChar = "%"
   , alignSep = "}{"
-  , template = "%StdinReader% } %battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% { %date% "
+  , template = "%StdinReader% } %battery% | Vol: %volume% | Back: %backlight% | %multicpu% | %coretemp% | %memory% | %dynnetwork% { %date% "
 
   -- General Behavior
   , lowerOnStart = True -- Send to bottom of window stack on start
@@ -105,6 +105,9 @@ Config {
     -- time and date indicator
     --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
     , Run Date           "<fc=#ABABAB>%F (%a) %T</fc>" "date" 10
+
+    , Run Com "get-volume" [] "volume" 1
+    , Run Com "get-backlight" [] "backlight" 1
 
     -- Needed to ensure unread pipe doesn't fill up
     -- See: https://wiki.haskell.org/Xmonad/Frequently_asked_questions#XMonad_stops_but_the_current_window_still_responds_to_keys

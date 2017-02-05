@@ -1,0 +1,11 @@
+#!/usr/bin/env python2
+
+backlight_dir = "/sys/class/backlight/gmux_backlight"
+
+with open(backlight_dir + "/max_brightness") as f:
+    max_brightness = float(f.read())
+
+with open(backlight_dir + "/brightness") as f:
+    brightness = float(f.read())
+
+print("{0}%".format(int(round(brightness/max_brightness*100))))
