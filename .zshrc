@@ -40,12 +40,11 @@ fi
 ref_exec() {
   local c=$1
   shift
-  local loc=$(command -v "$@")
-  if [ $? -ne 0 ]; then
+  if ! command -v "$@"; then
     >&2 echo "Not found"
     return 1
   fi
-  $c $loc
+  $c $(command -v "$@")
 }
 
 cx() { ref_exec cat "$@"; }
