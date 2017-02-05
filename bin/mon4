@@ -4,7 +4,7 @@
 # have not been activated.
 
 xrandr \
-  --output HDMI-1 --auto --primary --mode 1920x1080 --pos 1080x0 --rotate normal \
+  --output HDMI-1 --auto --mode 1920x1080 --pos 1080x0 --rotate normal \
   --output DP-1 --auto --mode 1920x1080 --pos 3000x0 --rotate normal \
-  --output eDP-1 --auto --mode 1680x1050 --pos 1176x1080 --rotate normal \
+  --output eDP-1 --auto --primary --mode 1680x1050 --pos 1176x1080 --rotate normal \
   --output DP-2 --auto --mode 1920x1080 --pos 0x0 --rotate right
