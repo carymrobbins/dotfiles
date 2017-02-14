@@ -19,6 +19,7 @@ FILES=(
   .gitignore
   .ideavimrc
   .IntelliJIdea2016.3
+  .npmrc
   .oh-my-zsh
   .path
   .psqlrc
