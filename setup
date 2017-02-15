@@ -14,6 +14,7 @@ FILES=(
   bin
   .ackrc
   .config/nvim
+  .config/terminator/config
   .ghci
   .gitconfig
   .gitignore
