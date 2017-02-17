@@ -15,6 +15,7 @@ export TERM=xterm-256color
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/bin/workon"
 alias g=git
+alias c=curl -sS
 alias v='$EDITOR'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias xmv='v ~/.xmonad/xmonad.hs'
