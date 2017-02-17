@@ -1,0 +1,10 @@
+[Unit]
+Description=gnome-screensaver
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/gnome-screensaver
+ExecStop=/usr/bin/pkill gnome-screensaver
+
+[Install]
+WantedBy=wm.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=stalonetray
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/stalonetray -c "%h/.xmonad/stalonetrayrc"
+ExecStop=/usr/bin/pkill stalonetray
+
+[Install]
+WantedBy=wm.target

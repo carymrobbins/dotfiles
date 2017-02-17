@@ -15,6 +15,14 @@ FILES=(
   .ackrc
   .config/nvim
   .config/terminator/config
+  .config/systemd/user/gnome-screensaver.service
+  .config/systemd/user/low-battery.service
+  .config/systemd/user/low-battery.timer
+  .config/systemd/user/notify-osd.service
+  .config/systemd/user/nm-applet.service
+  .config/systemd/user/stalonetray.service
+  .config/systemd/user/wm.target
+  .config/systemd/user/xbindkeys.service
   .ghci
   .gitconfig
   .gitignore

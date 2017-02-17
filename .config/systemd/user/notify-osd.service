@@ -1,0 +1,10 @@
+[Unit]
+Description=notify-osd
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/lib/notify-osd/notify-osd
+ExecStop=/usr/bin/pkill notify-osd
+
+[Install]
+WantedBy=wm.target

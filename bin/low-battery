@@ -26,8 +26,7 @@ if [ "$battery_perc" -le "$MIN_PERC" ]; then
 fi
 
 show_notification() {
-  killall notify-osd 2>/dev/null
-  notify-send -u critical "${battery_perc}%  Low battery" -i ~/Downloads/low-battery.png
+  notify-send -u critical "${battery_perc}%  Low battery" -i ~/bin/img/low-battery.ico
 }
 
 

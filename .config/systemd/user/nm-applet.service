@@ -1,0 +1,10 @@
+[Unit]
+Description=nm-applet
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/nm-applet
+ExecStop=/usr/bin/pkill nm-applet
+
+[Install]
+WantedBy=wm.target
