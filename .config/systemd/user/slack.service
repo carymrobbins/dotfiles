@@ -1,0 +1,8 @@
+[Unit]
+Description=Slack Chat Client
+
+[Service]
+Environment=DISPLAY=:0
+Type=simple
+ExecStart=/usr/bin/slack
+ExecStop=/usr/bin/pkill slack
