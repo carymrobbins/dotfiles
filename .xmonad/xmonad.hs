@@ -9,7 +9,11 @@ import           XMonad.Util.Run
 
 myModKey = mod4Mask
 
+-- 4 monitors
 myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [3,1,2,0]
+
+-- 3 monitors
+-- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 
 myKeys =
   [((m .|. myModKey, key), screenWorkspace sc >>= flip whenJust (windows . f))
