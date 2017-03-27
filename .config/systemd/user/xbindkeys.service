@@ -3,7 +3,7 @@ Description=xbindkeys
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/xbindkeys
+ExecStart=/usr/bin/xbindkeys -n
 ExecStop=/usr/bin/pkill xbindkeys
 
 [Install]

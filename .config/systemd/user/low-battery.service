@@ -2,6 +2,7 @@
 Description=low-battery notification
 
 [Service]
+Environment=DISPLAY=:0
 Type=oneshot
 ExecStart=/bin/bash -c "%h/bin/low-battery"
 
