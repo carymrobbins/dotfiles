@@ -15,11 +15,17 @@ export TERM=xterm-256color
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/bin/workon"
 alias g=git
-alias c=curl -sS
+alias c='curl -sS'
 alias v='$EDITOR'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias xmv='v ~/.xmonad/xmonad.hs'
 alias xmc='xmonad --recompile && cat ~/.xmonad/xmonad.errors'
+alias sc='sudo systemctl'
+alias scu='systemctl --user'
+
+# SBT fails for permgen, this should work for Java >= 8
+# See https://github.com/sbt/sbt/issues/1395
+export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=256M -Xms2G -Xmx2G"
 
 hl() {
   "$@" --help 2>&1 | less
