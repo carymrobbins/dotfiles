@@ -12,7 +12,20 @@ xmodmap -e 'keycode 66 = Caps_Lock'
 # Load our actual xmodmap config
 xmodmap $HOME/.Xmodmap
 
-systemctl --user start wm.target
+# TODO: wm.target doesn't seem to work
+# systemctl --user start wm.target
+systemctl --user start gnome-screensaver
+systemctl --user start stalonetray
+systemctl --user start nm-applet
+systemctl --user start notify-osd
+systemctl --user start low-battery.timer
+# TODO: Running xbindkeys with systemctl means it
+# can't find stuff in our $HOME/bin
+xbindkeys
 
-# Start xmonad with `startx` from a ttl
+if command -v mon1 >/dev/null; then
+  mon1
+fi
+
+# Start xmonad with `startx` from a tty
 exec xmonad
