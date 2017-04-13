@@ -1,6 +1,9 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
+# Load ~/.env, if it exists.
+[ ! -f "$HOME/.env" ] || source "$HOME/.env"
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -9,6 +12,9 @@ ZSH_THEME="carymrobbins"
 
 # Enable 256 colors
 export TERM=xterm-256color
+# ZSH disabled features
+# The 'r' command isn't really used
+disable r
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -27,9 +33,13 @@ alias scu='systemctl --user'
 # See https://github.com/sbt/sbt/issues/1395
 export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=256M -Xms2G -Xmx2G"
 
-hl() {
-  "$@" --help 2>&1 | less
-}
+# Helper functions
+
+# Run --help | less
+hl() { "$@" --help 2>&1 | less;  }
+
+# Run bash's help function
+help() { bash -c "help $(printf '%q ' "$@")"; }
 
 # Mac-specific aliases
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -157,5 +167,8 @@ for key in $(find ~/.ssh -name '*_rsa'); do
   fi
 done
 
-# Attempt to start a tmux session. If we can't, don't error, just warn.
-# [ -n "$TMUX" ] || tmux a || tmux || >&2 echo "Warning, could not start a tmux session"
+# Attempt to start a tmux session if we're not in a TTY and not already in tmux.
+# If we can't, don't error, just warn.
+if [ -n "$DISPLAY" -a -z "$TMUX" ] && command -v tmux >/dev/null; then
+  tmux a 2>/dev/null || tmux
+fi
