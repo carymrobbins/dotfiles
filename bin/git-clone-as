@@ -78,7 +78,11 @@ for line in stderr.splitlines():
   if m is not None:
     clone_dir = m.group(1)
     break
-p.wait()
+
+if p.wait() != 0:
+    sys.stderr.write("Failed to clone repository\n")
+    exit(1)
+
 if clone_dir is None:
   sys.stderr.write(
     "Could not obtain cloned directory, be sure to 'git set-user {!r}' manually!\n".format(key)
