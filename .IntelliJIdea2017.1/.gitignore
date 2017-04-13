@@ -1,8 +1,15 @@
 system/
 tasks/
+config/consoles/.history
 config/disabled_plugins.txt
+config/disabled_update.txt
 config/extensions/
 config/idea.key
 config/plugins/
 config/port
 config/port.lock
+config/options/diff.xml
+config/options/find.xml
+config/options/packages.xml
+config/options/plugin_ui.xml
+config/options/updates.xml

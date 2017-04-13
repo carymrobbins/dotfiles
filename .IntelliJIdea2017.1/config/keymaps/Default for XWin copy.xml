@@ -18,7 +18,7 @@
     <keyboard-shortcut first-keystroke="shift alt f4" />
   </action>
   <action id="CloseProject">
-    <keyboard-shortcut first-keystroke="shift alt q" />
+    <keyboard-shortcut first-keystroke="shift alt c" />
   </action>
   <action id="Compile" />
   <action id="CompileDirty">
@@ -84,6 +84,7 @@
   <action id="PasteMultiple">
     <keyboard-shortcut first-keystroke="shift ctrl insert" />
   </action>
+  <action id="RecentChanges" />
   <action id="Resume" />
   <action id="ShowErrorDescription">
     <keyboard-shortcut first-keystroke="f1" />

@@ -1,6 +1,23 @@
 <code_scheme name="Default (1)">
+  <option name="OTHER_INDENT_OPTIONS">
+    <value>
+      <option name="INDENT_SIZE" value="2" />
+      <option name="CONTINUATION_INDENT_SIZE" value="8" />
+      <option name="TAB_SIZE" value="2" />
+      <option name="USE_TAB_CHARACTER" value="false" />
+      <option name="SMART_TABS" value="false" />
+      <option name="LABEL_INDENT_SIZE" value="0" />
+      <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+      <option name="USE_RELATIVE_INDENTS" value="false" />
+    </value>
+  </option>
+  <option name="RIGHT_MARGIN" value="100" />
   <ScalaCodeStyleSettings>
     <option name="USE_SCALADOC2_FORMATTING" value="false" />
+    <option name="MULTILINE_STRING_SUPORT" value="0" />
+    <option name="MULTI_LINE_QUOTES_ON_NEW_LINE" value="false" />
+    <option name="KEEP_MULTI_LINE_QUOTES" value="false" />
+    <option name="PROCESS_MARGIN_ON_COPY_PASTE" value="false" />
     <option name="PUBLIC_PROPERTY_TYPE_ANNOTATION" value="1" />
     <option name="PROTECTED_PROPERTY_TYPE_ANNOTATION" value="1" />
     <option name="PROTECTED_METHOD_TYPE_ANNOTATION" value="0" />
