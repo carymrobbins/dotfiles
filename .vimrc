@@ -102,3 +102,12 @@ let g:vim_markdown_folding_disabled=1
 
 " Map // to search for visually selected text.
 vnoremap // y/<C-R>"<CR>
+
+" Use :TrimWhitespace to...trim the trailing whitespace.
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+command! TrimWhitespace call TrimWhitespace()
