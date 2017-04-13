@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This requires ghostscript.  It can probably be installed via your package manager.
+# e.g. `brew install ghostscript`
+
+if [ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Usage: $0 <file.pdf>"
+    echo "Creates a new file named 'file.pdf-decrypted.pdf'"
+    exit 1
+fi
+
+#gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="$1-decrypted.pdf" -sPDFPassword="$2" -c .setpdfwrite -f "$1"
+set -x
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="$1-decrypted.pdf" -sPDFPassword="$2" -f "$1"
