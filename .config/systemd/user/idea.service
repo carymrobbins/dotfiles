@@ -4,5 +4,5 @@ Description=IntelliJ IDEA
 [Service]
 Environment=DISPLAY=:0
 Type=simple
-ExecStart=/usr/bin/intellij-idea-ue-bundled-jre
-ExecStop=/usr/bin/pkill intellij-idea-ue-bundled-jre
+ExecStart=/bin/bash -c "%h/opt/idea/bin/idea.sh"
+ExecStop=/usr/bin/pkill idea.sh
