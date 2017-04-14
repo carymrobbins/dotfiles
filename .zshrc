@@ -167,8 +167,11 @@ for key in $(find ~/.ssh -name '*_rsa'); do
   fi
 done
 
+# NOTE: Let's not auto-enable tmux, it ends up being weird when you open
+# multiple terminals.
+#
 # Attempt to start a tmux session if we're not in a TTY and not already in tmux.
 # If we can't, don't error, just warn.
-if [ -n "$DISPLAY" -a -z "$TMUX" ] && command -v tmux >/dev/null; then
-  tmux a 2>/dev/null || tmux
-fi
+# if [ -n "$DISPLAY" -a -z "$TMUX" ] && command -v tmux >/dev/null; then
+#   tmux a 2>/dev/null || tmux
+# fi
