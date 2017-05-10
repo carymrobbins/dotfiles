@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+url=https://ptpb.pw/
+
+if [ $# -eq 0 ]; then
+  sourceFile=@-
+elif [ $# -eq 1 ]; then
+  sourceFile=@$1
+fi
+
+set -x
+
+exec curl -F c="$sourceFile" "$url"
