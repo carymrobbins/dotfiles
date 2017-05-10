@@ -1,4 +1,7 @@
-#### # Key repeat, 300 ms delay, 60 cps
+# Load resources
+[ -f $HOME/.Xresources ] && xrdb -merge -I$HOME $HOME/.Xresources
+
+# Key repeat, 300 ms delay, 60 cps
 xset r rate 300 60
 
 # Default screen brightness
