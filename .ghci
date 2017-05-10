@@ -1,1 +1,20 @@
 :set prompt "\x1b[35mλ\x1b[0m "
+
+:m + Data.List.Split
+:m + Data.List
+
+:{
+-- Pretty print a number with commas
+pp :: Show a => a -> IO ()
+pp x = putStrLn $ h ++ t
+  where
+  --n = Numeric.showFFloat ()
+  sp = break (== '.') $ show x
+  h = reverse (intercalate "," $ chunksOf 3 $ reverse $ fst sp)
+  t = snd sp
+
+removeCRsFromFile :: FilePath -> IO ()
+removeCRsFromFile file = do
+  c <- readFile file
+  length c `seq` writeFile file $ filter (/= '\r') c
+:}
