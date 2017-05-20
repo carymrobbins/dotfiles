@@ -1,0 +1,25 @@
+#!/bin/bash
+
+usage() {
+  cat <<HERE
+Usage: $0 <dark|light>
+HERE
+}
+
+if [ $# -ne 1 ]; then
+  >&2 usage
+  exit 1
+fi
+
+config_dir=$HOME/.config/hexchat
+colors_conf=$config_dir/colors.conf
+
+case "$1" in
+  light) mv "$colors_conf" "$colors_conf.bak" ;;
+  dark)  mv "$colors_conf.bak" "$colors_conf" ;;
+  *)
+    >&2 echo "Unexpected argument: $1"
+    >&2 usage
+    exit 1
+    ;;
+esac
