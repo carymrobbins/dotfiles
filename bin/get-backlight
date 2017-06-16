@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-backlight_dir = "/sys/class/backlight/gmux_backlight"
+backlight_dir = "/sys/class/backlight/intel_backlight"
 
 with open(backlight_dir + "/max_brightness") as f:
     max_brightness = float(f.read())
