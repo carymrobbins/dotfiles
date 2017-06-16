@@ -27,7 +27,7 @@ FILES=(
   .gitconfig
   .gitignore
   .ideavimrc
-  .IntelliJIdea2016.3
+  .IntelliJIdea2017.1
   .npmrc
   .oh-my-zsh
   .path
