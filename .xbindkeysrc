@@ -13,28 +13,28 @@
 "pamixer -i 1"
   Shift + XF86AudioRaiseVolume
 
-"gmux_backlight -100"
+"xleds screen - 10%"
   XF86MonBrightnessDown
 
-"gmux_backlight +100"
+"xleds screen + 10%"
   XF86MonBrightnessUp
 
-"gmux_backlight -10"
+"xleds screen - 1%"
   Shift + XF86MonBrightnessDown
 
-"gmux_backlight +10"
+"xleds screen + 1%"
   Shift + XF86MonBrightnessUp
 
-"xleds -dec 10"
+"xleds key - 10"
   XF86KbdBrightnessDown
 
-"xleds -inc 10"
+"xleds key + 10"
   XF86KbdBrightnessUp
 
-"xleds -dec 1"
+"xleds key - 1"
   Shift + XF86KbdBrightnessDown
 
-"xleds -inc 1"
+"xleds key + 1"
   Shift + XF86KbdBrightnessUp
 
 "gnome-screenshot -i"
