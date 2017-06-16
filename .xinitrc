@@ -10,8 +10,7 @@ gmux_backlight 160
 # Default keyboard brightness
 xleds -set 10
 
-# Load our xmodmap config
-xmodmap $HOME/.Xmodmap
+xkbcomp $HOME/dotfiles/custom.xkb $DISPLAY
 
 # TODO: wm.target doesn't seem to work
 # systemctl --user start wm.target

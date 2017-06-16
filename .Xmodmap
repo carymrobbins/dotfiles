@@ -1,9 +1,0 @@
-! Remap Caps Lock to Escape
-clear Lock
-keycode 66 = Escape
-
-! Swap the Alt and Super keys.
-remove mod1 = Alt_L Alt_R
-remove mod4 = Super_L Super_R
-add mod1 = Super_L Super_R
-add mod4 = Alt_L Alt_R
