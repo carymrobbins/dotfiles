@@ -28,8 +28,8 @@ if command -v mon1 >/dev/null; then
 fi
 
 # Enable natural scrolling and two-finger right-click.
-xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Natural Scrolling Enabled' 1
-xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Click Method Enabled' 0 1
+xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Natural Scrolling Enabled' 1
+xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Click Method Enabled' 0 1
 
 # Start xmonad with `startx` from a tty
 exec xmonad
