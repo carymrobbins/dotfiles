@@ -10,9 +10,7 @@ gmux_backlight 160
 # Default keyboard brightness
 xleds -set 10
 
-# Hack to get around missing keys
-xmodmap -e 'keycode 66 = Caps_Lock'
-# Load our actual xmodmap config
+# Load our xmodmap config
 xmodmap $HOME/.Xmodmap
 
 # TODO: wm.target doesn't seem to work
@@ -29,6 +27,10 @@ xbindkeys
 if command -v mon1 >/dev/null; then
   mon1
 fi
+
+# Enable natural scrolling and two-finger right-click.
+xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Natural Scrolling Enabled' 1
+xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Click Method Enabled' 0 1
 
 # Start xmonad with `startx` from a tty
 exec xmonad
