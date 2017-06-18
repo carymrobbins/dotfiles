@@ -1,5 +1,7 @@
+# The mute key is not named, so we can't use XF86AudioMute
+# Use our mute key's code from `xbindkeys -k` instead
 "pamixer -t"
-  XF86AudioMute
+  m:0x0 + c:121
 
 "pamixer -d 10"
   XF86AudioLowerVolume
@@ -38,7 +40,7 @@
   Shift + XF86KbdBrightnessUp
 
 "gnome-screenshot -i"
-  XF86LaunchB
+  Print
 
 "lock"
   Alt+Mod4 + l
