@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# SBT wrapper which works around a bug with newer ncurses.
+# See https://stackoverflow.com/a/44361749/1313611
+
+if [ $# -eq 0 ]; then
+  TERM=xterm-color /usr/bin/sbt shell
+else
+  TERM=xterm-color /usr/bin/sbt "$@"
+fi
