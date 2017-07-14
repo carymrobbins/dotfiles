@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# This requires ghostscript.  It can probably be installed via your package manager.
+# e.g. `brew install ghostscript`
+
+if [ $# -lt 2 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  cat <<HERE
+Usage: $0 <file.pdf> [-p | <password>]
+
+Creates a new file named 'file.pdf-decrypted.pdf'
+
+Use -p instead of <password> to input it with a password prompt.
+Omit the password argument to decrypt without a password.
+HERE
+  exit 1
+fi
+
+args=(
+  -q
+  -dNOPAUSE
+  -dBATCH
+  -sDEVICE=pdfwrite
+  -sOutputFile="$1-decrypted.pdf"
+)
+
+if [ -n "$2" ]; then
+  case "$2" in
+    -p)
+      read -p "PDF Password: " -s password
+      echo
+      ;;
+    *)
+      password=$2
+  esac
+  args+=("-sPDFPassword=$password")
+fi
+
+args+=(
+  -c
+  .setpdfwrite
+  -f "$1"
+)
+
+gs "${args[@]}"
