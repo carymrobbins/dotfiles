@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -ex
+
+ln -f -s "$1" wallpaper
+
+feh --bg-scale wallpaper

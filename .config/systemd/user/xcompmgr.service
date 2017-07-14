@@ -1,0 +1,10 @@
+[Unit]
+Description=xcompmgr
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/xcompmgr
+ExecStop=/usr/bin/pkill xcompmgr
+
+[Install]
+WantedBy=wm.target

@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# Key repeat, 300 ms delay, 60 cps
-xset r rate 300 60
+# Desktop image
+wallpaper=$HOME/dotfiles/resources/wallpaper
+[ ! -f "$wallpaper" ] || feh --bg-scale "$wallpaper"
+
+# Key repeat: ms delay, cps
+xset r rate 150 80
 
 $HOME/bin/xkb-reload
 
