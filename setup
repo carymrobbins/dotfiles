@@ -10,25 +10,13 @@ echo "Updating submodules..."
 git submodule update --init --recursive
 
 # Files and dirs to symlink in HOME.
-FILES=(
-  bin
+SHARED_FILES=(
   .ackrc
   .config/nvim
-  .config/terminator/config
-  .config/systemd/user/gnome-screensaver.service
-  .config/systemd/user/low-battery.service
-  .config/systemd/user/low-battery.timer
-  .config/systemd/user/notify-osd.service
-  .config/systemd/user/nm-applet.service
-  .config/systemd/user/stalonetray.service
-  .config/systemd/user/xcompmgr.service
-  .config/systemd/user/wm.target
-  .config/systemd/user/xbindkeys.service
   .ghci
   .gitconfig
   .gitignore
   .ideavimrc
-  .IntelliJIdea2017.1
   .npmrc
   .oh-my-zsh
   .path
@@ -44,6 +32,20 @@ FILES=(
   .Xmodmap
   .xmonad
   .zshrc
+)
+
+LINUX_FILES=(
+  .config/terminator/config
+  .config/systemd/user/gnome-screensaver.service
+  .config/systemd/user/low-battery.service
+  .config/systemd/user/low-battery.timer
+  .config/systemd/user/notify-osd.service
+  .config/systemd/user/nm-applet.service
+  .config/systemd/user/stalonetray.service
+  .config/systemd/user/xcompmgr.service
+  .config/systemd/user/wm.target
+  .config/systemd/user/xbindkeys.service
+  .IntelliJIdea2017.1
 )
 
 # Loop through each file in dotfiles and add to HOME.
