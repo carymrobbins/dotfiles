@@ -8,7 +8,9 @@ debugger.xml
 dimensions.xml
 extensionsRootType.xml
 feature.usage.statistics.xml
+find.xml
 git.xml
+github_settings.xml
 gradle.run.settings.xml
 ide.general.xml
 images.support.xml
@@ -19,7 +21,9 @@ laf.xml
 markdown.xml
 options.xml
 other.xml
+packages.xml
 path.macros.xml
+plugin_ui.xml
 project.default.xml
 proxy.settings.pwd
 recentProjects.xml

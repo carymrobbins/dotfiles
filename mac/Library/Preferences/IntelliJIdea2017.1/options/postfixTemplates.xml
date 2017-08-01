@@ -1,0 +1,135 @@
+<application>
+  <component name="PostfixTemplatesSettings">
+    <option name="langDisabledTemplates">
+      <disabled-postfix-templates lang="Java">
+        <value>
+          <set>
+            <option value="!" />
+            <option value=".assert" />
+            <option value=".cast" />
+            <option value=".else" />
+            <option value=".field" />
+            <option value=".for" />
+            <option value=".fori" />
+            <option value=".format" />
+            <option value=".forr" />
+            <option value=".if" />
+            <option value=".inst" />
+            <option value=".instanceof" />
+            <option value=".iter" />
+            <option value=".lambda" />
+            <option value=".nn" />
+            <option value=".not" />
+            <option value=".notnull" />
+            <option value=".null" />
+            <option value=".opt" />
+            <option value=".par" />
+            <option value=".return" />
+            <option value=".sout" />
+            <option value=".stream" />
+            <option value=".switch" />
+            <option value=".synchronized" />
+            <option value=".throw" />
+            <option value=".try" />
+            <option value=".twr" />
+            <option value=".var" />
+            <option value=".while" />
+          </set>
+        </value>
+      </disabled-postfix-templates>
+      <disabled-postfix-templates lang="JavaScript">
+        <value>
+          <set>
+            <option value="!" />
+            <option value=".await" />
+            <option value=".const" />
+            <option value=".else" />
+            <option value=".forin" />
+            <option value=".forof" />
+            <option value=".if" />
+            <option value=".itin" />
+            <option value=".let" />
+            <option value=".log" />
+            <option value=".not" />
+            <option value=".notnull" />
+            <option value=".null" />
+            <option value=".par" />
+            <option value=".return" />
+            <option value=".throw" />
+            <option value=".typeof" />
+            <option value=".undef" />
+            <option value=".var" />
+          </set>
+        </value>
+      </disabled-postfix-templates>
+      <disabled-postfix-templates lang="Kotlin">
+        <value>
+          <set>
+            <option value=".assert" />
+            <option value=".else" />
+            <option value=".for" />
+            <option value=".if" />
+            <option value=".iter" />
+            <option value=".nn" />
+            <option value=".not" />
+            <option value=".notnull" />
+            <option value=".null" />
+            <option value=".par" />
+            <option value=".return" />
+            <option value=".sout" />
+            <option value=".try" />
+            <option value=".val" />
+            <option value=".var" />
+            <option value=".when" />
+            <option value=".while" />
+          </set>
+        </value>
+      </disabled-postfix-templates>
+      <disabled-postfix-templates lang="Python">
+        <value>
+          <set>
+            <option value=".if" />
+            <option value=".ifn" />
+            <option value=".ifnn" />
+            <option value=".main" />
+            <option value=".not" />
+            <option value=".par" />
+            <option value=".print" />
+            <option value=".return" />
+            <option value=".while" />
+          </set>
+        </value>
+      </disabled-postfix-templates>
+      <disabled-postfix-templates lang="Scala">
+        <value>
+          <set>
+            <option value=".!" />
+            <option value=".List" />
+            <option value=".Option" />
+            <option value=".Seq" />
+            <option value=".assert" />
+            <option value=".cast" />
+            <option value=".dowhile" />
+            <option value=".else" />
+            <option value=".field" />
+            <option value=".for" />
+            <option value=".if" />
+            <option value=".match" />
+            <option value=".nn" />
+            <option value=".not" />
+            <option value=".notnull" />
+            <option value=".null" />
+            <option value=".par" />
+            <option value=".prtln" />
+            <option value=".return" />
+            <option value=".sout" />
+            <option value=".throw" />
+            <option value=".try" />
+            <option value=".var" />
+            <option value=".while" />
+          </set>
+        </value>
+      </disabled-postfix-templates>
+    </option>
+  </component>
+</application>
