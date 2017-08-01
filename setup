@@ -21,6 +21,7 @@ FILES=(
   .config/systemd/user/notify-osd.service
   .config/systemd/user/nm-applet.service
   .config/systemd/user/stalonetray.service
+  .config/systemd/user/xcompmgr.service
   .config/systemd/user/wm.target
   .config/systemd/user/xbindkeys.service
   .ghci
