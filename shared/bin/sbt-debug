@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -ex
+
+# Sets the port that IntelliJ attaches to
+true ${LISTEN_PORT:=5005}
+# Sets whether or not the process waits for the debugger to attach
+true ${SUSPEND:=y}
+
+JVM_DEBUG=-Xdebug
+JVM_RUN=-Xrunjdwp:transport=dt_socket,server=y,suspend=$SUSPEND,address=$LISTEN_PORT
+
+SBT_OPTS="$JVM_DEBUG $JVM_RUN" sbt "; set javaOptions ++= Seq(\"$JVM_DEBUG\", \"$JVM_RUN\") ; $@"

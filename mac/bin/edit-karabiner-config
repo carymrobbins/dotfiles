@@ -1,0 +1,39 @@
+#!/bin/bash
+
+template=$HOME/dotfiles/.config/karabiner/template.hs
+
+get_last_modified() {
+  date -r "$template" +%s
+}
+
+last_modified=$(get_last_modified)
+
+while true; do
+  $EDITOR "$template"
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+  if [ "$last_modified" -eq "$(get_last_modified)" ]; then
+    exit
+  else
+    read -p "Looks like the template changed, recompile? [y/N] " -n 1 -r
+    echo
+    if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+      exit
+    else
+      echo "Compiling..."
+      update-karabiner-config
+      if [ $? -eq 0 ]; then
+        exit
+      else
+        read -p "Would you like to edit again? [y/N] " -n 1 -r
+        echo
+        if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
+          exit 1
+        else
+          continue
+        fi
+      fi
+    fi
+  fi
+done

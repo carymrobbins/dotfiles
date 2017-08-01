@@ -1,0 +1,43 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 <action> <service>"
+}
+
+case "$#" in
+  1)
+    case "$1" in
+      l)
+        brew services list
+        exit
+        ;;
+      *)
+        >&2 usage
+        exit 1
+        ;;
+    esac
+    ;;
+  2)
+    action="$1"
+    case "$action" in
+      e) action=start;;
+      d) action=stop;;
+      r) action=restart;;
+      s) action=status;;
+    esac
+
+    service="$2"
+    case "$service" in
+      chunkwm) service=crisidev/chunkwm/chunkwm;;
+      khd)     service=koekeishiya/formulae/khd;;
+    esac
+
+    set -x
+    exec brew services "$action" "$service"
+    exit
+    ;;
+  *)
+    >&2 usage
+    exit 1
+    ;;
+esac
