@@ -21,8 +21,9 @@ except IOError as e:
 You will need to create this file, here's an example:
 
 {
-  "foo": ("John Foo", "foo@example.com", "~/.ssh/foo_rsa"),
-  "bar": ("John Bar", "bar@example.com", "~/.ssh/bar_rsa"),
+    "default": "foo",
+    "foo": ("John Foo", "foo@example.com", "~/.ssh/foo_rsa"),
+    "bar": ("John Bar", "bar@example.com", "~/.ssh/bar_rsa"),
 }
 """)
   exit(1)
@@ -37,24 +38,37 @@ if not isinstance(git_users, dict):
 
 usage = """Usage: git clone-as <key> [clone-args]
 Key can be one of: {0}
+If omitted, the "default" user will be used.
 See configuration in {1}
 """.format(
   ', '.join(git_users.iterkeys()),
   GITUSERS_FILENAME
 )
 
-if len(sys.argv) < 3:
+if len(sys.argv) < 2:
   sys.stderr.write(usage)
   exit(1)
 
-key = sys.argv[1]
-user = git_users.get(key)
-if user is None:
-  sys.stderr.write("Invalid key: {}\n".format(key))
-  sys.stderr.write(usage)
-  exit(1)
+def exists(p, xs):
+    return next((True for x in xs if p(x)), False)
 
-(_, _, ssh_key) = user
+def get_user(k):
+    user = git_users.get(k)
+    if user is not None:
+        return (k, user)
+    if len(sys.argv) == 2:
+        arg = sys.argv[-1]
+        # Assume that `arg` is not a user key if it contains one of the substrings.
+        if exists(lambda p: p in arg, ['/', '~', 'git@']):
+            default = git_users.get("default")
+            if default is not None:
+                sys.stderr.write("Falling back to default user '{}'\n".format(default))
+                return get_user(default)
+    sys.stderr.write("Invalid key: {}\n".format(k))
+    sys.stderr.write(usage)
+    exit(1)
+
+(key, (_, _, ssh_key)) = get_user(sys.argv[1])
 
 # TODO: More copy-pasta from git set-user
 ssh_command = "ssh -i {} -F /dev/null".format(ssh_key)
@@ -63,7 +77,12 @@ git_ssh_var = "GIT_SSH_COMMAND"
 env = os.environ.copy()
 env[git_ssh_var] = ssh_command
 
-command = ["git", "clone"] + sys.argv[2:]
+if len(sys.argv) == 2:
+    clone_args = sys.argv[1:]
+else:
+    clone_args = sys.argv[2:]
+
+command = ["git", "clone"] + clone_args
 
 sys.stderr.write("Executing: {}={} {}\n".format(
   git_ssh_var, repr(ssh_command), ' '.join(map(repr, command))
