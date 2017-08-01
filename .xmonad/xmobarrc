@@ -3,6 +3,8 @@ Config {
   -- Appeearance
     font = "xft:DejaVuSans:size=9:antialias=true"
 
+  , alpha = 15
+
   -- Dark theme
   , bgColor = "black"
   , fgColor = "#cccccc"
