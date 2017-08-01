@@ -2,9 +2,33 @@
 
 set -e
 
+text_reset="$(tput sgr0)"
+text_red="$(tput setaf 1)"
+text_yellow="$(tput setaf 3)"
+
+echo_color() {
+  local color=$1
+  shift
+  local message=$1
+  shift
+  if [ $# -ne 0 ]; then
+    >&2 echo "${text_red}Usage: $0 <color> <message>${text_reset}"
+    exit 1
+  fi
+  case "$color" in
+    red) text_color=$text_red;;
+    yellow) text_color=$text_yellow;;
+    *)
+      >&2 echo "${text_red}Invalid color: ${color}${text_reset}"
+      exit 1
+      ;;
+  esac
+  echo "${text_color}${message}${text_reset}"
+}
+
 # Start in dotfiles dir.
-BASE_DIR=$(cd $(dirname $0) && echo $PWD)
-cd "$BASE_DIR"
+DOTFILES_DIR=$(cd $(dirname $0) && echo $PWD)
+cd "$DOTFILES_DIR"
 
 echo "Updating submodules..."
 git submodule update --init --recursive
@@ -19,18 +43,12 @@ SHARED_FILES=(
   .ideavimrc
   .npmrc
   .oh-my-zsh
-  .path
   .psqlrc
   .style
   .tmux
   .tmux.conf
   .vim
   .vimrc
-  .xbindkeysrc
-  .xinitrc
-  .Xresources
-  .Xmodmap
-  .xmonad
   .zshrc
 )
 
@@ -45,31 +63,80 @@ LINUX_FILES=(
   .config/systemd/user/xcompmgr.service
   .config/systemd/user/wm.target
   .config/systemd/user/xbindkeys.service
-  .IntelliJIdea2017.1
+  .IntelliJIdea2017.1 .path .xbindkeysrc
+  .xinitrc
+  .Xresources
+  .xmonad
+)
+
+MAC_FILES=(
+  .iterm
+  .path
 )
 
 # Loop through each file in dotfiles and add to HOME.
 cd $HOME
-for f in "${FILES[@]}"; do
-  if [ "$(readlink "$f")" = "$BASE_DIR/$f" ]; then
-    # Already symlinked.
-    continue;
-  fi
 
-  if [ -f "$f" -o -d "$f" ]; then
-    >&2 echo "WARNING: '$PWD/$f' already exists, skipping"
-    continue;
-  fi
+errors=0
+warnings=0
 
-  if [ -f "$BASE_DIR/$f" -o -d "$BASE_DIR/$f" ]; then
-    echo "Symlinking $BASE_DIR/$f to $HOME/$f"
-    (cd "$(dirname $f)" && ln -s "$BASE_DIR/$f")
-    continue;
-  fi
+create_symlinks() {
+  local dir=$1
+  shift
+  for f in "$@"; do
+    local target_file=$DOTFILES_DIR/$dir/$f
+    if [ "$(readlink "$f")" = "$target_file" ]; then
+      # Already symlinked.
+      continue;
+    fi
 
-  >&2 echo "ERROR: '$BASE_DIR/$f' not found!"
-  exit 1
-done
+    if [ -f "$f" -o -d "$f" ]; then
+      >&2 echo_color yellow "WARNING: '$PWD/$f' already exists, skipping"
+      ((warnings+=1))
+      continue;
+    fi
+
+    if [ -f "$target_file" -o -d "$target_file" ]; then
+      echo "Symlinking $target_file to $HOME/$f"
+      if ! (cd "$(dirname $f)" && ln -s "$target_file"); then
+        >&2 echo_color red "ERROR: Failed to symlink  $target_file to $HOME/$f"
+        ((errors+=1))
+      fi
+      continue;
+    fi
+
+    >&2 echo_color red "ERROR: '$target_file' not found!"
+    exit 1
+  done
+}
+
+create_symlinks "shared" "${SHARED_FILES[@]}"
+os_type=$(uname -s)
+if [ "$os_type" = "Linux" ]; then
+  create_symlinks "linux" "${LINUX_FILES[@]}"
+elif [ "$(uname -s)" = "Darwin" ]; then
+  create_symlinks "mac" "${MAC_FILES[@]}"
+else
+  >&2 echo_color yellow "WARNING: OS type '$os_type' not regognized, only linking shared dotfiles."
+fi
 
 echo "------------------------"
-echo "dotfiles setup complete!"
+if [ $warnings -gt 0 ]; then
+  if [ $warnings -eq 1 ]; then
+    >&2 echo_color yellow "WARNING: There was 1 warning, please review"
+  else
+    >&2 echo_color yellow "WARNING: There were $warnings warnings, please review"
+  fi
+fi
+if [ $errors -gt 0 ]; then
+  if [ $errors -eq 1 ]; then
+    >&2 echo_color red "ERROR: There was 1 error, please review"
+  else
+    >&2 echo_color red "ERROR: There were $errors errors, please review"
+  fi
+fi
+if [ $errors -eq 0 -a $warnings -eq 0 ]; then
+  echo "dotfiles setup complete!"
+else
+  exit 1
+fi

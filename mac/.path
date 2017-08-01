@@ -1,4 +1,4 @@
-$HOME/bin
+$HOME/dotfiles/mac/bin
 $HOME/.local/bin
 $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 /usr/local/bin
@@ -7,3 +7,4 @@ $HOME/build/ansible/bin
 $HOME/opt/terraform
 $HOME/Library/Python/2.7/bin
 $HOME/.node/lib/node_modules
+/usr/local/opt/cassandra@2.1/bin

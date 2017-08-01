@@ -1,30 +1,6 @@
 [submodule ".oh-my-zsh"]
-	path = .oh-my-zsh
+	path = shared/.oh-my-zsh
 	url = git@github.com:carymrobbins/oh-my-zsh.git
-[submodule ".vim/bundle/ctrlp.vim"]
-	path = .vim/bundle/ctrlp.vim
-	url = https://github.com/kien/ctrlp.vim
-[submodule ".vim/bundle/nerdtree"]
-	path = .vim/bundle/nerdtree
-	url = https://github.com/scrooloose/nerdtree
-[submodule ".vim/bundle/purescript-vim"]
-	path = .vim/bundle/purescript-vim
-	url = https://github.com/raichoo/purescript-vim.git
-[submodule ".vim/bundle/vim-fugitive"]
-	path = .vim/bundle/vim-fugitive
-	url = https://github.com/tpope/vim-fugitive
-[submodule ".vim/bundle/vim-markdown"]
-	path = .vim/bundle/vim-markdown
-	url = https://github.com/plasticboy/vim-markdown.git
-[submodule ".vim/bundle/vim-sbt"]
-	path = .vim/bundle/vim-sbt
-	url = https://github.com/derekwyatt/vim-sbt
-[submodule ".vim/bundle/vim-scala"]
-	path = .vim/bundle/vim-scala
-	url = https://github.com/derekwyatt/vim-scala
-[submodule ".vim/bundle/vim-tmux-navigator"]
-	path = .vim/bundle/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator
 [submodule ".tmux/plugins/tmux-sensible"]
 	path = .tmux/plugins/tmux-sensible
 	url = git@github.com:tmux-plugins/tmux-sensible
@@ -34,15 +10,45 @@
 [submodule ".tmux/plugins/tpm"]
 	path = .tmux/plugins/tpm
 	url = git@github.com:tmux-plugins/tpm
-[submodule ".vim/bundle/vim-frege-syntax"]
-	path = .vim/bundle/vim-frege-syntax
+[submodule "shared/.tmux/plugins/tmux-sensible"]
+	path = shared/.tmux/plugins/tmux-sensible
+	url = git@github.com:tmux-plugins/tmux-sensible
+[submodule "shared/.tmux/plugins/tmux-yank"]
+	path = shared/.tmux/plugins/tmux-yank
+	url = git@github.com:tmux-plugins/tmux-yank
+[submodule "shared/.tmux/plugins/tpm"]
+	path = shared/.tmux/plugins/tpm
+	url = git@github.com:tmux-plugins/tpm
+[submodule "shared/.vim/bundle/ctrlp.vim"]
+	path = shared/.vim/bundle/ctrlp.vim
+	url = https://github.com/kien/ctrlp.vim
+[submodule "shared/.vim/bundle/purescript-vim"]
+	path = shared/.vim/bundle/purescript-vim
+	url = https://github.com/raichoo/purescript-vim.git
+[submodule "shared/.vim/bundle/vim-fugitive"]
+	path = shared/.vim/bundle/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "shared/.vim/bundle/vim-markdown"]
+	path = shared/.vim/bundle/vim-markdown
+	url = https://github.com/plasticboy/vim-markdown.git
+[submodule "shared/.vim/bundle/vim-sbt"]
+	path = shared/.vim/bundle/vim-sbt
+	url = https://github.com/derekwyatt/vim-sbt
+[submodule "shared/.vim/bundle/vim-scala"]
+	path = shared/.vim/bundle/vim-scala
+	url = https://github.com/derekwyatt/vim-scala
+[submodule "shared/.vim/bundle/vim-tmux-navigator"]
+	path = shared/.vim/bundle/vim-tmux-navigator
+	url = https://github.com/christoomey/vim-tmux-navigator
+[submodule "shared/.vim/bundle/vim-frege-syntax"]
+	path = shared/.vim/bundle/vim-frege-syntax
 	url = https://github.com/melrief/vim-frege-syntax
-[submodule ".vim/bundle/vim-syntax-extra"]
-	path = .vim/bundle/vim-syntax-extra
+[submodule "shared/.vim/bundle/vim-syntax-extra"]
+	path = shared/.vim/bundle/vim-syntax-extra
 	url = https://github.com/justinmk/vim-syntax-extra
-[submodule ".vim/bundle/vim-colors-solarized"]
-	path = .vim/bundle/vim-colors-solarized
+[submodule "shared/.vim/bundle/vim-colors-solarized"]
+	path = shared/.vim/bundle/vim-colors-solarized
 	url = https://github.com/altercation/vim-colors-solarized
-[submodule ".vim/bundle/haskell-vim"]
-	path = .vim/bundle/haskell-vim
+[submodule "shared/.vim/bundle/haskell-vim"]
+	path = shared/.vim/bundle/haskell-vim
 	url = https://github.com/neovimhaskell/haskell-vim.git
