@@ -6,7 +6,7 @@ if [ $# -ne 1 ]; then
   >&2 cat <<HERE
 Uses $baseCmd to set the timezone
 
-Usage: $0 <ct|et|other...>
+Usage: $0 <ct|et|pt|other...>
 
 Use -l to list all time zones. You can use 'ct' or 'et' for Central and Eastern times,
 respectively.
@@ -22,6 +22,7 @@ case "$1" in
   -l) list;;
   ct) run America/Chicago;;
   et) run America/New_York;;
+  pt) run America/Los_Angeles;;
   *)
     if ! list | fgrep "$1"; then
       >&2 echo "Invalid time zone '$1'"
