@@ -57,6 +57,7 @@ au BufNewFile,BufRead kwmrc set filetype=c
 au BufNewFile,BufRead *.json set filetype=javascript
 au BufNewFile,BufRead xmobarrc set filetype=haskell
 au BufNewFile,BufRead .ghci set filetype=haskell
+au BufNewFile,BufRead *.zsh-theme set filetype=zsh
 
 "Prevent YouCompleteMe scratch preview from staying open.
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
