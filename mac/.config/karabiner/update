@@ -1,0 +1,13 @@
+#!/bin/bash
+
+base=$HOME/dotfiles/.config/karabiner
+template=$base/template.hs
+dest=$base/assets/complex_modifications/linux.json
+
+result=$("$template")
+if [ $? -ne 0 ]; then
+  >&2 echo "Failed to execute template.hs"
+  exit 1
+fi
+
+echo "$result" > "$dest"

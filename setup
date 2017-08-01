@@ -70,8 +70,12 @@ LINUX_FILES=(
 )
 
 MAC_FILES=(
+  .chunkwmrc
+  .config/karabiner
   .iterm
+  .khdrc
   .path
+  Library/Preferences/IntelliJIdea2017.1
 )
 
 # Loop through each file in dotfiles and add to HOME.
