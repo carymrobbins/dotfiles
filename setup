@@ -75,7 +75,7 @@ MAC_FILES=(
   .iterm
   .khdrc
   .path
-  Library/Preferences/IntelliJIdea2017.1
+  #Library/Preferences/IntelliJIdea2017.1
 )
 
 # Loop through each file in dotfiles and add to HOME.

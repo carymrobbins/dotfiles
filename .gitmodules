@@ -52,3 +52,62 @@
 [submodule "shared/.vim/bundle/haskell-vim"]
 	path = shared/.vim/bundle/haskell-vim
 	url = https://github.com/neovimhaskell/haskell-vim.git
+[submodule ".vim/bundle/ctrlp.vim"]
+       path = .vim/bundle/ctrlp.vim
+       url = https://github.com/kien/ctrlp.vim
+[submodule ".vim/bundle/nerdtree"]
+       path = .vim/bundle/nerdtree
+       url = https://github.com/scrooloose/nerdtree
+[submodule ".vim/bundle/purescript-vim"]
+       path = .vim/bundle/purescript-vim
+       url = https://github.com/raichoo/purescript-vim.git
+[submodule ".vim/bundle/vim-fugitive"]
+       path = .vim/bundle/vim-fugitive
+       url = https://github.com/tpope/vim-fugitive
+[submodule ".vim/bundle/vim-markdown"]
+       path = .vim/bundle/vim-markdown
+       url = https://github.com/plasticboy/vim-markdown.git
+[submodule ".vim/bundle/vim-sbt"]
+       path = .vim/bundle/vim-sbt
+       url = https://github.com/derekwyatt/vim-sbt
+[submodule ".vim/bundle/vim-scala"]
+       path = .vim/bundle/vim-scala
+       url = https://github.com/derekwyatt/vim-scala
+[submodule ".vim/bundle/vim-tmux-navigator"]
+       path = .vim/bundle/vim-tmux-navigator
+       url = https://github.com/christoomey/vim-tmux-navigator
+[submodule ".vim/bundle/vim-frege-syntax"]
+       path = .vim/bundle/vim-frege-syntax
+[submodule ".vim/bundle/ctrlp.vim"]
+       path = .vim/bundle/ctrlp.vim
+       url = https://github.com/kien/ctrlp.vim
+[submodule ".vim/bundle/nerdtree"]
+       path = .vim/bundle/nerdtree
+       url = https://github.com/scrooloose/nerdtree
+[submodule ".vim/bundle/purescript-vim"]
+       path = .vim/bundle/purescript-vim
+       url = https://github.com/raichoo/purescript-vim.git
+[submodule ".vim/bundle/vim-fugitive"]
+       path = .vim/bundle/vim-fugitive
+       url = https://github.com/tpope/vim-fugitive
+[submodule ".vim/bundle/vim-markdown"]
+       path = .vim/bundle/vim-markdown
+       url = https://github.com/plasticboy/vim-markdown.git
+[submodule ".vim/bundle/vim-sbt"]
+       path = .vim/bundle/vim-sbt
+       url = https://github.com/derekwyatt/vim-sbt
+[submodule ".vim/bundle/vim-scala"]
+       path = .vim/bundle/vim-scala
+       url = https://github.com/derekwyatt/vim-scala
+[submodule ".vim/bundle/vim-tmux-navigator"]
+       path = .vim/bundle/vim-tmux-navigator
+       url = https://github.com/christoomey/vim-tmux-navigator
+[submodule ".vim/bundle/vim-syntax-extra"]
+       path = .vim/bundle/vim-syntax-extra
+       url = https://github.com/justinmk/vim-syntax-extra
+[submodule ".vim/bundle/vim-colors-solarized"]
+       path = .vim/bundle/vim-colors-solarized
+       url = https://github.com/altercation/vim-colors-solarized
+[submodule ".vim/bundle/haskell-vim"]
+       path = .vim/bundle/haskell-vim
+       url = https://github.com/neovimhaskell/haskell-vim.git
