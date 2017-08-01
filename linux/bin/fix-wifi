@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo "This worked once, but it took a little bit.  Lets see if it works again!"
-
-sudo service network-manager stop
-sudo rm /var/lib/NetworkManager/NetworkManager.state
-sudo service network-manager start

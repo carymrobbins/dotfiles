@@ -26,7 +26,7 @@ if [ "$battery_perc" -le "$MIN_PERC" ]; then
 fi
 
 show_notification() {
-  notify-send -u critical "${battery_perc}%  Low battery" -i ~/bin/img/low-battery.ico
+  notify-send -u critical "${battery_perc}%  Low battery" -i ~/dotfiles/linux/resources/low-battery.ico
 }
 
 
