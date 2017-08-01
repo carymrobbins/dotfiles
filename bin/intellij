@@ -6,6 +6,6 @@ terminator -p dark -x '
     trap - SIGINT
     exec nohup /bin/bash $HOME/opt/idea/bin/idea.sh > /dev/null
   ) &
-  disown -har
+  disown %1
   sleep 1
 '
