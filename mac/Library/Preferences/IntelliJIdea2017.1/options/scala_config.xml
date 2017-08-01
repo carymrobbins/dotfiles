@@ -1,0 +1,5 @@
+<application>
+  <component name="ScalaApplicationSettings">
+    <option name="INSERT_MULTILINE_QUOTES" value="false" />
+  </component>
+</application>

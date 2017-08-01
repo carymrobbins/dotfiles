@@ -19,7 +19,7 @@ disable r
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias wo="source ~/bin/workon"
+alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
 alias c='curl -sS'
 alias v='$EDITOR'

@@ -63,7 +63,9 @@ LINUX_FILES=(
   .config/systemd/user/xcompmgr.service
   .config/systemd/user/wm.target
   .config/systemd/user/xbindkeys.service
-  .IntelliJIdea2017.1 .path .xbindkeysrc
+  .IntelliJIdea2017.1
+  .path
+  .xbindkeysrc
   .xinitrc
   .Xresources
   .xmonad
@@ -75,7 +77,7 @@ MAC_FILES=(
   .iterm
   .khdrc
   .path
-  #Library/Preferences/IntelliJIdea2017.1
+  Library/Preferences/IntelliJIdea2017.1
 )
 
 # Loop through each file in dotfiles and add to HOME.

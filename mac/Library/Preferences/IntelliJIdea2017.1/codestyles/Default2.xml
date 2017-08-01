@@ -1,0 +1,18 @@
+<code_scheme name="Default">
+  <ScalaCodeStyleSettings>
+    <option name="USE_SCALADOC2_FORMATTING" value="false" />
+    <option name="MULTILINE_STRING_SUPORT" value="0" />
+    <option name="PROCESS_MARGIN_ON_COPY_PASTE" value="false" />
+    <option name="PUBLIC_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_METHOD_TYPE_ANNOTATION" value="0" />
+    <option name="ENABLE_SCALADOC_FORMATTING" value="false" />
+  </ScalaCodeStyleSettings>
+  <codeStyleSettings language="Haskell">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="2" />
+    </indentOptions>
+  </codeStyleSettings>
+  <codeStyleSettings language="Scala">
+    <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+  </codeStyleSettings>
+</code_scheme>
