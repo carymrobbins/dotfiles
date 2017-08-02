@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Hack to run outside of dmenu
-terminator -p dark -x '
+terminator -x '
   (
     trap - SIGINT
     exec nohup /bin/bash $HOME/opt/idea/bin/idea.sh > /dev/null
