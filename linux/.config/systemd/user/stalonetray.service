@@ -3,7 +3,7 @@ Description=stalonetray
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/stalonetray -c "%h/.xmonad/stalonetrayrc"
+ExecStart=/%h/dotfiles/linux/bin/stalonetray-wrapper
 ExecStop=/usr/bin/pkill stalonetray
 
 [Install]
