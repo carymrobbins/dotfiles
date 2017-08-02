@@ -1,0 +1,104 @@
+#!/bin/bash
+
+usage() {
+  cat <<HERE
+Show github link to repo or file.
+
+Usage: $0 [options] [file]
+
+Options:
+-o          Open in browser
+-b          Use current branch name instead of commit hash
+-u <remote> Use specified remote instead of origin
+-r <rev>    Use specified revision instead of current one
+HERE
+}
+
+validate_extra_args() {
+  local arg1=$1
+  shift
+  if [ -z "$arg1" ]; then
+    >&2 echo "Assertion error: empty arg1"
+    exit 1
+  fi
+  for arg in "$@"; do
+    if [ -z "$arg" ]; then
+      >&2 echo "Missing argument to $arg1"
+      >&2 usage
+      exit 1
+    fi
+  done
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --help|-h) usage; exit;;
+    -o) open_in_browser=1; shift;;
+    -b) use_branch=1;      shift;;
+    -u) validate_extra_args "$1" "$2"; remote=$2; shift; shift;;
+    -r) validate_extra_args "$1" "$2"; rev=$2;    shift; shift;;
+    *)
+      if [ -z "$file" ]; then
+        file=$1
+        shift
+      else
+        >&2 echo "Unexpected argument: $1"
+        >&2 usage
+        exit 1
+      fi
+  esac
+done
+
+if [ -n "$rev" -a "$use_branch" ]; then
+  >&2 echo "Cannot use -b and -r together"
+  exit 1
+fi
+
+if [ -z "$rev" ]; then
+  if [ -n "$use_branch" ]; then
+    rev=$(git rev-parse --abbrev-ref HEAD)
+  else
+    rev=$(git rev-parse HEAD)
+  fi
+fi
+
+[ -n "$remote" ] || remote=origin
+url=$(git config --get "remote.$remote.url")
+if [ $? -ne 0 ]; then
+  >&2 echo "Failed to obtain url for remote: $remote"
+  exit 1
+fi
+
+# Strip the leading git@
+# Strip the trailing .git
+# Convert .com: to .com/
+url=$(
+  echo "$url" \
+    | sed 's/^git@/https:\/\//' \
+    | sed 's/\.git$//' \
+    | sed 's/\.com:/.com\//'
+)
+
+if [ -z "$file" ]; then
+  url=$url/tree/$rev
+elif [ -d "$file" ]; then
+  url=$url/tree/$rev/$file
+elif [ -f "$file" ]; then
+  url=$url/blob/$rev/$file
+else
+  >&2 echo "Cannot determine url for file: $file"
+  exit 1
+fi
+
+if [ "$open_in_browser" ]; then
+  os_type=$(uname -s)
+  case "$os_type" in
+    Darwin) open "$url";;
+    Linux) xdg-open "$url";;
+    *)
+      >&2 echo "Unsupported OS: $os_type"
+      exit 1
+  esac
+else
+  echo "$url"
+fi
