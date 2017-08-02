@@ -5,7 +5,7 @@
 xleds screen -set 5%
 
 # Load our x settings (xset, xkb, xinput, etc.)
-$HOME/bin/reload-x-settings
+reload-x-settings
 
 # TODO: wm.target doesn't seem to work
 # systemctl --user start wm.target
@@ -16,7 +16,7 @@ systemctl --user start notify-osd
 systemctl --user start low-battery.timer
 systemctl --user start xcompmgr
 # TODO: Running xbindkeys with systemctl means it
-# can't find stuff in our $HOME/bin
+# can't find stuff in our $PATH
 xbindkeys
 
 if command -v mon1 >/dev/null; then

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Desktop image
-wallpaper=$HOME/dotfiles/resources/wallpaper
+wallpaper=$HOME/dotfiles/linux/resources/wallpaper
 [ ! -f "$wallpaper" ] || feh --bg-scale "$wallpaper"
 
 # Key repeat: ms delay, cps
 xset r rate 150 50
 
-$HOME/bin/xkb-reload
+xkb-reload
 
 # Enable natural scrolling and two-finger right-click.
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Natural Scrolling Enabled' 1
