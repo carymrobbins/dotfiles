@@ -30,6 +30,7 @@
 	f = fetch
 	unstage = reset HEAD --
 	r = rebase
+	ri = rebase -i
 	autosquash = rebase -i --autosquash
 	as = rebase -i --autosquash
 	p = push
