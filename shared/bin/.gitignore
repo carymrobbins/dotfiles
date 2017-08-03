@@ -1,3 +1,4 @@
 find-project-dir
 *.hi
 *.o
+gitusers.py
