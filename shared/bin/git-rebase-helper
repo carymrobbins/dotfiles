@@ -9,7 +9,7 @@ usage() {
   echo "  --verbose       Output debugging info"
   echo "  --simple        Only output suggested commands"
   echo "  --squash        Squash commits instead of fixup"
-  # echo "  --exec          Execute suggested commands"
+  echo "  --exec          Execute suggested commands"
 }
 
 text_bold="$(tput bold)"
@@ -99,23 +99,9 @@ array_intersection() {
   comm -12 <(array_to_lines "$1" | sort) <(array_to_lines "$2" | sort)
 }
 
-if [ -n "$execute" ]; then
-  >&2 echo "--exec not implemented!"
-  exit 1
-  while IFS= read -r -d $'\n'; do
-    if grep 'git rebase' <<< "$REPLY" >/dev/null; then
-      echo "To squash your commits:"
-      echo "$REPLY"
-    else
-      log "Executing: $REPLY"
-      $REPLY
-    fi
-  done < <(verbose=$verbose squash=$squash $0 "$base_rev" --simple)
-  exit
-fi
-
 files_suggested=()
 intersection=()
+to_exec=()
 
 for rev in "${revs[@]}"; do
   log "Checking revision: $rev"
@@ -133,16 +119,37 @@ for rev in "${revs[@]}"; do
         >&2 echo "  - $f"
       done
       >&2 printf "${text_reset}"
+      no_exec_due_to_warn=1
     fi
 
     [ -n "$simple" ] || printf '%s %s\n' \
       "${text_bold}${text_magenta}# Rebase suggestion:${text_reset}" \
       "${text_magenta}$(git show -s --format=%s "$rev")${text_reset}"
+    # Using ';' as a delimiter
+    to_exec+=(git add "${files_found[@]}" ';')
     echo "  git add ${files_found[@]}"
+    to_exec+=(git commit "$squash_type" "$rev" ';')
     echo "  git commit $squash_type $rev"
     files_suggested+=("${files_found[@]}")
   fi
 done
 
 [ -n "$simple" ] || echo "${text_bold}${text_magenta}# To squash changes:${text_reset}"
+to_exec+=(git rebase -i "$base_rev" --autosquash ';')
 echo "  git rebase -i $base_rev --autosquash"
+
+if [ -n "$execute" ]; then
+  if [ -n "$no_exec_due_to_warn" ]; then
+    >&2 echo "Cannot execute due to warnings"
+    exit 1
+  fi
+  cmd=()
+  for arg in "${to_exec[@]}"; do
+    if [ "$arg" == ';' ]; then
+      (set -x ; "${cmd[@]}")
+      cmd=()
+    else
+      cmd+=("$arg")
+    fi
+  done
+fi
