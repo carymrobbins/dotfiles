@@ -1,6 +1,7 @@
 $HOME/bin
 $HOME/dotfiles/shared/bin
 $HOME/dotfiles/mac/bin
+$HOME/opt/eta
 $HOME/.local/bin
 $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 /usr/local/bin
