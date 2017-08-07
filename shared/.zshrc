@@ -47,8 +47,6 @@ if [ "$(uname -s)" = "Darwin" ]; then
   alias vk="vim ~/.kwm/kwmrc"
   alias kr="kwmc config reload"
 
-  alias bs="brew services"
-
   # Java helpers
   for c in java javac; do alias "${c}7"='$(/usr/libexec/java_home -v 1.7)/bin/'$c; done
   for c in java javac; do alias "${c}8"='$(/usr/libexec/java_home -v 1.8)/bin/'$c; done

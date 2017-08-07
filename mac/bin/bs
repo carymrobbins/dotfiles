@@ -30,6 +30,8 @@ case "$#" in
     case "$service" in
       chunkwm) service=crisidev/chunkwm/chunkwm;;
       khd)     service=koekeishiya/formulae/khd;;
+      mongo)   service=mongodb26;;
+      cass)    service=cassandra@2.1;;
     esac
 
     set -x
