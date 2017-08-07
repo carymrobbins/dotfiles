@@ -1,6 +1,6 @@
 #!/bin/bash
 
-base=$HOME/dotfiles/.config/karabiner
+base=$HOME/dotfiles/mac/.config/karabiner
 template=$base/template.hs
 dest=$base/assets/complex_modifications/linux.json
 

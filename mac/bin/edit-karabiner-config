@@ -1,6 +1,6 @@
 #!/bin/bash
 
-template=$HOME/dotfiles/.config/karabiner/template.hs
+template=$HOME/dotfiles/mac/.config/karabiner/template.hs
 
 get_last_modified() {
   date -r "$template" +%s
