@@ -27,6 +27,8 @@ runner.layout.xml
 scala.xml
 scratches.xml
 statistics.application.usages.xml
+statistics.shortcuts.xml
+statistics.toolbar.clicks.xml
 stubIndex.xml
 ui.lnf.xml
 usage.statistics.xml
