@@ -46,10 +46,6 @@
     <keyboard-shortcut first-keystroke="ctrl p" />
   </action>
   <action id="ExportToTextFile" />
-  <action id="FindUsages">
-    <keyboard-shortcut first-keystroke="alt f7" />
-    <keyboard-shortcut first-keystroke="f7" />
-  </action>
   <action id="Forward">
     <keyboard-shortcut first-keystroke="ctrl alt right" />
     <mouse-shortcut keystroke="button5" />

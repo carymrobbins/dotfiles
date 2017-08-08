@@ -63,7 +63,7 @@ LINUX_FILES=(
   .config/systemd/user/xcompmgr.service
   .config/systemd/user/wm.target
   .config/systemd/user/xbindkeys.service
-  .IntelliJIdea2017.1
+  .IntelliJIdea2017.2
   .path
   .xbindkeysrc
   .xinitrc
