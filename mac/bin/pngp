@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if ! command -v pngpaste >/dev/null 2>&1; then
+  >&2 echo "The program 'pngpaste' is not installed"
+  >&2 echo "Install it with 'brew install pngpaste'"
+  exit 1
+fi
+
+tmpfile=$(mktemp)
+pngpaste "$tmpfile" >/dev/null 2>&1
+if [ ! -f "$tmpfile" ]; then
+  >&2 echo "pngpaste failed"
+  exit 1
+fi
+
+url=$(cat "$tmpfile" | ptpb | grep '^url' | cut -d' ' -f2)
+
+echo $url.png
