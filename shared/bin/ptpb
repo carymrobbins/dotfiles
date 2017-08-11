@@ -12,4 +12,4 @@ fi
 
 set -x
 
-exec curl -F c="$sourceFile" "$url"
+exec curl -sS -F c="$sourceFile" "$url"
