@@ -134,6 +134,9 @@ shift + ctrl + alt + cmd - space : chunkc tiling::desktop --layout bsp
 
 # ctrl + alt - w : chunkc tiling::desktop --deserialize ~/.chunkwm_layouts/dev_1
 
+# Close active window
+cmd + shift - c : chunkc tiling::window --close
+
 # remap caps-lock to escape for this config only !!!
 # macos sierra can also perform this remap for a given keyboard
 # - capslock : khd -p "- escape"
