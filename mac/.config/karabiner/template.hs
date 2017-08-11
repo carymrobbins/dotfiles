@@ -99,6 +99,7 @@ notTerminalRemaps =
     , [Control, Shift] |+| N !> [RightCommand, RightShift] |+| N
       -- Slack: Go to conversation
     , Control |+| K !> RightCommand |+| K
+    , Control |+| ReturnOrEnter !> RightCommand |+| ReturnOrEnter
     ]
   ) ??! [iterm, intellij]
 
@@ -404,6 +405,7 @@ data KeyCode
   | Spacebar | Backspace
   | OpenBracket | CloseBracket
   | RightArrow | LeftArrow | UpArrow | DownArrow
+  | ReturnOrEnter
 
 instance ToJSON KeyCode where
   toJSON = \case
@@ -451,3 +453,4 @@ instance ToJSON KeyCode where
     LeftArrow -> "left_arrow"
     DownArrow -> "down_arrow"
     UpArrow -> "up_arrow"
+    ReturnOrEnter -> "return_or_enter"
