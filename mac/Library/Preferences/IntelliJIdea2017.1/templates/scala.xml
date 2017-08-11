@@ -1,0 +1,38 @@
+<templateSet group="scala">
+  <template name="T" value="&lt;$TAG$&gt;$SELECTION$&lt;/$TAGNAME$&gt;&#10;" description="Surround with &lt;tag&gt;&lt;/tag&gt;" toReformat="true" toShortenFQNames="true">
+    <variable name="TAG" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TAGNAME" expression="firstWord(TAG)" defaultValue="&quot;&quot;" alwaysStopAt="false" />
+    <context />
+  </template>
+  <template name="tcvi" value="implicit val $TYPE_CLASS$$INSTANCE_CLASS$: $TYPE_CLASS$[$INSTANCE_CLASS$] = $TYPE_CLASS$.instance(???)" description="Template for type class val instance" toReformat="false" toShortenFQNames="true">
+    <variable name="TYPE_CLASS" expression="&quot;F&quot;" defaultValue="F" alwaysStopAt="true" />
+    <variable name="INSTANCE_CLASS" expression="&quot;A&quot;" defaultValue="A" alwaysStopAt="true" />
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="tcdi" value="implicit def $decapitalize(${TYPE_CLASS}${INSTANCE_CLASS})$: ${TYPE_CLASS}[${INSTANCE_CLASS}] = ${TYPE_CLASS}.instance(???" description="Template for type class def instance" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="tcls" value="trait $NAME$[$GENERIC_ARGS$] {&#10;  def $METHOD$($METHOD_ARG_NAME$: $METHOD_ARG_TYPE$): $METHOD_RETURN_TYPE$&#10;}&#10;&#10;object $NAME$ {&#10;&#10;  def apply[$GENERIC_ARGS$](implicit ev: $NAME$[$GENERIC_ARGS$]): $NAME$[$GENERIC_ARGS$] = ev&#10;&#10;  def instance[$GENERIC_ARGS$](f: $METHOD_ARG_TYPE$ =&gt; $METHOD_RETURN_TYPE$): $NAME$[$GENERIC_ARGS$] = new $NAME$[$GENERIC_ARGS$] {&#10;    override def $METHOD$($METHOD_ARG_NAME$: $METHOD_ARG_TYPE$): $METHOD_RETURN_TYPE$ = f($METHOD_ARG_NAME$)&#10;  }&#10;}" description="Template for type class" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="GENERIC_ARGS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD_ARG_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD_ARG_TYPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD_RETURN_TYPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="opscls" value="final class $NAME$[$GENERIC_ARGS$](val repr: $REPR_CLASS$) extends AnyVal {&#10;&#10;}&#10;&#10;trait To$NAME$ {&#10;  implicit def to$NAME$[$GENERIC_ARGS$](x: $REPR_CLASS$): $NAME$[$GENERIC_ARGS$] = new $NAME$[$GENERIC_ARGS$](x)&#10;}" description="Template for Ops class" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="GENERIC_ARGS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="REPR_CLASS" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+</templateSet>
