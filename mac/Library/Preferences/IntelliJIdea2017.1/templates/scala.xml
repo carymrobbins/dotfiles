@@ -2,7 +2,6 @@
   <template name="T" value="&lt;$TAG$&gt;$SELECTION$&lt;/$TAGNAME$&gt;&#10;" description="Surround with &lt;tag&gt;&lt;/tag&gt;" toReformat="true" toShortenFQNames="true">
     <variable name="TAG" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="TAGNAME" expression="firstWord(TAG)" defaultValue="&quot;&quot;" alwaysStopAt="false" />
-    <context />
   </template>
   <template name="tcvi" value="implicit val $TYPE_CLASS$$INSTANCE_CLASS$: $TYPE_CLASS$[$INSTANCE_CLASS$] = $TYPE_CLASS$.instance(???)" description="Template for type class val instance" toReformat="false" toShortenFQNames="true">
     <variable name="TYPE_CLASS" expression="&quot;F&quot;" defaultValue="F" alwaysStopAt="true" />

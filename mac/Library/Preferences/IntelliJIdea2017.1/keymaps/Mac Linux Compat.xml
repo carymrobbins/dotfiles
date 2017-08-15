@@ -138,6 +138,9 @@
   <action id="ImplementMethods" />
   <action id="Jdbc.RunSqlScript" />
   <action id="MethodHierarchy.OverrideMethodAction" />
+  <action id="NewElementInMenuGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl n" />
+  </action>
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="ctrl right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
