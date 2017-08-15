@@ -1,10 +1,14 @@
 #!/bin/sh
 
+# Note we use --set "Broadcast RGB" "Full" to avoid the washed out colors
+# over HDMI; see https://askubuntu.com/questions/621964/colors-on-display-are-washed-out
 xrandr \
   --output HDMI-2 --off \
   --output DP-1 --off \
   --output eDP-1 --primary --mode 1920x1080 --pos 1920x464 --rotate normal \
   --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal \
+                  --set "Broadcast RGB" "Full" \
   --output DP-2 --mode 1920x1080 --pos 3840x0 --rotate normal \
+                --set "Broadcast RGB" "Full" \
   && xmonad --restart \
   && systemctl --user restart stalonetray
