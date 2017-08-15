@@ -139,10 +139,23 @@ to_exec+=(git rebase -i "$base_rev" --autosquash ';')
 echo "  git rebase -i $base_rev --autosquash"
 
 if [ -n "$execute" ]; then
+
   if [ -n "$no_exec_due_to_warn" ]; then
     >&2 echo "Cannot execute due to warnings"
     exit 1
   fi
+
+  echo
+  read -p "Execute the suggested rebase now? [y/N] " -n 1 -r
+  echo
+
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    base_rev="$default_base_rev"
+  else
+    >&2 echo "Exiting per user request"
+    exit 1
+  fi
+
   cmd=()
   for arg in "${to_exec[@]}"; do
     if [ "$arg" == ';' ]; then
