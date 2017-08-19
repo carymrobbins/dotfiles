@@ -72,6 +72,9 @@
     <keyboard-shortcut first-keystroke="alt slash" />
     <keyboard-shortcut first-keystroke="alt space" />
   </action>
+  <action id="MoveEditorToOppositeTabGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl o" />
+  </action>
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="alt right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
