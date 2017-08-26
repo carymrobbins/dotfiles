@@ -60,7 +60,18 @@
   <action id="CompileDirty">
     <keyboard-shortcut first-keystroke="f9" />
   </action>
+  <action id="CopyPaths">
+    <keyboard-shortcut first-keystroke="ctrl alt c" />
+  </action>
+  <action id="CopyReference">
+    <keyboard-shortcut first-keystroke="shift meta alt c" />
+    <keyboard-shortcut first-keystroke="shift ctrl alt c" />
+  </action>
   <action id="Debug" />
+  <action id="DebugClass">
+    <keyboard-shortcut first-keystroke="shift ctrl d" />
+    <keyboard-shortcut first-keystroke="shift ctrl f11" />
+  </action>
   <action id="Diff.NextChange">
     <keyboard-shortcut first-keystroke="ctrl right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
@@ -86,7 +97,6 @@
   <action id="EditorPreviousWord" />
   <action id="ExportToTextFile" />
   <action id="ExpressionTypeInfo">
-    <keyboard-shortcut first-keystroke="shift ctrl p" />
     <keyboard-shortcut first-keystroke="alt equals" />
   </action>
   <action id="FindInPath">
@@ -141,6 +151,10 @@
   <action id="NewElementInMenuGroup">
     <keyboard-shortcut first-keystroke="shift ctrl n" />
   </action>
+  <action id="NextOccurence">
+    <keyboard-shortcut first-keystroke="meta alt down" />
+    <keyboard-shortcut first-keystroke="ctrl alt j" />
+  </action>
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="ctrl right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
@@ -152,8 +166,11 @@
     <keyboard-shortcut first-keystroke="alt p" />
   </action>
   <action id="Play2.TypeInfo">
-    <keyboard-shortcut first-keystroke="shift ctrl p" />
     <keyboard-shortcut first-keystroke="alt equals" />
+  </action>
+  <action id="PreviousOccurence">
+    <keyboard-shortcut first-keystroke="meta alt up" />
+    <keyboard-shortcut first-keystroke="ctrl alt k" />
   </action>
   <action id="PreviousTab">
     <keyboard-shortcut first-keystroke="shift meta open_bracket" />
@@ -184,13 +201,18 @@
     <keyboard-shortcut first-keystroke="ctrl r" />
     <keyboard-shortcut first-keystroke="shift f10" />
   </action>
-  <action id="RunClass" />
+  <action id="RunClass">
+    <keyboard-shortcut first-keystroke="shift ctrl f10" />
+  </action>
   <action id="SafeDelete">
     <keyboard-shortcut first-keystroke="meta delete" />
     <keyboard-shortcut first-keystroke="alt delete" />
   </action>
-  <action id="Scala.TypeInfo">
+  <action id="Scala.ShowImplicitParameters">
+    <keyboard-shortcut first-keystroke="shift meta p" />
     <keyboard-shortcut first-keystroke="shift ctrl p" />
+  </action>
+  <action id="Scala.TypeInfo">
     <keyboard-shortcut first-keystroke="alt equals" />
   </action>
   <action id="ShowErrorDescription">

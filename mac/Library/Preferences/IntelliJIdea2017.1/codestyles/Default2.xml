@@ -1,9 +1,21 @@
 <code_scheme name="Default">
   <ScalaCodeStyleSettings>
+    <option name="importLayout">
+      <array>
+        <option value="prelude" />
+        <option value="_______ blank line _______" />
+        <option value="java" />
+        <option value="_______ blank line _______" />
+        <option value="all other imports" />
+        <option value="_______ blank line _______" />
+        <option value="scala" />
+      </array>
+    </option>
     <option name="USE_SCALADOC2_FORMATTING" value="false" />
     <option name="MULTILINE_STRING_SUPORT" value="0" />
     <option name="PROCESS_MARGIN_ON_COPY_PASTE" value="false" />
     <option name="PUBLIC_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_PROPERTY_TYPE_ANNOTATION" value="1" />
     <option name="PROTECTED_METHOD_TYPE_ANNOTATION" value="0" />
     <option name="ENABLE_SCALADOC_FORMATTING" value="false" />
   </ScalaCodeStyleSettings>

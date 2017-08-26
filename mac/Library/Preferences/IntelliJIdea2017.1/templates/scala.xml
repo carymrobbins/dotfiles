@@ -2,6 +2,7 @@
   <template name="T" value="&lt;$TAG$&gt;$SELECTION$&lt;/$TAGNAME$&gt;&#10;" description="Surround with &lt;tag&gt;&lt;/tag&gt;" toReformat="true" toShortenFQNames="true">
     <variable name="TAG" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="TAGNAME" expression="firstWord(TAG)" defaultValue="&quot;&quot;" alwaysStopAt="false" />
+    <context />
   </template>
   <template name="tcvi" value="implicit val $TYPE_CLASS$$INSTANCE_CLASS$: $TYPE_CLASS$[$INSTANCE_CLASS$] = $TYPE_CLASS$.instance(???)" description="Template for type class val instance" toReformat="false" toShortenFQNames="true">
     <variable name="TYPE_CLASS" expression="&quot;F&quot;" defaultValue="F" alwaysStopAt="true" />
@@ -30,6 +31,16 @@
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="GENERIC_ARGS" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="REPR_CLASS" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="tqs" value="&quot;&quot;&quot;$END$&quot;&quot;&quot;" description="Template for triple quote string" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="tqj" value="&quot;&quot;&quot;{&#10;  $END$&#10;}&quot;&quot;&quot;" description="Template for triple quote string json object" toReformat="false" toShortenFQNames="true">
     <context>
       <option name="SCALA" value="true" />
     </context>
