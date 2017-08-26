@@ -3,3 +3,7 @@ let mapleader=" "
 
 " Map // to search for visually selected text.
 vnoremap // y/<C-R>"<CR>
+
+" Disable bell in IntelliJ when pressing esc
+set visualbell
+set noerrorbells
