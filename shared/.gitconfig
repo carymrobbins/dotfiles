@@ -19,11 +19,13 @@
 	sq = commit --squash
 	fq = !git commit -a --fixup HEAD && git rebase -i --autosquash HEAD^^
 	s = show
+	ss = show --stat
 	st = status
 	d = diff
 	dc = diff --cached
 	dh = diff HEAD
 	l = log --graph --decorate
+	ls = log --graph --decorate --stat
 	l1 = log --oneline
 	ll1 = log --graph --decorate --oneline
 	lp = log -p
