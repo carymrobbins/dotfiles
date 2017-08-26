@@ -1,8 +1,22 @@
 <code_scheme name="Default">
   <option name="RIGHT_MARGIN" value="100" />
   <ScalaCodeStyleSettings>
+    <option name="importLayout">
+      <array>
+        <option value="prelude" />
+        <option value="_______ blank line _______" />
+        <option value="java" />
+        <option value="_______ blank line _______" />
+        <option value="all other imports" />
+        <option value="_______ blank line _______" />
+        <option value="scala" />
+      </array>
+    </option>
     <option name="NOT_CONTINUATION_INDENT_FOR_PARAMS" value="true" />
     <option name="USE_SCALADOC2_FORMATTING" value="false" />
+    <option name="PUBLIC_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_PROPERTY_TYPE_ANNOTATION" value="1" />
+    <option name="PROTECTED_METHOD_TYPE_ANNOTATION" value="1" />
     <option name="ENABLE_SCALADOC_FORMATTING" value="false" />
   </ScalaCodeStyleSettings>
   <codeStyleSettings language="Haskell">
