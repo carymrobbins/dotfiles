@@ -27,6 +27,32 @@ set shiftwidth=2  "An indent is 4 spaces
 set smarttab      "Indent instead of tab at start of line
 set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
+"Disable word wrap
+set nowrap
+"Set leader to spacebar
+let mapleader=" "
+
+"Key mappings
+"""""""""""""
+"Copy selection to system clipboard
+xmap <Leader>y "*y
+"Paste system clipboard
+nmap <Leader>p "*p
+"Toggle spellchecker
+nmap <Leader>s :setlocal spell!<CR>
+"Toggle line numbers
+nmap <Leader>n :setlocal number!<CR>
+"Toggle color column (max line length bar)
+nmap <Leader>c :call ToggleColorColumn()<CR>
+"Append to end of lines of selection
+xmap <Leader>a $A
+"Ctrl+N to open/close NERDTree
+map <C-n> :NERDTreeToggle<CR>
+" Map // to search for visually selected text.
+vnoremap // y/<C-R>"<CR>
+"Remap <Enter> to split the line and insert a new line in between for braces/parens
+inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
+"""""""""""""
 
 "Customize for solarized dark/light
 
@@ -73,16 +99,10 @@ fun BreakLine()
   endif
 endfun
 
-"Remap <Enter> to split the line and insert a new line in between if
-"BreakLine return True
-inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
-
 "Open NERDTree automatically if no files specified when opened.
 autocmd vimenter * if !argc() | NERDTree | endif
 "Show hidden files.
 let NERDTreeShowHidden=1
-"Ctrl+N to open/close NERDTree
-map <C-n> :NERDTreeToggle<CR>
 
 "Close if NERDTree is the only open window.
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
@@ -94,19 +114,20 @@ match Todo /\s\+$/
 
 "Highlight long lines
 set colorcolumn=101
-"hi ColorColumn ctermbg=lightgrey guibg=lightgrey
-"""Old implementation, using colorcolumn instead
-"highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-"match OverLength /\%101v.\+/
+
+fun ToggleColorColumn()
+  if (&colorcolumn > 0)
+    set colorcolumn=0
+  else
+    set colorcolumn=101
+  endif
+endfun
 
 " Disable auto-folding in markdown files
 let g:vim_markdown_folding_disabled=1
 
 " Disable haskell-vim auto-indentation
 let g:haskell_indent_disable=1
-
-" Map // to search for visually selected text.
-vnoremap // y/<C-R>"<CR>
 
 " Use :TrimWhitespace to...trim the trailing whitespace.
 fun! TrimWhitespace()
