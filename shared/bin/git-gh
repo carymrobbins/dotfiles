@@ -76,7 +76,7 @@ url=$(
   echo "$url" \
     | sed 's/^git@/https:\/\//' \
     | sed 's/\.git$//' \
-    | sed 's/\.com:/.com\//'
+    | sed 's/\(https\{0,1\}:\/\/[^:]*\):/\1\//'
 )
 
 if [ -z "$file" ]; then
