@@ -45,4 +45,22 @@
       <option name="SCALA" value="true" />
     </context>
   </template>
+  <template name="expk1" value="type $NAME$[F[_]] = $PATH$.$NAME$[F]&#10;val $NAME$ = $PATH$.$NAME$" description="Template for higher kinded type with arity 1" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="PATH" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="todo" value="// TODO REFACTOR: $END$" description="Template for TODO" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
+  <template name="for" value="for {&#10;  $END$&#10;} yield ???" description="Template for for comprehension" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
 </templateSet>

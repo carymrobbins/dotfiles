@@ -148,6 +148,9 @@
   <action id="ImplementMethods" />
   <action id="Jdbc.RunSqlScript" />
   <action id="MethodHierarchy.OverrideMethodAction" />
+  <action id="MoveEditorToOppositeTabGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl o" />
+  </action>
   <action id="NewElementInMenuGroup">
     <keyboard-shortcut first-keystroke="shift ctrl n" />
   </action>
