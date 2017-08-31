@@ -22,7 +22,7 @@ case "$#" in
     case "$action" in
       e) action=start;;
       d) action=stop;;
-      r) action=restart;;
+      r) action="stop start";; # seems to work better than restart
       s) action=status;;
     esac
 
@@ -34,8 +34,12 @@ case "$#" in
       cass)    service=cassandra@2.1;;
     esac
 
-    set -x
-    exec brew services "$action" "$service"
+    for a in $action; do
+      (
+        set -x
+        exec brew services "$a" "$service"
+      )
+    done
     exit
     ;;
   *)
