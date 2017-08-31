@@ -1,7 +1,9 @@
 execute pathogen#infect()
+
 syntax on
 filetype plugin on
 filetype indent on
+
 "Show line, column numbers in status bar.
 set ruler
 "Highlight search terms.
@@ -42,6 +44,8 @@ nmap <Leader>p "*p
 nmap <Leader>s :setlocal spell!<CR>
 "Toggle line numbers
 nmap <Leader>n :setlocal number!<CR>
+"Toggle hlsearch
+nmap <Leader>h :setlocal hlsearch!<CR>
 "Toggle color column (max line length bar)
 nmap <Leader>c :call ToggleColorColumn()<CR>
 "Append to end of lines of selection
