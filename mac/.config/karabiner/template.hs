@@ -22,6 +22,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+
 import Data.Aeson
 import Data.Aeson.Types
 import Data.Aeson.Encode.Pretty
@@ -41,7 +42,7 @@ root = Root "Linux Compat" [rule]
 
 rule = Rule "Various remappings to make it feel like linux" $
      terminalRemaps
-  <> notTerminalRemaps
+  <> notTerminalOrIntelliJRemaps
   <> chunkwmRemaps
   <> workspaceRemaps
   <> vimArrowsRemaps
@@ -51,11 +52,11 @@ terminalRemaps =
     [Control, Shift] |+| C !> RightCommand |+| C
     -- Paste
   , [Control, Shift] |+| V !> RightCommand |+| V
-  ]
+  ] ?? [iterm]
 
--- These bindings don't work well with iterm or intellij due
+-- These bindings don't work well with iterm2 or intellij due
 -- to clashes with vim, tmux, etc, so excluding them with ??!
-notTerminalRemaps =
+notTerminalOrIntelliJRemaps =
   (
     -- Useful for moving to tab n of an app, e.g. browser.
     (map (\n -> Option |+| n !> RightCommand |+| n) numbers)
@@ -72,6 +73,8 @@ notTerminalRemaps =
     , Control |+| X !> RightCommand |+| X
       -- Paste
     , Control |+| V !> RightCommand |+| V
+      -- Paste without formatting
+    , [Control, Shift] |+| V !> [RightCommand, RightShift] |+| V
       -- Select all
     , Control |+| A !> RightCommand |+| A
       -- Find
@@ -224,6 +227,17 @@ instance
   => ManipulatorBuilder a (KeyBinding MetaModifier) where
   (!>) = undefined
 
+-- | Adds 'frontmost_application_if' condition to Manipulator
+(?) :: Manipulator -> [Text] -> Manipulator
+m ? ts = m { manipulatorConditions = cs }
+  where
+  c = ManipulatorCondition FrontmostApplicationIf ts
+  cs = Just $ c : fromMaybe [] (manipulatorConditions m)
+
+-- | Same as ? except updates a list of Manipulator
+(??) :: [Manipulator] -> [Text] -> [Manipulator]
+ms ?? ts = map (? ts) ms
+
 -- | Adds 'frontmost_application_unless' condition to Manipulator
 (?!) :: Manipulator -> [Text] -> Manipulator
 m ?! ts = m { manipulatorConditions = cs }
@@ -330,11 +344,14 @@ instance ToJSON ManipulatorCondition where
   toJSON (ManipulatorCondition t bis) =
     object ["type" .= t, "bundle_identifiers" .= bis]
 
-data ManipulatorConditionType = FrontmostApplicationUnless
+data ManipulatorConditionType
+  = FrontmostApplicationUnless
+  | FrontmostApplicationIf
 
 manipulatorConditionTypeToText :: ManipulatorConditionType -> Text
 manipulatorConditionTypeToText = \case
   FrontmostApplicationUnless -> "frontmost_application_unless"
+  FrontmostApplicationIf -> "frontmost_application_if"
 
 instance ToJSON ManipulatorConditionType where
   toJSON = toJSON . manipulatorConditionTypeToText
