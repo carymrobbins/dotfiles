@@ -18,3 +18,17 @@ removeCRsFromFile file = do
   c <- readFile file
   length c `seq` writeFile file $ filter (/= '\r') c
 :}
+
+-- Pretty printing with :cp and :ncp
+-- stack build pretty-show hscolour
+:{
+colorPrint =
+  System.IO.putStrLn
+  . Language.Haskell.HsColour.hscolour
+      Language.Haskell.HsColour.TTY
+      Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False
+  . Text.Show.Pretty.ppShow
+:}
+:set -interactive-print=colorPrint
+:def cp (\_ -> return ":set -interactive-print=colorPrint")
+:def ncp (\_ -> return ":set -interactive-print=print")
