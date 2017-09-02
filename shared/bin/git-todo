@@ -7,6 +7,8 @@
 # If revision is not specified, defaults to origin/master.
 
 pat='(TODO|\?\?\?)'
+text_reset=$(tput sgr0)
+text_magenta=$(tput setaf 5)
 
 if [ "$1" = "--root" ]; then
   ack "$pat"
@@ -18,7 +20,7 @@ BRANCH=${1:-origin/master}
 for file in $(git diff "$BRANCH".. --name-only); do
   todos=$(git diff "$BRANCH".. -- "$file" | grep '^\+' | egrep "$pat" | cut -c 3-)
   if [ -n "$todos" ]; then
-    echo -e "\e[1m\e[32m$file\e[39m\e[0m"
+    echo -e "$text_magenta$file$text_reset"
     while read -r todo; do
       fgrep -n -- "$todo" "$file"
     # Using `| sort | uniq` to avoid duplicate matches.
