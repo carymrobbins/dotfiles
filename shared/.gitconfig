@@ -27,7 +27,7 @@
 	l = log --graph --decorate
 	ls = log --graph --decorate --stat
 	l1 = log --oneline
-	lh = ! git log --oneline --color | head -n10
+	lh = log --oneline --color --no-decorate -n10
 	ll1 = log --graph --decorate --oneline
 	lp = log -p
 	f = fetch
