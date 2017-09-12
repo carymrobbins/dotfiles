@@ -14,6 +14,7 @@
 	au = add -u
 	ap = add -p
 	ci = commit
+	cf = commit --fixup
 	ca = commit -a --amend
 	fu = commit --fixup
 	sq = commit --squash
@@ -24,10 +25,10 @@
 	d = diff
 	dc = diff --cached
 	dh = diff HEAD
-	l = log --graph --decorate
+	l = log --oneline --color --no-decorate -n15
+	ll = log --graph --decorate
 	ls = log --graph --decorate --stat
 	l1 = log --oneline
-	lh = log --oneline --color --no-decorate -n10
 	ll1 = log --graph --decorate --oneline
 	lp = log -p
 	f = fetch
