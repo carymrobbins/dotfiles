@@ -21,6 +21,7 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
+alias gwa='./gradlew assemble'
 alias c='curl -sS'
 alias v='$EDITOR'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
