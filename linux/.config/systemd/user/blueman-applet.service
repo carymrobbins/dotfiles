@@ -1,0 +1,10 @@
+[Unit]
+Description=blueman-applet
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/blueman-applet
+ExecStop=/usr/bin/pkill blueman-applet
+
+[Install]
+WantedBy=wm.target
