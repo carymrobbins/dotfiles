@@ -1,4 +1,12 @@
 <keymap version="1" name="Mac Linux Compat" parent="Mac OS X 10.5+">
+  <action id="$Copy">
+    <keyboard-shortcut first-keystroke="meta c" />
+    <keyboard-shortcut first-keystroke="shift ctrl c" />
+  </action>
+  <action id="$Paste">
+    <keyboard-shortcut first-keystroke="meta v" />
+    <keyboard-shortcut first-keystroke="shift ctrl v" />
+  </action>
   <action id="ActivateDebugToolWindow">
     <keyboard-shortcut first-keystroke="meta 5" />
     <keyboard-shortcut first-keystroke="alt 5" />
@@ -83,6 +91,12 @@
   <action id="Diff.ShowDiff">
     <keyboard-shortcut first-keystroke="meta d" />
     <keyboard-shortcut first-keystroke="ctrl d" />
+  </action>
+  <action id="Editor Copy">
+    <keyboard-shortcut first-keystroke="shift ctrl c" />
+  </action>
+  <action id="Editor Paste">
+    <keyboard-shortcut first-keystroke="shift ctrl v" />
   </action>
   <action id="EditorDeleteToWordEnd" />
   <action id="EditorDeleteToWordStart">
