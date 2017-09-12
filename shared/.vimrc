@@ -36,6 +36,12 @@ let mapleader=" "
 
 "Key mappings
 """""""""""""
+"Save current file
+nmap <Leader>w :w<CR>
+"Save and close current file
+nmap <Leader>x :x<CR>
+"Close current file
+nmap <Leader>q :q<CR>
 "Copy selection to system clipboard
 xmap <Leader>y "*y
 "Paste system clipboard
