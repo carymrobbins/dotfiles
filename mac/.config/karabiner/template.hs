@@ -22,14 +22,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wall -Werror #-}
 
+import Prelude hiding (mod)
 import Data.Aeson
 import Data.Aeson.Types
 import Data.Aeson.Encode.Pretty
 import qualified Data.ByteString.Lazy.Char8 as LC
 import Data.Maybe
 import Data.Monoid
-import Data.Ord
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified GHC.TypeLits as TL
@@ -38,139 +39,149 @@ import GHC.TypeLits (ErrorMessage((:$$:)))
 main :: IO ()
 main =  LC.putStrLn $ pretty root
 
+root :: Root
 root = Root "Linux Compat" [rule]
+  where
+  rule = Rule "Various remappings to make it feel like linux" $ mempty
+    <> terminalRemaps
+    <> intellijRemaps
+    <> notTerminalOrIntelliJRemaps
+    <> chunkwmRemaps
+    <> workspaceRemaps
+    <> vimArrowsRemaps
 
-rule = Rule "Various remappings to make it feel like linux" $
-     terminalRemaps
-  <> notTerminalOrIntelliJRemaps
-  <> chunkwmRemaps
-  <> workspaceRemaps
-  <> vimArrowsRemaps
-
-terminalRemaps =
-  [ -- Copy
-    [Control, Shift] |+| C !> RightCommand |+| C
-    -- Paste
-  , [Control, Shift] |+| V !> RightCommand |+| V
-  ] ?? [iterm]
-
--- These bindings don't work well with iterm2 or intellij due
--- to clashes with vim, tmux, etc, so excluding them with ??!
-notTerminalOrIntelliJRemaps =
-  (
-    -- Useful for moving to tab n of an app, e.g. browser.
-    (map (\n -> Option |+| n !> RightCommand |+| n) numbers)
-    <>
-    [ -- New tab
-      Control |+| T !> RightCommand |+| T
-      -- Open closed tab
-    , [Control, Shift] |+| T !> [RightCommand, RightShift] |+| T
-      -- Close tab
-    , Control |+| W !> RightCommand |+| W
-      -- Copy
-    , Control |+| C !> RightCommand |+| C
-      -- Cut
-    , Control |+| X !> RightCommand |+| X
+  terminalRemaps =
+    [ -- Copy
+      [Control, Shift] |+| C !> RightCommand |+| C
       -- Paste
-    , Control |+| V !> RightCommand |+| V
-      -- Paste without formatting
-    , [Control, Shift] |+| V !> [RightCommand, RightShift] |+| V
-      -- Select all
-    , Control |+| A !> RightCommand |+| A
-      -- Find
-    , Control |+| F !> RightCommand |+| F
-      -- Reload
-    , Control |+| R !> RightCommand |+| R
-      -- Force reload
-    , [Shift, Control] |+| R !> [RightShift, RightCommand] |+| R
-      -- Undo
-    , Control |+| Z !> RightCommand |+| Z
-      -- Redo
-    , Control |+| Y !> RightCommand |+| Y
-      -- Highlight address
-    , Control |+| L !> RightCommand |+| L
-      -- Previous tab
-    , [Option, Shift] |+| OpenBracket  !> [RightCommand, RightShift] |+| OpenBracket
-      -- Next tab
-    , [Option, Shift] |+| CloseBracket !> [RightCommand, RightShift] |+| CloseBracket
-      -- Back / Forward
-    , Option |+| LeftArrow  !> RightCommand |+| LeftArrow
-    , Option |+| RightArrow !> RightCommand |+| RightArrow
-      -- Delete previous word
-    , Control |+| Backspace !> RightOption |+| Backspace
-      -- Chrome: Private tab
-    , [Control, Shift] |+| N !> [RightCommand, RightShift] |+| N
-      -- Slack: Go to conversation
-    , Control |+| K !> RightCommand |+| K
-    , Control |+| ReturnOrEnter !> RightCommand |+| ReturnOrEnter
+    , [Control, Shift] |+| V !> RightCommand |+| V
+    ] ?? [iterm]
+
+  -- The Option + Key mappings in IntelliJ don't work consistently due
+  -- to Mac's preference to insert unicode chars instead.
+  -- These mappings override that behavior.
+  intellijRemaps =
+    [ -- Jump to Super method
+      Option |+| U !> RightCommand |+| U
+    ] ?? [intellij]
+
+  -- These bindings don't work well with iterm2 or intellij due
+  -- to clashes with vim, tmux, etc, so excluding them with ??!
+  notTerminalOrIntelliJRemaps =
+    (
+      -- Useful for moving to tab n of an app, e.g. browser.
+      (map (\n -> Option |+| n !> RightCommand |+| n) numbers)
+      <>
+      [ -- New tab
+        Control |+| T !> RightCommand |+| T
+        -- Open closed tab
+      , [Control, Shift] |+| T !> [RightCommand, RightShift] |+| T
+        -- Close tab
+      , Control |+| W !> RightCommand |+| W
+        -- Copy
+      , Control |+| C !> RightCommand |+| C
+        -- Cut
+      , Control |+| X !> RightCommand |+| X
+        -- Paste
+      , Control |+| V !> RightCommand |+| V
+        -- Paste without formatting
+      , [Control, Shift] |+| V !> [RightCommand, RightShift] |+| V
+        -- Select all
+      , Control |+| A !> RightCommand |+| A
+        -- Find
+      , Control |+| F !> RightCommand |+| F
+        -- Reload
+      , Control |+| R !> RightCommand |+| R
+        -- Force reload
+      , [Shift, Control] |+| R !> [RightShift, RightCommand] |+| R
+        -- Undo
+      , Control |+| Z !> RightCommand |+| Z
+        -- Redo
+      , Control |+| Y !> RightCommand |+| Y
+        -- Highlight address
+      , Control |+| L !> RightCommand |+| L
+        -- Previous tab
+      , [Option, Shift] |+| OpenBracket  !> [RightCommand, RightShift] |+| OpenBracket
+        -- Next tab
+      , [Option, Shift] |+| CloseBracket !> [RightCommand, RightShift] |+| CloseBracket
+        -- Back / Forward
+      , Option |+| LeftArrow  !> RightCommand |+| LeftArrow
+      , Option |+| RightArrow !> RightCommand |+| RightArrow
+        -- Delete previous word
+      , Control |+| Backspace !> RightOption |+| Backspace
+        -- Chrome: Private tab
+      , [Control, Shift] |+| N !> [RightCommand, RightShift] |+| N
+        -- Slack: Go to conversation
+      , Control |+| K !> RightCommand |+| K
+      , Control |+| ReturnOrEnter !> RightCommand |+| ReturnOrEnter
+      ]
+    ) ??! [iterm, intellij]
+
+  -- Key maps to use simulate Xmonad.
+  chunkwmRemaps =
+    [
+      -- Focus monitor 1
+      Command |+| W !> chunkMod |+| W
+      -- Focus monitor 2
+    , Command |+| E !> chunkMod |+| E
+      -- Focus monitor 3
+    , Command |+| R !> chunkMod |+| R
+      -- Move window to monitor 1
+    , [Shift, Command] |+| W !> chunkShiftMod |+| W
+      -- Move window to monitor 2
+    , [Shift, Command] |+| E !> chunkShiftMod |+| E
+      -- Move window to monitor 3
+    , [Shift, Command] |+| R !> chunkShiftMod |+| R
+      -- Focus previous window
+    , Command |+| J !> chunkMod |+| J
+      -- Focus next window
+    , Command |+| K !> chunkMod |+| K
+      -- Move window to previous
+    , [Shift, Command] |+| J !> chunkShiftMod |+| J
+      -- Move window to next
+    , [Shift, Command] |+| K !> chunkShiftMod |+| K
+      -- Spotlight
+    , Command |+| P !> RightCommand |+| Spacebar
+      -- Default (bsp) layout
+    , Command |+| Spacebar !> chunkMod |+| Spacebar
+      -- Full (monocle) layout
+    , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
+      -- Toggle float current window
+    , Command |+| T !> chunkMod |+| T
     ]
-  ) ??! [iterm, intellij]
 
--- Key maps to use simulate Xmonad.
-chunkwmRemaps =
-  [
-    -- Focus monitor 1
-    Command |+| W !> chunkMod |+| W
-    -- Focus monitor 2
-  , Command |+| E !> chunkMod |+| E
-    -- Focus monitor 3
-  , Command |+| R !> chunkMod |+| R
-    -- Move window to monitor 1
-  , [Shift, Command] |+| W !> chunkShiftMod |+| W
-    -- Move window to monitor 2
-  , [Shift, Command] |+| E !> chunkShiftMod |+| E
-    -- Move window to monitor 3
-  , [Shift, Command] |+| R !> chunkShiftMod |+| R
-    -- Focus previous window
-  , Command |+| J !> chunkMod |+| J
-    -- Focus next window
-  , Command |+| K !> chunkMod |+| K
-    -- Move window to previous
-  , [Shift, Command] |+| J !> chunkShiftMod |+| J
-    -- Move window to next
-  , [Shift, Command] |+| K !> chunkShiftMod |+| K
-    -- Spotlight
-  , Command |+| P !> RightCommand |+| Spacebar
-    -- Default (bsp) layout
-  , Command |+| Spacebar !> chunkMod |+| Spacebar
-    -- Full (monocle) layout
-  , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
-    -- Toggle float current window
-  , Command |+| T !> chunkMod |+| T
-  ]
+  workspaceRemaps = numbers >>= \n ->
+    [ -- Use Command+number instead of Control+number for switching workspaces.
+      Command          |+| n !> RightControl  |+| n
+      -- Use Shift+Command+number to move window to workspace via chunkwm
+    , [Shift, Command] |+| n !> chunkShiftMod |+| n
+    ]
 
-workspaceRemaps = numbers >>= \n ->
-  [ -- Use Command+number instead of Control+number for switching workspaces.
-    Command          |+| n !> RightControl  |+| n
-    -- Use Shift+Command+number to move window to workspace via chunkwm
-  , [Shift, Command] |+| n !> chunkShiftMod |+| n
-  ]
+  vimArrowsRemaps =
+    [ -- Remap Option+h/j/k/l to arrow keys
+      Option |+| H !> LeftArrow
+    , Option |+| J !> DownArrow
+    , Option |+| K !> UpArrow
+    , Option |+| L !> RightArrow
+      -- Remap Shift+Option+h/j/k/l to shift+arrow keys
+      -- Useful when highlighting with vim arrows
+    , [Shift, Option] |+| H !> RightShift |+| LeftArrow
+    , [Shift, Option] |+| J !> RightShift |+| DownArrow
+    , [Shift, Option] |+| K !> RightShift |+| UpArrow
+    , [Shift, Option] |+| L !> RightShift |+| RightArrow
+    ]
 
-vimArrowsRemaps =
-  [ -- Remap Option+h/j/k/l to arrow keys
-    Option |+| H !> LeftArrow
-  , Option |+| J !> DownArrow
-  , Option |+| K !> UpArrow
-  , Option |+| L !> RightArrow
-    -- Remap Shift+Option+h/j/k/l to shift+arrow keys
-    -- Useful when highlighting with vim arrows
-  , [Shift, Option] |+| H !> RightShift |+| LeftArrow
-  , [Shift, Option] |+| J !> RightShift |+| DownArrow
-  , [Shift, Option] |+| K !> RightShift |+| UpArrow
-  , [Shift, Option] |+| L !> RightShift |+| RightArrow
-  ]
+  -- My ~/.chunkwmrc uses these keys as "mod" keys
+  chunkMod = [RightControl, RightOption, RightCommand]
+  chunkShiftMod = RightShift : chunkMod
 
--- My ~/.chunkwmrc uses these keys as "mod" keys
-chunkMod = [RightControl, RightOption, RightCommand]
-chunkShiftMod = RightShift : chunkMod
+  -- Number keys on the keyboard, useful for generating key maps via loops.
+  numbers = [One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Zero]
 
--- Number keys on the keyboard, useful for generating key maps via loops.
-numbers = [One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Zero]
-
--- Patterns for binding keys only for certain apps.
-iterm = litPat "com.googlecode.iterm2"
-chrome = litPat "com.google.Chrome"
-intellij = litPat "com.jetbrains.intellij"
+  -- Patterns for binding keys only for certain apps.
+  iterm = litPat "com.googlecode.iterm2"
+  -- chrome = litPat "com.google.Chrome"
+  intellij = litPat "com.jetbrains.intellij"
 
 -----------------------------------
 
@@ -220,9 +231,9 @@ instance AsAnyModifier a
 
 instance
   TL.TypeError
-    (    TL.Text "Unsupported ManipulatorBuilder (!>) usage;"
-    :$$: TL.Text "'to' binding must use a PhysicalModifier (e.g. RightControl)"
-    :$$: TL.Text "not a MetaModifier (e.g. Control)"
+    (     'TL.Text "Unsupported ManipulatorBuilder (!>) usage;"
+    ':$$: 'TL.Text "'to' binding must use a PhysicalModifier (e.g. RightControl)"
+    ':$$: 'TL.Text "not a MetaModifier (e.g. Control)"
     )
   => ManipulatorBuilder a (KeyBinding MetaModifier) where
   (!>) = undefined
@@ -251,8 +262,10 @@ infix 3 ?!
 (??!) :: [Manipulator] -> [Text] -> [Manipulator]
 ms ??! ts = map (?! ts) ms
 
+pretty :: Root -> LC.ByteString
 pretty = encodePretty' prettyConfig
 
+prettyConfig :: Config
 prettyConfig = defConfig
   { confIndent = Spaces 2
   , confCompare = prettyConfigCompare
