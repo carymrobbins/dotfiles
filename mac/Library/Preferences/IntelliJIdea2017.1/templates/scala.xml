@@ -63,4 +63,9 @@
       <option name="SCALA" value="true" />
     </context>
   </template>
+  <template name="reify" value="scala.reflect.runtime.universe.reify {&#10;  $END$&#10;}" description="scala.reflect.runtime.universe.reify { .. }" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA" value="true" />
+    </context>
+  </template>
 </templateSet>
