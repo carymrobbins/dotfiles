@@ -2,6 +2,7 @@ $HOME/bin
 $HOME/dotfiles/shared/bin
 $HOME/dotfiles/linux/bin
 $HOME/.local/bin
+$HOME/.cargo/bin
 $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 /usr/local/bin
 /usr/local/sbin
