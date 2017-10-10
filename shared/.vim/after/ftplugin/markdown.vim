@@ -1,2 +1,3 @@
 setlocal colorcolumn=0
-set spell
+"Spell is annoying set by default
+"set spell
