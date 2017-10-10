@@ -51,6 +51,10 @@
     <mouse-shortcut keystroke="button5" />
     <keyboard-shortcut first-keystroke="ctrl i" />
   </action>
+  <action id="Generate">
+    <keyboard-shortcut first-keystroke="alt insert" />
+    <keyboard-shortcut first-keystroke="ctrl alt g" />
+  </action>
   <action id="GotoClass">
     <keyboard-shortcut first-keystroke="alt o" />
   </action>
@@ -75,6 +79,7 @@
   <action id="MoveEditorToOppositeTabGroup">
     <keyboard-shortcut first-keystroke="shift ctrl o" />
   </action>
+  <action id="Mvc.RunTarget" />
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="alt right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
