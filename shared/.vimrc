@@ -43,9 +43,9 @@ nmap <Leader>x :x<CR>
 "Close current file
 nmap <Leader>q :q<CR>
 "Copy selection to system clipboard
-xmap <Leader>y "*y
+xmap <Leader>y "+y
 "Paste system clipboard
-nmap <Leader>p "*p
+nmap <Leader>p "+p
 "Toggle spellchecker
 nmap <Leader>s :setlocal spell!<CR>
 "Toggle line numbers
