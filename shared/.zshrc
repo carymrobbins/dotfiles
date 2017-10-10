@@ -21,14 +21,10 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
-alias gwa='./gradlew assemble'
 alias c='curl -sS'
 alias v='$EDITOR'
+alias sv='sudoedit'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
-alias xmv='v ~/.xmonad/xmonad.hs'
-alias xmc='xmonad --recompile && cat ~/.xmonad/xmonad.errors'
-alias sc='sudo systemctl'
-alias scu='systemctl --user'
 
 # SBT fails for permgen, this should work for Java >= 8
 # See https://github.com/sbt/sbt/issues/1395
@@ -42,13 +38,15 @@ hl() { "$@" --help 2>&1 | less;  }
 # Run bash's help function
 help() { bash -c "help $(printf '%q ' "$@")"; }
 
-# Mac-specific aliases
-if [ "$(uname -s)" = "Darwin" ]; then
-  # kwm helpers
-  alias vk="vim ~/.kwm/kwmrc"
-  alias kr="kwmc config reload"
-
-  # Java helpers
+if [ "$(uname -s)" = "Linux" ]; then
+  # Linux-specific aliases
+  alias xmv='v ~/.xmonad/xmonad.hs'
+  alias xmc='xmonad --recompile && cat ~/.xmonad/xmonad.errors'
+  alias sc='systemctl'
+  alias ssc='sudo systemctl'
+  alias scu='systemctl --user'
+elif [ "$(uname -s)" = "Darwin" ]; then
+  # Mac-specific aliases
   for c in java javac; do alias "${c}7"='$(/usr/libexec/java_home -v 1.7)/bin/'$c; done
   for c in java javac; do alias "${c}8"='$(/usr/libexec/java_home -v 1.8)/bin/'$c; done
 fi
