@@ -46,3 +46,6 @@
 [submodule "shared/.vim/bundle/nerdtree"]
 	path = shared/.vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree
+[submodule "shared/.vim/bundle/hexmode"]
+	path = shared/.vim/bundle/hexmode
+	url = https://github.com/fidian/hexmode.git
