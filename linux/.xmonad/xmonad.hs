@@ -27,27 +27,30 @@ myKeys =
   [ ((shiftMask .|. myModKey, xK_h), scratchHamster)
   ]
   where
-  scratchHamster = namedScratchpadAction myScratchpads hamsterScratchpadName
-
-hamsterScratchpadName = "hamster"
+  scratchHamster = namedScratchpadAction myScratchpads "hamster"
 
 myScratchpads =
   [ NS "hamster" spawnHamster findHamster manageHamster
   ]
   where
-  spawnHamster = hamsterScratchpadName
+  -- Avoid spawning multiple instances of hamster
+  spawnHamster = "bash -c 'killall hamster 2>/dev/null || true && hamster'"
   findHamster = className =? "Hamster"
   manageHamster = customFloating $ W.RationalRect h w t l
     where
-    h = 0.6
-    w = 0.6
-    t = (1 - h) / 2 -- centered top/botom
-    l = (1 - w) / 2 -- centered left/right
+    h = 0.3
+    w = 0.3
+    t = (1 - h) / 2
+    l = (1 - w) / 1.5
 
 myManageHook =
   def
   <+> manageDocks
   <+> namedScratchpadManageHook myScratchpads
+  -- Float that annoying slack call popup
+  <+> (title =? "Slack Call Minipanel" --> doFloat)
+  -- Float amethyst games, so long as their app name is 'Amethyst'
+  <+> (appName =? "Amethyst" --> doFloat)
 
 main = do
   xmobarProc <- spawnPipe "xmobar ~/.xmonad/xmobarrc"
