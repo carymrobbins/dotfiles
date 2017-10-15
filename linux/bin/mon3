@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # Note we use --set "Broadcast RGB" "Full" to avoid the washed out colors
 # over HDMI; see https://askubuntu.com/questions/621964/colors-on-display-are-washed-out
 xrandr \
@@ -9,6 +11,19 @@ xrandr \
   --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal \
                   --set "Broadcast RGB" "Full" \
   --output DP-2 --mode 1920x1080 --pos 3840x0 --rotate normal \
-                --set "Broadcast RGB" "Full" \
-  && xmonad --restart \
-  && systemctl --user restart stalonetray
+                --set "Broadcast RGB" "Full"
+
+xmonad --restart
+
+# Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
+# This is so stalonetray can be positioned properly for the new layout.
+elapsed=0
+timeout=5
+while [ "$elapsed" -lt "$timeout" ]; do
+  if [ "$(xrandr | fgrep '*+' | wc -l)" -eq 3 ]; then
+    break
+  fi
+  sleep 1
+  ((++elapsed))
+done
+systemctl --user restart stalonetray
