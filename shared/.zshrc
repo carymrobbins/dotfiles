@@ -21,6 +21,7 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
+alias gr=gradle
 alias c='curl -sS'
 alias v='$EDITOR'
 alias sv='sudoedit'
