@@ -3,10 +3,10 @@
 "pamixer -t"
   m:0x0 + c:121
 
-"pamixer -d 10"
+"pamixer -d 5"
   XF86AudioLowerVolume
 
-"pamixer -i 10"
+"pamixer -i 5"
   XF86AudioRaiseVolume
 
 "pamixer -d 1"
