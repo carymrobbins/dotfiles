@@ -36,12 +36,11 @@ myScratchpads =
   -- Avoid spawning multiple instances of hamster
   spawnHamster = "bash -c 'killall hamster 2>/dev/null || true && hamster'"
   findHamster = className =? "Hamster"
-  manageHamster = customFloating $ W.RationalRect h w t l
-    where
-    h = 0.3
-    w = 0.3
-    t = (1 - h) / 2
-    l = (1 - w) / 1.5
+  manageHamster = customFloating $ centeredRect (1/3) (2/3)
+
+-- | Rectangle centered on screen with specified width and height, sizes
+--   relative to the screen size.
+centeredRect w h = W.RationalRect ((1-w)/2) ((1-h)/2) w h
 
 myManageHook =
   def
