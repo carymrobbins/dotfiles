@@ -1,5 +1,6 @@
 stuff/
 worksheet.sc
+*.worksheet.sc
 .DS_Store
 *.swp
 ScratchPad.scala

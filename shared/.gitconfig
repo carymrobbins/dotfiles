@@ -28,7 +28,7 @@
 	d = diff
 	dc = diff --cached
 	dh = diff HEAD
-	l = log --oneline --color --no-decorate -n15
+	l = log --oneline --color
 	ll = log --graph --decorate
 	ls = log --graph --decorate --stat
 	l1 = log --oneline
