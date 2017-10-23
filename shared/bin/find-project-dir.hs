@@ -1,27 +1,43 @@
 #!/usr/bin/env runhaskell
 
+-- Compile with: ghc --make -dynamic find-project-dir
+
+{- You'll want a ~/.find-project-dir file with something like the following -
+
+roots:
+$HOME/build
+$HOME/projects
+$HOME/work
+
+aliases:
+dot=dotfiles
+hf=projects/intellij-haskforce
+-}
+
+{-# OPTIONS_GHC -Wall -Werror #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad
-import Data.Foldable
 import Data.List (elemIndex)
+import Data.Monoid
 import Data.Maybe
+import qualified Data.Text as T
 import Data.Traversable
-import Debug.Trace
 import System.Directory
 import System.Environment
 import System.Exit
 import System.FilePath
 import System.IO
+import System.IO.Unsafe (unsafePerformIO)
 
-(=:) = (,)
-
+usage :: String
 usage = "Usage: find-project-dir.hs <pattern>"
 
--- Relative to $HOME
-dirs = ["work", "projects", "build"]
-
+main :: IO ()
 main = getArgs >>= \case
+  ["--debug"] -> readConfig >>= print
   [pat] -> do
     results <- run pat
     case catMaybes . join $ results of
@@ -34,35 +50,64 @@ main = getArgs >>= \case
 
   _ -> hPutStrLn stderr usage
 
-readAliases = do
-  home <- getHomeDirectory
-  let path = home </> ".find-project-dir"
+data Config = Config
+  { configRoots :: [String]
+  , configAliases :: [(String, String)]
+  }
+  deriving Show
+
+mkConfigRoot :: String -> Config
+mkConfigRoot r = Config [r] mempty
+
+mkConfigAlias :: (String, String) -> Config
+mkConfigAlias kv = Config mempty [kv]
+
+instance Monoid Config where
+  mempty = Config mempty mempty
+  mappend (Config rs1 as1) (Config rs2 as2) = Config (rs1 <> rs2) (as1 <> as2)
+
+homeDir :: String
+homeDir = unsafePerformIO getHomeDirectory
+{-# NOINLINE homeDir #-}
+
+readConfig :: IO Config
+readConfig = do
+  let path = homeDir </> ".find-project-dir"
   exists <- doesFileExist path
   if exists then
-    parse <$> readFile path
+    parse parseInit mempty . lines <$> readFile path
   else
-    return []
+    return mempty
   where
-  parse :: String -> [(String, String)]
-  parse content = map pair . lines $ content
+  parse p config fileLines = case fileLines of
+    [] -> config
+    x:xs -> case x of
+      "" -> parse p config xs
+      "roots:" -> parse parseRoot config xs
+      "aliases:" -> parse parseAlias config xs
+      _ -> parse p (config <> p x) xs
 
-  pair :: String -> (String, String)
-  pair s = case break (== '=') s of
-    (k, '=':v) -> (k, v)
-    _ -> error $ "Invalid pair: " ++ show s
+  parseInit x = error $ "Expected 'roots:' or 'aliases:'; got: " <> show x
 
+  parseRoot x =
+    mkConfigRoot $ T.unpack $ T.replace "$HOME" (T.pack homeDir) (T.pack x)
+
+  parseAlias x = case T.splitOn "=" $ T.pack x of
+    [k, v] -> mkConfigAlias (T.unpack k, T.unpack v)
+    _ -> error $ "Invalid alias: " <> show x
+
+run :: String -> IO [[Maybe String]]
 run pat = do
-  aliases <- readAliases
-  case lookup pat aliases of
+  Config {..} <- readConfig
+  case lookup pat configAliases of
     Just found -> do
-      home <- getHomeDirectory
-      return $ [[Just $ home </> found]]
-    Nothing -> search pat
+      return $ [[Just $ homeDir </> found]]
+    Nothing -> search pat configRoots
 
-search pat = do
-  home <- getHomeDirectory
+search :: Traversable t => String -> t FilePath -> IO (t [Maybe FilePath])
+search pat dirs = do
   for dirs $ \dir -> do
-    let path = home </> dir
+    let path = homeDir </> dir
     files <- getDirectoryContents path
     for files $ \file -> do
       let fullPath = path </> file
@@ -74,6 +119,7 @@ search pat = do
       else
         return Nothing
 
+matches :: Eq a => [a] -> [a] -> Bool
 file `matches` pat
   | file == pat = True
   | otherwise = loop file pat
