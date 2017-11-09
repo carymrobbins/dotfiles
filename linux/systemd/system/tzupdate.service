@@ -1,0 +1,9 @@
+[Unit]
+Description=Run tzupdate
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "%h/.local/bin/tzupdate"
+
+[Install]
+WantedBy=wm.target
