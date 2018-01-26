@@ -1,0 +1,78 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 [-i] [-v]"
+  echo
+  echo "-i Wait for screenshot"
+  echo "-v Verbose logging"
+}
+
+log() {
+  [ -z "$verbose" ] || >&2 echo "$@"
+}
+
+check_ptpb_code() {
+  local code=$1
+  local output=$2
+  log "ptpb exited with code: $code"
+  if [ $code -ne 0 ]; then
+    >&2 echo "Failed to paste to ptpb; output was:"
+    >&2 echo "$output"
+  fi
+}
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    -i)
+      do_import=1
+      shift
+      ;;
+    -v)
+      verbose=1
+      shift
+      ;;
+    *)
+      >&2 echo "Unexpected argument: $1"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -n "$do_import" ]; then
+  img=$(mktemp).png
+  log "Importing screenshot to tmp file: $img"
+  import "$img"
+  log "Imported screenshot"
+  output=$(ptpb < "$img")
+  code=$?
+  log "Output from ptpb:"
+  log "-----------------"
+  log "$output"
+  log "-----------------"
+  check_ptpb_code "$code" "$output"
+else
+  if ! command -v xclip >/dev/null 2>&1; then
+    >&2 echo "The program 'xclip' is not installed"
+    >&2 echo "Install it with 'pacman -S xclip'"
+    exit 1
+  fi
+  output=$(xclip -se c -o -t image/png | ptpb)
+  code=$?
+  log "Output from ptpb:"
+  log "-----------------"
+  log "$output"
+  log "-----------------"
+  check_ptpb_code "$code" "$output"
+fi
+
+
+url=$(grep '^url' <<< "$output" | cut -d' ' -f2)
+
+if [ $? -ne 0 ]; then
+  >&2 echo "Failed to get url from ptpb output; output was:"
+  >&2 echo "$output"
+  exit 1
+fi
+
+echo "$url.png"

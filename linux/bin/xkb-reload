@@ -1,3 +1,7 @@
 #!/bin/bash
 
+# Ensure we start from the US config
+# This fixes problems with weird states
+# e.g. ctrl+r may stop working
+setxkbmap us
 xkbcomp ~/dotfiles/linux/custom.xkb "$DISPLAY"

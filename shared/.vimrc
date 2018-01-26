@@ -1,13 +1,13 @@
 execute pathogen#infect()
 
+source ~/dotfiles/shared/common.vimrc
+
 syntax on
 filetype plugin on
 filetype indent on
 
 "Show line, column numbers in status bar.
 set ruler
-"Highlight search terms.
-set hlsearch
 "Always show file name.
 set ls=2
 "Custom command to clear search highlighting.
@@ -29,17 +29,9 @@ set shiftwidth=2  "An indent is 4 spaces
 set smarttab      "Indent instead of tab at start of line
 set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
-"Set leader to spacebar
-let mapleader=" "
 
 "Key mappings
 """""""""""""
-"Save current file
-nmap <Leader>w :w<CR>
-"Save and close current file
-nmap <Leader>x :x<CR>
-"Close current file
-nmap <Leader>q :q<CR>
 "Copy selection to system clipboard
 xmap <Leader>y "+y
 "Paste system clipboard
@@ -52,15 +44,10 @@ nmap <Leader>n :setlocal number!<CR>
 nmap <Leader>h :setlocal hlsearch!<CR>
 "Toggle color column (max line length bar)
 nmap <Leader>c :call ToggleColorColumn()<CR>
-"Append to end of lines of selection
-xmap <Leader>a $A
 "Ctrl+N to open/close NERDTree
 map <C-n> :NERDTreeToggle<CR>
-" Map // to search for visually selected text.
-vnoremap // y/<C-R>"<CR>
 "Remap <Enter> to split the line and insert a new line in between for braces/parens
 inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
-"""""""""""""
 
 "Customize for solarized dark/light
 

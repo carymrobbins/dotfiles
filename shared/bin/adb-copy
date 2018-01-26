@@ -1,25 +1,90 @@
 #!/bin/bash
 
-: ${REMOTE_PATH:=/sdcard/DCIM/Camera}
+trap 'on_error $LINENO $?' ERR
 
-if [ -n "$1" ]; then
-  >&2 echo "Usage: adb-copy"
-  >&2 echo
-  >&2 echo "Copies files from android device to current directory"
-  >&2 echo
-  >&2 echo "Environment Variables:"
-  >&2 echo "  REMOTE_PATH     Default: $REMOTE_PATH"
+on_error() {
+  local lineno=$1
+  local exitcode=$2
+  if [ -z "$is_invalid_usage" ]; then
+    >&2 echo "Error occurred in $0 at line $1 with code $exitcode"
+  fi
+  exit "$exitcode"
+}
 
+invalid_usage() {
+  is_invalid_usage=1
+  >&2 echo "$@"
+  >&2 usage
   exit 1
+}
+
+usage() {
+  >&2 echo "Copy files to this machine from your android device"
+  >&2 echo "Usage: $0 [options] <source_path> --to <destination_path>"
+  >&2 echo ""
+  >&2 echo "Options:"
+  >&2 echo "-d    dry run"
+  >&2 echo ""
+  >&2 echo "Example: $0 /sdcard/DCIM/Camera --to path/to/nexus"
+}
+
+while [ $# -ne 0 ]; do
+  if [ -z "$src" -a "$2" = "--to" ]; then
+    if [ $# -lt 3 ]; then
+      invalid_usage "Invalid --to usage"
+    fi
+    src=$1
+    dst=$3
+    shift # $src
+    shift # --to
+    shift # $dst
+    if [ ! -d "$dst" ]; then
+      invalid_usage "Destination does not exist: $dst"
+    fi
+    if adb shell "ls '$src'" | grep 'No such file or directory' >/dev/null; then
+      invalid_usage "Source does not exist: $src"
+    fi
+  else
+    case "$1" in
+      -d) dry_run=1; shift;;
+      *)
+        invalid_usage "Unexpected argument: $1"
+    esac
+  fi
+done
+
+if [ -z "$dst" -o -z "$src" ]; then
+  invalid_usage "Missing <destination_path> and <source_path>"
 fi
 
-for f in $(adb shell ls $REMOTE_PATH); do
-    # Remove nasty ^M character added by android.
-    f=${f/%$'\r'/}
-    if [ -f $f ]; then
-        echo "$f already exists, skipping..."
-    else
-        echo "Copying $f ..."
-        adb pull $REMOTE_PATH/$f
-    fi
+
+eval files=()
+while IFS= read -r -d $'\n'; do
+  files+=("$REPLY")
+done < <(
+  adb shell "find '$src' -type f -not -name .nomedia" | tr -d '\r'
+)
+
+for x in "${files[@]}"; do
+  # Remove nasty ^M character added by android.
+  #x=${x/%$'\r'/}
+  target=$dst$x
+  # Skip $target if we already have it
+  if [ -f "$target" ]; then
+    >&2 echo "Already exists, skipping $target"
+    continue
+  fi
+  if [ -z "$dry_run" ]; then
+    mkdir -p "$(dirname "$target")"
+    (
+      set -x
+      adb pull -a "$x" "$target"
+    )
+  else
+    # sed stuff is just to indent $x to match length of $dst
+    echo "pull $(sed 's/./ /g' <<< "$dst")$x"
+    echo "  to $target"
+  fi
+  echo "---"
 done
+echo "Done"

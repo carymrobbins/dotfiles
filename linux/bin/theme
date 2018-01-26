@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -x
+
+# TODO:
+# lxappearance
+# gitter
+# intellij
+# terminator
+
+typ=$1
+dark_desktop=black-triangles.jpg
+light_desktop=ice-mountains.jpeg
+
+set_wallpaper() {
+  (
+    cd ~/dotfiles/linux/resources
+    ./set-wallpaper "$1"
+  )
+}
+
+set_stalonetray_theme() {
+  (
+    cd ~/.xmonad
+    ln -s -f "stalonetrayrc.$1" stalonetrayrc
+  )
+}
+
+set_xmobar_theme() {
+  (
+    cd ~/.xmonad
+    ln -s -f "xmobarrc.$1" xmobarrc
+  )
+}
+
+case "$typ" in
+  dark|d)
+    set_wallpaper       "$dark_desktop"
+    hexchat-theme         dark
+    set_stalonetray_theme dark
+    set_xmobar_theme      dark
+    ;;
+  light|l)
+    set_wallpaper       "$light_desktop"
+    hexchat-theme         light
+    set_stalonetray_theme light
+    set_xmobar_theme      light
+    ;;
+  *)
+    >&2 echo "Invalid theme type: $typ"
+    exit 1
+    ;;
+esac
+
+xmonad --restart
+systemctl --user restart stalonetray
+reload-x-settings

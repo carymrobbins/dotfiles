@@ -1,9 +1,14 @@
 :set prompt "\x1b[35mλ\x1b[0m "
 
-:m + Data.List.Split
+-- Default imports
+:m + Control.Monad
 :m + Data.List
+:m + Data.List.Split
+:m + Data.Monoid
 
+-- START HASKELL CODE
 :{
+
 -- Pretty print a number with commas
 pp :: Show a => a -> IO ()
 pp x = putStrLn $ h ++ t
@@ -17,20 +22,59 @@ removeCRsFromFile :: FilePath -> IO ()
 removeCRsFromFile file = do
   c <- readFile file
   length c `seq` writeFile file $ filter (/= '\r') c
-:}
+
+takeWhileM :: Monad m => (a -> Bool) -> [m a] -> m [a]
+takeWhileM p (ma : mas) = do
+    a <- ma
+    if p a
+      then liftM (a :) $ takeWhileM p mas
+      else return []
+takeWhileM _ _ = return []
+
+getLinesWhile :: (String -> Bool) -> IO String
+getLinesWhile p = liftM unlines $ takeWhileM p (repeat getLine)
+
+getLines :: IO String
+getLines = getLinesWhile (/="\"\"\"")
 
 -- Pretty printing with :cp and :ncp
 -- pacman -S haskell-pretty-show haskell-hscolour
 -- or
 -- stack build pretty-show hscolour
-:{
 colorPrint =
   System.IO.putStrLn
   . Language.Haskell.HsColour.hscolour
       Language.Haskell.HsColour.TTY
       Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False
   . Text.Show.Pretty.ppShow
+
+-- Helper to do hour/minute time math
+-- data HourMinTime = HourMinTime Int Int
+--
+-- h #: m
+--   | abs h > 23 -> error $ "Invalid hour for HourMinTime: " ++ h
+--   | m < 0 || m > 59 -> error $ "Invalid minute for HourMinTie: " ++ m
+--   | otherwise = HourMinTime
+--
+-- instance Show HourMinTime where
+--   show (HourMin h m) =
+--     show h ++ ":" ++ (reverse $ take 2 $ reverse $ "0" ++ show m)
+--
+-- instance Num HourMinTime where
+--   (HourMinTime h1 m1) + (HourMinTime h2 m2) =
+--     HourMinTime (h + (m `div` 60) `mod` 24) (m `div` 60)
+--     where
+--     h = h1 + h2
+--     m = m1 + m2
+--
+--   (HourMinTime h1 m1) - (HourMinTime h2 m2) =
+--     HourMinTime (h + (m `div` 60) `mod` 24) (m `div` 60)
+--     where
+--     h = h1 + h2
+--     m = m1 + m2
 :}
-:set -interactive-print=colorPrint
+-- END HASKELL CODE
+
+-- Use cp/ncp to turn on/off color printing (off by default)
 :def cp (\_ -> return ":set -interactive-print=colorPrint")
 :def ncp (\_ -> return ":set -interactive-print=print")

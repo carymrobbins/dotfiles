@@ -1,6 +1,6 @@
 #!/usr/bin/env runhaskell
 
--- Compile with: ghc --make -dynamic find-project-dir
+-- Compile with: make-find-project-dir
 
 {- You'll want a ~/.find-project-dir file with something like the following -
 
@@ -20,6 +20,7 @@ hf=projects/intellij-haskforce
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad
+import Data.Char (toLower)
 import Data.List (elemIndex)
 import Data.Monoid
 import Data.Maybe
@@ -119,11 +120,14 @@ search pat dirs = do
       else
         return Nothing
 
-matches :: Eq a => [a] -> [a] -> Bool
+matches :: String -> String -> Bool
 file `matches` pat
-  | file == pat = True
-  | otherwise = loop file pat
+  | fileLower == patLower = True
+  | otherwise = loop fileLower patLower
   where
+  patLower = map toLower pat
+  fileLower = map toLower file
+
   loop _ [] = True
   loop [] _ = False
   loop restFile (c:restPat) = case c `elemIndex` restFile of

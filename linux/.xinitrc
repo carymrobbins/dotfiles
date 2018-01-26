@@ -23,5 +23,9 @@ if command -v mon1 >/dev/null; then
   mon1
 fi
 
+# This is needed for java apps to work properly within xmonad
+# e.g. visualvm, yourkit
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 # Start xmonad with `startx` from a tty
 exec xmonad

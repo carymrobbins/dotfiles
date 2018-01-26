@@ -9,6 +9,9 @@
     <keyboard-shortcut first-keystroke="shift insert" />
     <keyboard-shortcut first-keystroke="shift ctrl v" />
   </action>
+  <action id="ActivateKeyPromoterXToolWindow">
+    <keyboard-shortcut first-keystroke="alt x" />
+  </action>
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
@@ -29,6 +32,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl f9" />
   </action>
   <action id="ContextHelp" />
+  <action id="Diff.PrevChange">
+    <keyboard-shortcut first-keystroke="alt left" />
+    <keyboard-shortcut first-keystroke="shift alt open_bracket" />
+  </action>
   <action id="Editor Copy">
     <keyboard-shortcut first-keystroke="shift ctrl c" />
   </action>
@@ -39,6 +46,8 @@
     <keyboard-shortcut first-keystroke="down" />
     <keyboard-shortcut first-keystroke="ctrl n" />
   </action>
+  <action id="EditorMoveToPageBottom" />
+  <action id="EditorMoveToPageTop" />
   <action id="EditorSelectWord" />
   <action id="EditorUnSelectWord" />
   <action id="EditorUp">
@@ -46,6 +55,10 @@
     <keyboard-shortcut first-keystroke="ctrl p" />
   </action>
   <action id="ExportToTextFile" />
+  <action id="ExpressionTypeInfo">
+    <keyboard-shortcut first-keystroke="shift ctrl p" />
+    <keyboard-shortcut first-keystroke="alt equals" />
+  </action>
   <action id="Forward">
     <keyboard-shortcut first-keystroke="ctrl alt right" />
     <mouse-shortcut keystroke="button5" />
@@ -83,6 +96,7 @@
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="alt right" />
     <keyboard-shortcut first-keystroke="shift alt close_bracket" />
+    <keyboard-shortcut first-keystroke="ctrl page_down" />
   </action>
   <action id="PackageFile" />
   <action id="ParameterInfo">
@@ -95,6 +109,7 @@
   <action id="PreviousTab">
     <keyboard-shortcut first-keystroke="alt left" />
     <keyboard-shortcut first-keystroke="shift alt open_bracket" />
+    <keyboard-shortcut first-keystroke="ctrl page_up" />
   </action>
   <action id="RecentChanges" />
   <action id="Resume" />
@@ -117,5 +132,6 @@
     <keyboard-shortcut first-keystroke="shift alt up" />
   </action>
   <action id="TableResult.GrowSelection" />
+  <action id="View event PSI element" />
   <action id="WD.UploadCurrentRemoteFileAction" />
 </keymap>

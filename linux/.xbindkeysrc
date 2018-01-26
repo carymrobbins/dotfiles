@@ -47,3 +47,12 @@
 
 "thunar"
   Mod4 + f
+
+"mon1"
+  Mod4 + Control + 1
+
+"mon2"
+  Mod4 + Control + 2
+
+"mon3"
+  Mod4 + Control + 3

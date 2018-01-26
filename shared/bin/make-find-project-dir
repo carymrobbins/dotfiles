@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+echo "Using working directory: $PWD"
+
+set -x
+ghc --make -dynamic find-project-dir

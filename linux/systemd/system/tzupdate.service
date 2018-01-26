@@ -3,7 +3,7 @@ Description=Run tzupdate
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c "%h/.local/bin/tzupdate"
+ExecStart=/usr/bin/tzupdate
 
 [Install]
 WantedBy=wm.target

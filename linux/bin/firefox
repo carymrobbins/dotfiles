@@ -1,3 +1,6 @@
 #!/bin/bash
 
-env GTK_THEME=Adwaita:light firefox-esr
+firefox_bin=/usr/bin/firefox
+#firefox_bin=/usr/bin/firefox-esr
+
+env GTK_THEME=Adwaita:light "$firefox_bin" "$@"

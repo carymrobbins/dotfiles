@@ -1,20 +1,6 @@
-set hlsearch
-let mapleader=" "
+source ~/dotfiles/shared/common.vimrc
 
-" Map // to search for visually selected text.
-vnoremap // y/<C-R>"<CR>
-
-" Disable bell in IntelliJ when pressing esc
-set visualbell
-set noerrorbells
-
-"Key mappings
-"""""""""""""
-"Save current file
-nmap <Leader>w :w<CR>
-"Save and close current file
-nmap <Leader>x :x<CR>
-"Close current file
-nmap <Leader>q :q<CR>
 "Don't hlsearch
+"Unfortunately, the one in vimrc can't be reused
+"because toggling doesn't seem to work.
 nmap <Leader>h :noh<CR>

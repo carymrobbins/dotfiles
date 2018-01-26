@@ -21,11 +21,12 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
-alias gr=gradle
+alias gr='$(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi)'
 alias c='curl -sS'
 alias v='$EDITOR'
 alias sv='sudoedit'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
+alias zsv='v ~/.zshrc'
 
 # SBT fails for permgen, this should work for Java >= 8
 # See https://github.com/sbt/sbt/issues/1395

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" -o "$1" = "--help" -o "$1" = "-h" ]; then
+  >&2 echo "Open a project with intellij given a specified pattern"
+  >&2 echo "Usage: $0 <pattern>"
+  exit 1
+fi
+
+proj=$(find-project-dir "$1")
+idea "$proj"
