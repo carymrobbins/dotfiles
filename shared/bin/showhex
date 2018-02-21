@@ -1,0 +1,13 @@
+#!/usr/bin/env runghc
+
+import Numeric
+import Control.Monad
+import Data.Char
+import Data.Monoid
+import System.Environment
+
+main = do
+  cs <- mconcat <$> getArgs
+  forM_ cs $ \c -> putStrLn $ c : ": " ++ hexStr c
+
+hexStr c = map toUpper . reverse . take 4 . reverse $ "000" ++ showHex (ord c) ""

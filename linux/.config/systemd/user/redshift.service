@@ -1,0 +1,10 @@
+[Unit]
+Description=redshift
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/bin/bash -c 'source %h/dotfiles/linux/.redshift ; redshift -v -l "$LATLON"'
+ExecStop=/usr/bin/pkill --signal INT redshift
+
+[Install]
+WantedBy=wm.target

@@ -68,6 +68,7 @@ LINUX_FILES=(
   .path
   .xbindkeysrc
   .xinitrc
+  .XCompose
   .Xresources
   .xmonad
 )

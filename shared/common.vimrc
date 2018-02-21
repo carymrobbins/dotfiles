@@ -37,3 +37,7 @@ inoremap <C-d> δ
 inoremap <C-e> ϵ
 inoremap <C-l> λ
 inoremap <C-k> Λ
+
+"Logic
+inoremap <C-n> ⊥
+inoremap <C-u> ∀

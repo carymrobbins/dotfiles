@@ -1399,7 +1399,7 @@ xkb_symbols "pc+us+inet(evdev)+capslock(escape)" {
     key <HKTG> {         [ Hiragana_Katakana ] };
     key <MUHE> {         [        Muhenkan ] };
     key <KPEN> {         [        KP_Enter ] };
-    key <RCTL> {         [       Control_R ] };
+    key <RCTL> {         [       Multi_key ] };
     key <KPDV> {
         type= "CTRL+ALT",
         symbols[Group1]= [       KP_Divide,       KP_Divide,       KP_Divide,       KP_Divide,      XF86Ungrab ]
@@ -1544,7 +1544,6 @@ xkb_symbols "pc+us+inet(evdev)+capslock(escape)" {
     modifier_map Mod1 { <LALT> };
     modifier_map Mod2 { <NMLK> };
     modifier_map Mod5 { <LVL3> };
-    modifier_map Control { <RCTL> };
     modifier_map Mod1 { <RALT> };
     modifier_map Mod4 { <LWIN> };
     modifier_map Mod4 { <RWIN> };
