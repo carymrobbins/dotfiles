@@ -21,7 +21,10 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
-alias gr='$(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi)'
+# Conditionally use ./gradlew if it exists
+# Setting TERM to workaround gradle 4.5.1 bug
+# See https://github.com/gradle/gradle/issues/4426
+alias gr='TERM=xterm-color $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi)'
 alias c='curl -sS'
 alias v='$EDITOR'
 alias sv='sudoedit'

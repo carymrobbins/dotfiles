@@ -12,6 +12,10 @@ typ=$1
 dark_desktop=black-triangles.jpg
 light_desktop=ice-mountains.jpeg
 
+set_theme_type_file() {
+  echo "$1" > ~/.theme-type
+}
+
 set_wallpaper() {
   (
     cd ~/dotfiles/linux/resources
@@ -33,19 +37,20 @@ set_xmobar_theme() {
   )
 }
 
+do_set_all() {
+  set_theme_type_file   "$1"
+  hexchat-theme         "$1"
+  set_stalonetray_theme "$1"
+  set_xmobar_theme      "$1"
+
+  # dark -> dark_desktop, light -> light_desktop
+  wallpaper=$(eval 'echo $'$(echo "$(eval 'echo $1')_desktop"))
+  set_wallpaper "$wallpaper"
+}
+
 case "$typ" in
-  dark|d)
-    set_wallpaper       "$dark_desktop"
-    hexchat-theme         dark
-    set_stalonetray_theme dark
-    set_xmobar_theme      dark
-    ;;
-  light|l)
-    set_wallpaper       "$light_desktop"
-    hexchat-theme         light
-    set_stalonetray_theme light
-    set_xmobar_theme      light
-    ;;
+  dark|d)  do_set_all dark ;;
+  light|l) do_set_all light ;;
   *)
     >&2 echo "Invalid theme type: $typ"
     exit 1

@@ -9,4 +9,4 @@ $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 $HOME/build/ansible/bin
 $HOME/opt/terraform
 $HOME/Library/Python/2.7/bin
-$HOME/.node/lib/node_modules
+$HOME/.node/bin

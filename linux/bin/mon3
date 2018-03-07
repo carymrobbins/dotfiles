@@ -27,3 +27,6 @@ while [ "$elapsed" -lt "$timeout" ]; do
   ((++elapsed))
 done
 systemctl --user restart stalonetray
+
+# Reload x settings to fix wallpaper and screen refreshing
+reload-x-settings

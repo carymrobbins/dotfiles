@@ -28,16 +28,3 @@ nmap <Leader>j f xi<CR><ESC>l
 nmap <Leader>o o<ESC>
 "Append to end of lines of selection
 xmap <Leader>a $A
-
-"Greek letters
-inoremap <C-a> α
-inoremap <C-b> β
-inoremap <C-g> γ
-inoremap <C-d> δ
-inoremap <C-e> ϵ
-inoremap <C-l> λ
-inoremap <C-k> Λ
-
-"Logic
-inoremap <C-n> ⊥
-inoremap <C-u> ∀

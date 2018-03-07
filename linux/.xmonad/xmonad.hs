@@ -65,7 +65,23 @@ myManageHook =
   def
   <+> manageDocks
   <+> namedScratchpadManageHook myScratchpads
+  <+> defaultWorkspaces
   <+> specificWindowManageHooks
+
+defaultWorkspaces = composeAll
+  [ -- IntelliJ, except the "exit" dialog should just appear on the active window
+    className =? "jetbrains-idea" <&&> title /=? "Confirm Exit" --> doShift "2"
+    -- Browsers
+  , className =? "Google-chrome" --> doShift "3"
+    -- Chat windows
+  , className =? "Slack"    --> doShift "4"
+  , title =? "Gitter"       --> doShift "4"
+  , className =? "Hexchat"  --> doShift "4"
+  ]
+
+-- | Query for not-equal, negation of =?
+(/=?) :: Eq a => Query a -> a -> Query Bool
+q /=? x = fmap (/= x) q
 
 specificWindowManageHooks =
   foldMap (--> doFloat) floatQueries
@@ -94,7 +110,7 @@ windowRole = stringProperty "WM_WINDOW_ROLE"
 main = do
   xmobarProc <- spawnPipe "xmobar ~/.xmonad/xmobarrc"
   xmonad $ def
-    { terminal = "terminator"
+    { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
     , borderWidth = 1
     , focusedBorderColor = "#268bd2"

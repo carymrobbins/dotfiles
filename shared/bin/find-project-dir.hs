@@ -30,26 +30,32 @@ import System.Directory
 import System.Environment
 import System.Exit
 import System.FilePath
+import System.Process
 import System.IO
 import System.IO.Unsafe (unsafePerformIO)
 
 usage :: String
-usage = "Usage: find-project-dir.hs <pattern>"
+usage = "Usage: find-project-dir.hs <pattern> [--notify]"
 
 main :: IO ()
 main = getArgs >>= \case
   ["--debug"] -> readConfig >>= print
-  [pat] -> do
+  [pat, "--notify"] -> runWithArgs pat True
+  [pat] -> runWithArgs pat False
+  _ -> hPutStrLn stderr usage
+  where
+  runWithArgs :: String -> Bool -> IO ()
+  runWithArgs pat notify = do
     results <- run pat
     case catMaybes . join $ results of
       [] -> do
-        hPutStrLn stderr $ "No matching project for '" ++ pat ++ "'"
+        let errMsg = "No matching project for '" ++ pat ++ "'"
+        hPutStrLn stderr $ errMsg
+        when notify $ void $ rawSystem "notify-send" [errMsg]
         exitFailure
 
       -- Print the first match
       x:_ -> putStrLn x
-
-  _ -> hPutStrLn stderr usage
 
 data Config = Config
   { configRoots :: [String]

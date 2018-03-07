@@ -10,6 +10,7 @@ reload-x-settings
 # TODO: wm.target doesn't seem to work
 # systemctl --user start wm.target
 systemctl --user start gnome-screensaver
+systemctl --user start blueman-applet
 systemctl --user start stalonetray
 systemctl --user start nm-applet
 systemctl --user start notify-osd

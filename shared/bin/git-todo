@@ -19,7 +19,7 @@ BRANCH=${1:-origin/master}
 
 for file in $(git diff "$BRANCH".. --name-only); do
   todos=$(git diff "$BRANCH".. -- "$file" | grep '^\+' | egrep "$pat" | cut -c 3-)
-  if [ -n "$todos" ]; then
+  if [ -n "$todos" -a -f "$file" ]; then
     echo -e "$text_magenta$file$text_reset"
     while read -r todo; do
       fgrep -n -- "$todo" "$file"

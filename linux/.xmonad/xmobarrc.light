@@ -115,8 +115,9 @@ Config {
 
     -- time and date indicator
     --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
+    --   see https://hackage.haskell.org/package/time-1.9/docs/Data-Time-Format.html
 
-    , Run Date           "<fc=black>%F (%a) %T</fc>" "date" 10
+    , Run Date           "<fc=black>%F (%a) %l:%M:%S %p</fc>" "date" 10
 
     , Run Com "get-volume" [] "volume" 1
     , Run Com "get-backlight" [] "backlight" 1
