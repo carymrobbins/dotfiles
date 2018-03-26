@@ -4,6 +4,7 @@ set -e
 
 # Note we use --set "Broadcast RGB" "Full" to avoid the washed out colors
 # over HDMI; see https://askubuntu.com/questions/621964/colors-on-display-are-washed-out
+output=$(
 xrandr \
   --output HDMI-2 --off \
   --output DP-1 --off \
@@ -11,7 +12,14 @@ xrandr \
   --output HDMI-1 --mode 1920x1080 --pos 0x504 --rotate normal \
                   --set "Broadcast RGB" "Full" \
   --output DP-2 --mode 1920x1080 --pos 1920x0 --rotate normal \
-                --set "Broadcast RGB" "Full"
+                --set "Broadcast RGB" "Full" \
+  2>&1
+)
+if [ $? -ne 0 ]; then
+  notify-send "$output"
+  >&2 echo "$output"
+  exit 1
+fi
 
 xmonad --restart
 

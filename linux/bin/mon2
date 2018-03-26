@@ -9,8 +9,26 @@
 #                  --set "Broadcast RGB" "Full" \
 
 xrandr \
-  --output DP-1 --mode 1920x1080 --pos 1920x0 --rotate left \
-  --output eDP-1 --primary --mode 1920x1080 --pos 0x1152 --rotate normal \
-  --set "Broadcast RGB" "Full" \
-  && xmonad --restart \
-  && systemctl --user restart stalonetray
+  --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal \
+  --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal \
+  --output HDMI-2 --off \
+  --output DP-1 --off \
+  --output DP-2 --off
+
+xmonad --restart
+
+# Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
+# This is so stalonetray can be positioned properly for the new layout.
+elapsed=0
+timeout=5
+while [ "$elapsed" -lt "$timeout" ]; do
+  if [ "$(xrandr | fgrep '*+' | wc -l)" -eq 2 ]; then
+    break
+  fi
+  sleep 1
+  ((++elapsed))
+done
+systemctl --user restart stalonetray
+
+# Reload x settings to fix wallpaper and screen refreshing
+reload-x-settings
