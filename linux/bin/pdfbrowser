@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <file.pdf>"
+  exit 1
+fi
+
+if [ ! -f "$1" ]; then
+  >&2 echo "File does not exist: $1"
+  >&2 echo "Usage: $0 <file.pdf>"
+  exit 1
+fi
+
+pdf_file=file://$(realpath "$1")
+default_browser=$(xdg-settings get default-web-browser || true)
+browser_path=google-chrome-stable
+
+if grep chrome <<< "$default_browser" >/dev/null; then
+  browser_path=google-chrome-stable
+elif grep firefox <<< "$default_browser" >/dev/null; then
+  browser_path=firefox
+else
+  exit 1
+fi
+
+set -x
+"$browser_path" "$pdf_file"
