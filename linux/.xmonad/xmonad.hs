@@ -17,7 +17,7 @@ myModKey = mod4Mask
 myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 
 -- 2 monitors
--- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [0,0,1,0]
+-- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
 
 myKeys =
   -- Set screen keys
@@ -75,7 +75,7 @@ defaultWorkspaces = composeAll
   , className =? "Google-chrome" --> doShift "3"
     -- Chat windows
   , className =? "Slack"    --> doShift "4"
-  , title =? "Gitter"       --> doShift "4"
+  , title     =? "Gitter"   --> doShift "4"
   , className =? "Hexchat"  --> doShift "4"
   ]
 
@@ -105,6 +105,19 @@ specificWindowManageHooks =
     [ title =? "Slack Call Minipanel"
     ]
 
+myLogHooks xmobarProc =
+      mousePointerLog
+  <+> xmobarLog
+  where
+  mousePointerLog = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
+  xmobarLog = dynamicLogWithPP xmobarPP
+    { ppOutput  = hPutStrLn xmobarProc
+    , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
+    , ppTitle   = xmobarColor myBlue "" . shorten 50
+    }
+
+myBlue = "#268bd2"
+
 windowRole = stringProperty "WM_WINDOW_ROLE"
 
 main = do
@@ -113,12 +126,10 @@ main = do
     { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
     , borderWidth = 1
-    , focusedBorderColor = "#268bd2"
+    , focusedBorderColor = myBlue
     , handleEventHook = def <+> docksEventHook
     , startupHook = setWMName "LG3D"
     , manageHook = myManageHook
     , layoutHook = avoidStruts $ layoutHook def
-    , logHook =
-        updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
-        <+> dynamicLogWithPP xmobarPP { ppOutput = hPutStrLn xmobarProc }
+    , logHook = myLogHooks xmobarProc
     } `additionalKeys` myKeys

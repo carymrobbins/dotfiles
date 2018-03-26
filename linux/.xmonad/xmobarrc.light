@@ -6,7 +6,8 @@ Config {
   -- Requires the ttf-font-icons package from AUR
   , additionalFonts = ["xft:Icons:size=15"]
 
-  , alpha = 120
+  -- Maybe this looks better without transparency
+  -- , alpha = 120
 
   , bgColor = "white"
   , fgColor = "black"
