@@ -16,6 +16,7 @@ systemctl --user start nm-applet
 systemctl --user start notify-osd
 systemctl --user start low-battery.timer
 systemctl --user start xcompmgr
+systemctl --user start redshift
 # TODO: Running xbindkeys with systemctl means it
 # can't find stuff in our $PATH
 xbindkeys
