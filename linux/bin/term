@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -f ~/.theme-type ]; then
+  theme=$(cat ~/.theme-type)
+else
+  theme=dark
+fi
+
+case "$theme" in
+  light) terminator -p white "$@" ;;
+  *)     terminator "$@" ;;
+esac
