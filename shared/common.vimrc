@@ -24,6 +24,8 @@ nmap <Leader>x :x<CR>
 nmap <Leader>q :q<CR>
 "Inverse of J
 nmap <Leader>j f xi<CR><ESC>l
+"Similar to above except moves close paren to next line
+nmap <Leader>0 f)i<CR><ESC>l
 "Insert a newline without going into insert mode
 nmap <Leader>o o<ESC>
 "Append to end of lines of selection

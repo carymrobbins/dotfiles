@@ -3,6 +3,7 @@ Description=blueman-applet
 
 [Service]
 Environment=DISPLAY=:0
+Environment=QT_X11_NO_MITSHM=1
 ExecStart=/usr/bin/blueman-applet
 ExecStop=/usr/bin/pkill blueman-applet
 

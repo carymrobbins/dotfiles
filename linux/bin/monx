@@ -1,0 +1,80 @@
+#!/bin/sh
+
+# Note we use --set "Broadcast RGB" "Full" to avoid the washed out colors
+# over HDMI; see https://askubuntu.com/questions/621964/colors-on-display-are-washed-out
+
+num_monitors=$1
+cmd_name=$(basename $0)
+cmd_args=("$@")
+
+abort() {
+  notify-send "$cmd_name ${cmd_args[@]}: $1"
+  >&2 echo "$1"
+  exit 1
+}
+
+if [ -z "$num_monitors" ]; then
+  >&2 echo "Usage: $0 <num_monitors>"
+  exit 1
+fi
+
+[ -n $DISPLAY ] || DISPLAY=:0
+
+xrandr_args=(-d "$DISPLAY")
+
+case "$num_monitors" in
+  1)
+    xrandr_args+=(
+      -d :0
+      --output HDMI-1 --off
+      --output DP-1 --off
+      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+      --output DP-2 --off
+    )
+    ;;
+  2)
+    xrandr_args+=(
+      --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal
+      --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal
+      --output HDMI-2 --off
+      --output DP-1 --off
+      --output DP-2 --off
+    )
+    ;;
+  3)
+    xrandr_args+=(
+      --output HDMI-2 --off
+      --output DP-1 --off
+      --output eDP-1 --primary --mode 1920x1080 --pos 1920x1080 --rotate normal
+      --output HDMI-1 --mode 1920x1080 --pos 0x504 --rotate normal
+                      --set "Broadcast RGB" "Full"
+      --output DP-2 --mode 1920x1080 --pos 1920x0 --rotate normal
+                    --set "Broadcast RGB" "Full"
+    )
+    ;;
+  *)
+    abort "Invalid num_monitors: $num_monitors"
+    ;;
+esac
+
+output=$(xrandr "${xrandr_args[@]}" 2>&1)
+[ $? -eq 0 ] || abort "$output"
+
+output=$(xmonad --restart 2>&1)
+[ $? -eq 0 ] || abort "$output"
+
+# Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
+# This is so stalonetray can be positioned properly for the new layout.
+elapsed=0
+timeout=5
+while [ "$elapsed" -lt "$timeout" ]; do
+  if [ "$(xrandr | fgrep '*+' | wc -l)" -eq "$num_monitors" ]; then
+    break
+  fi
+  sleep 1
+  ((++elapsed))
+done
+systemctl --user restart stalonetray
+
+# Reload x settings to fix wallpaper and screen refreshing
+reload-x-settings

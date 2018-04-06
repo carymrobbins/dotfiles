@@ -30,10 +30,12 @@ alias v='$EDITOR'
 alias sv='sudoedit'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
+alias sca='(cd ~/dump/scaling ; sbt consoleQuick)'
 
+# DISABLED AS THIS USES TOO MUCH MEMORY
 # SBT fails for permgen, this should work for Java >= 8
 # See https://github.com/sbt/sbt/issues/1395
-export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=256M -Xms2G -Xmx2G"
+# export SBT_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=256M -Xms2G -Xmx2G"
 
 # Helper functions
 
@@ -59,14 +61,20 @@ fi
 ref_exec() {
   local c=$1
   shift
-  if ! command -v "$@"; then
+  if ! command -v "$@" >/dev/null; then
     >&2 echo "Not found"
     return 1
   fi
   $c $(command -v "$@")
 }
 
-cx() { ref_exec cat "$@"; }
+cx() {
+  if command -v vimcat >/dev/null; then
+    ref_exec vimcat "$@";
+  else
+    ref_exec cat "$@";
+  fi
+}
 
 vx() { ref_exec "$EDITOR" "$1"; }
 

@@ -6,6 +6,8 @@
 <Multi_key> <L> <space> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
 <Multi_key> <p> <space> : "π" U03C0 # GREEK SMALL LETTER PI
 <Multi_key> <S> <space> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
+<Multi_key> <period> <space> : "∘" U0221
+<Multi_key> <slash> <equals> : "∘" U0221
 
 <Multi_key> <g> <a> : "α" U03B1 # GREEK SMALL LETTER ALPHA
 <Multi_key> <g> <b> : "β" U03B2 # GREEK SMALL LETTER BETA

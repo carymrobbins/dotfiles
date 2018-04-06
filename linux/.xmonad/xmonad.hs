@@ -68,23 +68,24 @@ myManageHook =
   <+> defaultWorkspaces
   <+> specificWindowManageHooks
 
-defaultWorkspaces = composeAll
-  [ -- IntelliJ, except the "exit" dialog should just appear on the active window
-    className =? "jetbrains-idea" <&&> title /=? "Confirm Exit" --> doShift "2"
-    -- Browsers
-  , className =? "Google-chrome" --> doShift "3"
-    -- Chat windows
-  , className =? "Slack"    --> doShift "4"
-  , title     =? "Gitter"   --> doShift "4"
-  , className =? "Hexchat"  --> doShift "4"
-  ]
+defaultWorkspaces =
+  def
+  -- IntelliJ, except the "exit" dialog should just appear on the active window
+  <+> (className =? "jetbrains-idea" <&&> title /=? "Confirm Exit" --> doShift "2")
+  -- Browsers
+  <+> (className =? "Google-chrome" --> doShift "3")
+  -- Chat windows
+  <+> (className =? "Slack"    --> doShift "4")
+  <+> (title     =? "Gitter"   --> doShift "4")
+  <+> (className =? "Hexchat"  --> doShift "4")
 
 -- | Query for not-equal, negation of =?
 (/=?) :: Eq a => Query a -> a -> Query Bool
 q /=? x = fmap (/= x) q
 
 specificWindowManageHooks =
-  foldMap (--> doFloat) floatQueries
+  def
+  <+> foldMap (--> doFloat) floatQueries
   <+> foldMap (--> doIgnore) ignoreQueries
   where
   floatQueries =
@@ -103,10 +104,13 @@ specificWindowManageHooks =
 
   ignoreQueries =
     [ title =? "Slack Call Minipanel"
+    -- Help IntelliJ's autocomplete popup to appear on the top of the IDE
+    , appName =? "sun-awt-X11-XWindowPeer" <&&> className =? "jetbrains-idea"
     ]
 
 myLogHooks xmobarProc =
-      mousePointerLog
+  def
+  <+> mousePointerLog
   <+> xmobarLog
   where
   mousePointerLog = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
