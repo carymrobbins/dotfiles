@@ -1,0 +1,94 @@
+#!/bin/bash
+
+usage() {
+  cat <<HERE
+Usage: $0 <rev> [options]
+
+Example: rebase-scalafmt origin/master --fast
+
+Options:
+
+--fast              Shorthand for --no-edit --no-interactive --no-compile
+
+--no-edit           Don't prompt to edit messages when amending commits.
+
+--no-interactive    Don't run in interactive rebase mode.
+                    Useful to skip the initial rebase prompt.
+
+--no-compile        Don't compile sources after applying scalafmt to a commit.
+
+--no-it             Don't run scalafmt for 'it' sources (integration tests).
+                    Useful if your project doesn't have 'it' sources.
+HERE
+}
+
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+magenta="$(tput setaf 5)"
+text_reset="$(tput sgr0)"
+
+echo_color() {
+  echo "$1$2$text_reset"
+}
+
+###################################################
+
+base_rev=$1
+if [ -z "$base_rev" ]; then
+  >&2 echo_color $red "Missing argument: rev"
+  >&2 usage
+  exit 1
+fi
+
+abort() {
+  >&2 echo_color $red "$1"
+  git rebase --abort 2>/dev/null
+  exit 1
+}
+
+trap 'abort "Errors occurred, aborting rebase."'  ERR
+trap 'abort "Killed by signal, aborting rebase."' SIGINT SIGTERM SIGKILL
+
+orig_rev=$(git rev-parse HEAD)
+shift
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --help|-h)        usage; exit;;
+    --fast)           shift; no_edit=1; no_interactive=1; no_compile=1;;
+    --no-edit)        shift; no_edit=1;;
+    --no-interactive) shift; no_interactive=1;;
+    --no-compile)     shift; no_compile=1;;
+    --no-it)          shift; no_it=1;;
+    *)
+      >&2 echo_color $red "Unexpected argument: $1"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+done
+
+echo_color $magenta "Starting at rev $orig_rev"
+
+exec_cmd="sbt scalafmt "
+[ -n "$no_compile" ] || exec_cmd+="compile "
+exec_cmd+="test:scalafmt "
+[ -n "$no_compile" ] || exec_cmd+="test:compile "
+if [ -z "$no_it" ]; then
+  exec_cmd+="it:scalafmt "
+  [ -n "$no_compile" ] || exec_cmd+="it:compile "
+fi
+exec_cmd+=" && git commit -a --amend "
+[ -z "$no_edit" ] || exec_cmd+="--no-edit "
+
+[ -n "$no_interactive" ] || interactive_flag=-i
+git rebase $interactive_flag --exec "$exec_cmd" "$base_rev"
+
+echo
+echo_color $green "scalafmt successfully applied to commits!"
+echo
+echo "The original revision was $orig_rev"
+echo "Use the following to see what changed after applying scalafmt -"
+echo "  git diff $orig_rev"
+echo "If things look wrong, you can revert back with -"
+echo "  git reset --hard $orig_rev"
