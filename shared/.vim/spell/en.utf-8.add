@@ -30,3 +30,7 @@ config
 url
 TODO
 SBT
+Monoid
+HNil
+implicits
+scalac
