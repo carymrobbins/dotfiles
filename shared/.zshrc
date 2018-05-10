@@ -30,7 +30,10 @@ alias v='$EDITOR'
 alias sv='sudoedit'
 alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
-alias sca='(cd ~/dump/scaling ; sbt consoleQuick)'
+alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
+alias rm=trash
+
+log_implicits='set scalacOptions in Global += "-Xlog-implicits"'
 
 # DISABLED AS THIS USES TOO MUCH MEMORY
 # SBT fails for permgen, this should work for Java >= 8
