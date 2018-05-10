@@ -1,4 +1,6 @@
 import           XMonad
+import           XMonad.Actions.CopyWindow
+import           XMonad.Actions.CycleWS
 import           XMonad.Actions.UpdatePointer
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
@@ -25,15 +27,31 @@ myKeys =
     ((m .|. myModKey, key), screenWorkspace sc >>= flip whenJust (windows . f))
     | (key, sc) <- myScreenKeys
     , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
-  ] ++
-  -- Scratchpads
-  [ ((shiftMask .|. myModKey, xK_h), scratch "hamster")
-  , ((shiftMask .|. myModKey, xK_t), scratch "trello")
-  , ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
-  , ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
   ]
+
+  -- Switch to NSP workspace
+  &  ((myModKey, xK_0), windows $ W.greedyView "NSP")
+
+  -- Scratchpads
+  & ((shiftMask .|. myModKey, xK_h), scratch "hamster")
+  & ((shiftMask .|. myModKey, xK_t), scratch "trello")
+  & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
+  & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
+
+  -- Cycle through invisible workspaces, allows selecting the NSP workspace
+  & ((myModKey, xK_n), moveTo Next HiddenNonEmptyWS)
+
+  -- Move mouse to center of focused window
+  & ((myModKey, xK_m), centerMouse)
+
+  -- Sticky
+  -- TODO: Not quite perfect yet...
+  -- & ((              myModKey, xK_s), windows $ copy "1")
+  -- & ((shiftMask .|. myModKey, xK_s), killAllOtherCopies)
   where
   scratch = namedScratchpadAction myScratchpads
+  centerMouse = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
+  (&) = flip (:)
 
 myScratchpads =
   [ NS "hamster"
@@ -94,7 +112,8 @@ specificWindowManageHooks =
     , title =? "Terminator Preferences"
     , title =? "Quit GIMP"
     , className =? "Blueman-manager"
-    , className =? "Pavucontrol"
+    -- This is always hard to find, ends up mostly off screen
+    -- , className =? "Pavucontrol"
     , className =? "Remmina"
     , windowRole =? "gimp-dock"
     , windowRole =? "gimp-toolbox"
@@ -110,10 +129,8 @@ specificWindowManageHooks =
 
 myLogHooks xmobarProc =
   def
-  <+> mousePointerLog
   <+> xmobarLog
   where
-  mousePointerLog = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
   xmobarLog = dynamicLogWithPP xmobarPP
     { ppOutput  = hPutStrLn xmobarProc
     , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
@@ -129,7 +146,7 @@ main = do
   xmonad $ def
     { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
-    , borderWidth = 1
+    , borderWidth = 4
     , focusedBorderColor = myBlue
     , handleEventHook = def <+> docksEventHook
     , startupHook = setWMName "LG3D"
