@@ -138,12 +138,13 @@ myLogHooks xmobarProc =
     , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
     -- I don't really need to see the layout name or active window title in xmobar
     , ppTitle = const ""
-    -- , ppLayout = const ""
+    , ppLayout = const ""
     }
 
 myLayoutHook =
   avoidStruts $ layouts
   where
+  --addTopBar = id --noop
   addTopBar = noFrillsDeco shrinkText topBarTheme
   addGaps = smartSpacing 5
   tall = Tall 1 (3/100) (1/2)
@@ -159,15 +160,19 @@ myLayoutHook =
 
 topBarTheme = def
   { fontName = "xft:Noto:style=Bold:pixelsize=10:hinting=true"
-  , activeColor = myBlue
-  , activeBorderColor = myBlue
-  , inactiveColor = myInactiveColor
-  , inactiveBorderColor = myInactiveColor
+  , activeTextColor = activeFG
+  , activeColor = activeBG
+  , activeBorderColor = activeBG
+  , inactiveColor = inactiveBG
+  , inactiveBorderColor = inactiveBG
   , decoHeight = 15
   }
+  where
+  activeBG   = "#68c987"
+  activeFG   = "#112d1a"
+  inactiveBG = "#dddddd"
 
-myBlue = "#268bd2"
-myInactiveColor = "#dddddd"
+myBlue       = "#268bd2"
 
 windowRole = stringProperty "WM_WINDOW_ROLE"
 
@@ -177,7 +182,6 @@ main = do
     { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
     , borderWidth = 0
-    , focusedBorderColor = myBlue
     , handleEventHook = def <+> docksEventHook
     , startupHook = setWMName "LG3D"
     , manageHook = myManageHook
