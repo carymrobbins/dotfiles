@@ -7,7 +7,10 @@
 <Multi_key> <p> <space> : "π" U03C0 # GREEK SMALL LETTER PI
 <Multi_key> <S> <space> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
 <Multi_key> <period> <space> : "∘" U0221
-<Multi_key> <slash> <equals> : "∘" U0221
+<Multi_key> <n> <space> : "¬" U00AC # Logical negation
+<Multi_key> <x> <space> : "⊕" U2295 # Exclusive disjunction
+<Multi_key> <i> <space> : "∨" U2228 # Inclusive disjunction
+<Multi_key> <c> <space> : "∧" U2227 # Logical conjunction
 
 <Multi_key> <g> <a> : "α" U03B1 # GREEK SMALL LETTER ALPHA
 <Multi_key> <g> <b> : "β" U03B2 # GREEK SMALL LETTER BETA
