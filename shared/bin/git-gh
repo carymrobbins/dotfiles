@@ -39,7 +39,20 @@ while [ $# -gt 0 ]; do
     -r) validate_extra_args "$1" "$2"; rev=$2;    shift; shift;;
     *)
       if [ -z "$file" ]; then
-        file=$1
+        if [ -f "$1" ]; then
+          # Resolve path to file relative to repo root.
+          file=$(git ls-tree --full-name --name-only HEAD $1)
+        elif [ -d "$1" ]; then
+          if ! command -v readlink >/dev/null 2>&1; then
+            >&2 echo "readlink is not installed, is required for linking to a directory"
+            exit 1
+          fi
+          # Resolve path to the directory relative to the repo root.
+          file=$(sed "s|^$(git rev-parse --show-toplevel)/||" <<< $(readlink -f .))
+        else
+          >&2 echo "'$1' is not a valid file or directory"
+          exit 1
+        fi
         shift
       else
         >&2 echo "Unexpected argument: $1"
@@ -81,13 +94,8 @@ url=$(
 
 if [ -z "$file" ]; then
   url=$url/tree/$rev
-elif [ -d "$file" ]; then
-  url=$url/tree/$rev/$file
-elif [ -f "$file" ]; then
-  url=$url/blob/$rev/$file
 else
-  >&2 echo "Cannot determine url for file: $file"
-  exit 1
+  url=$url/tree/$rev/$file
 fi
 
 if [ "$open_in_browser" ]; then
