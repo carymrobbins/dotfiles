@@ -5,8 +5,10 @@ import           XMonad.Actions.UpdatePointer
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.SetWMName
-import           XMonad.Util.NamedScratchpad
+import           XMonad.Layout.NoFrillsDecoration
+import           XMonad.Layout.Spacing
 import qualified XMonad.StackSet as W
+import           XMonad.Util.NamedScratchpad
 import           XMonad.Util.EZConfig
 import           XMonad.Util.Run
 
@@ -134,10 +136,38 @@ myLogHooks xmobarProc =
   xmobarLog = dynamicLogWithPP xmobarPP
     { ppOutput  = hPutStrLn xmobarProc
     , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
-    , ppTitle   = xmobarColor myBlue "" . shorten 50
+    -- I don't really need to see the layout name or active window title in xmobar
+    , ppTitle = const ""
+    -- , ppLayout = const ""
     }
 
+myLayoutHook =
+  avoidStruts $ layouts
+  where
+  addTopBar = noFrillsDeco shrinkText topBarTheme
+  addGaps = smartSpacing 5
+  tall = Tall 1 (3/100) (1/2)
+
+  -- Pass function `f` so we can `Mirror` before we add the top bar.
+  tiled f = addTopBar $ f $ addGaps $ tall
+  full    = addTopBar $ Full
+
+  layouts =
+    tiled id
+    ||| tiled Mirror
+    ||| full
+
+topBarTheme = def
+  { fontName = "xft:Noto:style=Bold:pixelsize=10:hinting=true"
+  , activeColor = myBlue
+  , activeBorderColor = myBlue
+  , inactiveColor = myInactiveColor
+  , inactiveBorderColor = myInactiveColor
+  , decoHeight = 15
+  }
+
 myBlue = "#268bd2"
+myInactiveColor = "#dddddd"
 
 windowRole = stringProperty "WM_WINDOW_ROLE"
 
@@ -146,11 +176,11 @@ main = do
   xmonad $ def
     { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
-    , borderWidth = 4
+    , borderWidth = 0
     , focusedBorderColor = myBlue
     , handleEventHook = def <+> docksEventHook
     , startupHook = setWMName "LG3D"
     , manageHook = myManageHook
-    , layoutHook = avoidStruts $ layoutHook def
+    , layoutHook = myLayoutHook
     , logHook = myLogHooks xmobarProc
     } `additionalKeys` myKeys
