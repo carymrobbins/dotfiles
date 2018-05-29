@@ -30,3 +30,11 @@ nmap <Leader>0 f)i<CR><ESC>l
 nmap <Leader>o o<ESC>
 "Append to end of lines of selection
 xmap <Leader>a $A
+
+"Helpers for revealjs hacks
+"Insert fragment spans for markdown slides
+vmap <Leader>ff c<frag><ESC>:set paste<CR>a<C-r>"</frag><ESC>:set nopaste<CR>
+"Insert fragment divs for markdown slides
+nmap <Leader>fd I<div class=fragment><CR><ESC>
+"Insert code block for markdown slides
+vmap <Leader>cb c<pre><code data-noescape data-trim class=scala><CR><C-r>"<CR></code></pre><ESC>
