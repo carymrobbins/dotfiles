@@ -49,3 +49,6 @@
 [submodule "shared/.vim/bundle/hexmode"]
 	path = shared/.vim/bundle/hexmode
 	url = https://github.com/fidian/hexmode.git
+[submodule "shared/.vim/bundle/vim-csharp"]
+	path = shared/.vim/bundle/vim-csharp
+	url = git://github.com/OrangeT/vim-csharp.git
