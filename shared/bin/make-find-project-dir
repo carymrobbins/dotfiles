@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cd $(dirname $0)
+cd /tmp
+cp $(dirname $0)/find-project-dir.hs .
 
-echo "Using working directory: $PWD"
-
-set -x
 ghc --make -dynamic find-project-dir
+
+cp find-project-dir ~/bin
