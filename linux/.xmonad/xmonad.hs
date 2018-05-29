@@ -5,8 +5,11 @@ import           XMonad.Actions.UpdatePointer
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.SetWMName
+import           XMonad.Layout.Named
 import           XMonad.Layout.NoFrillsDecoration
 import           XMonad.Layout.Spacing
+import           XMonad.Layout.Tabbed
+import           XMonad.Layout.ThreeColumns
 import qualified XMonad.StackSet as W
 import           XMonad.Util.NamedScratchpad
 import           XMonad.Util.EZConfig
@@ -40,8 +43,9 @@ myKeys =
   & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
   & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
 
-  -- Cycle through invisible workspaces, allows selecting the NSP workspace
-  & ((myModKey, xK_n), moveTo Next HiddenNonEmptyWS)
+  -- Cycle through workspaces
+  & ((myModKey,               xK_n), moveTo Next NonEmptyWS)
+  & ((shiftMask .|. myModKey, xK_n), moveTo Prev NonEmptyWS)
 
   -- Move mouse to center of focused window
   & ((myModKey, xK_m), centerMouse)
@@ -74,7 +78,8 @@ myScratchpads =
   , NS "thunderbird"
        "bash -c 'env GTK_THEME=Adwaita:light thunderbird'"
        (className =? "Thunderbird")
-       (customFloating $ centeredRect (13/14) (13/14))
+       nonFloating
+       --(customFloating $ centeredRect (13/14) (13/14))
   ]
 
 -- | Rectangle centered on screen with specified width and height, sizes
@@ -91,7 +96,8 @@ myManageHook =
 defaultWorkspaces =
   def
   -- IntelliJ, except the "exit" dialog should just appear on the active window
-  <+> (className =? "jetbrains-idea" <&&> title /=? "Confirm Exit" --> doShift "2")
+  <+> (className =? "jetbrains-idea"    <&&> title /=? "Confirm Exit" --> doShift "2")
+  <+> (className =? "jetbrains-idea-ce" <&&> title /=? "Confirm Exit" --> doShift "2")
   -- Browsers
   <+> (className =? "Google-chrome" --> doShift "3")
   -- Chat windows
@@ -112,11 +118,11 @@ specificWindowManageHooks =
     [ appName =? "Amethyst"
     , className =? "Nm-connection-editor"
     , title =? "Terminator Preferences"
-    , title =? "Quit GIMP"
+    -- , title =? "Quit GIMP"
     , className =? "Blueman-manager"
     -- This is always hard to find, ends up mostly off screen
     -- , className =? "Pavucontrol"
-    , className =? "Remmina"
+    -- , className =? "Remmina"
     , windowRole =? "gimp-dock"
     , windowRole =? "gimp-toolbox"
     , title =? "Install user style"
@@ -136,29 +142,26 @@ myLogHooks xmobarProc =
   xmobarLog = dynamicLogWithPP xmobarPP
     { ppOutput  = hPutStrLn xmobarProc
     , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
-    -- I don't really need to see the layout name or active window title in xmobar
+    -- No need for title since I use top bars/tabs
     , ppTitle = const ""
-    , ppLayout = const ""
     }
 
-myLayoutHook =
-  avoidStruts $ layouts
+myLayoutHook = (avoidStruts $ two ||| three ||| full) ||| fullNoBar
   where
-  --addTopBar = id --noop
-  addTopBar = noFrillsDeco shrinkText topBarTheme
+  two     = named "Two Column"   $ addBarGaps $ withDims Tall
+  three   = named "Three Column" $ addBarGaps $ withDims ThreeColMid
+  full    = named "Full"         $ tabbedAlways shrinkText myTopBarTheme
+  fullNoBar = named "Full No Bar" Full
+
+  addBarGaps = addTopBar . addGaps
+  addTopBar = noFrillsDeco shrinkText myTopBarTheme
   addGaps = smartSpacing 5
-  tall = Tall 1 (3/100) (1/2)
+  withDims f = f nmaster delta ratio
+  nmaster = 1
+  delta   = 3/100
+  ratio   = 1/2
 
-  -- Pass function `f` so we can `Mirror` before we add the top bar.
-  tiled f = addTopBar $ f $ addGaps $ tall
-  full    = addTopBar $ Full
-
-  layouts =
-    tiled id
-    ||| tiled Mirror
-    ||| full
-
-topBarTheme = def
+myTopBarTheme = def
   { fontName = "xft:Noto:style=Bold:pixelsize=10:hinting=true"
   , activeTextColor = activeFG
   , activeColor = activeBG
