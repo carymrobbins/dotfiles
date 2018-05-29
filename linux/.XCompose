@@ -26,6 +26,8 @@
 <Multi_key> <Left>                  : "⇐"   U21D0 # U+21D0 LEFTWARDS DOUBLE ARROW
 <Multi_key> <space> <Right>         : "→"   U2192 # U+2192 RIGHTWARDS ARROW
 <Multi_key> <space> <Left>          : "←"   U2190 # U+2190 LEFTWARDS ARROW
+<Multi_key> <space> <Up>            : "↑"   U2191 # up arrow
+<Multi_key> <space> <Down>          : "↓"   U2191 # down arrow
 
 # Defaults
 
