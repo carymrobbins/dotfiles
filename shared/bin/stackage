@@ -1,0 +1,15 @@
+#!/bin/bash
+
+resolver=$(grep resolver stack.yaml | cut -d: -f2 | xargs)
+
+url=https://www.stackage.org/$resolver
+
+case $# in
+  0) ;;
+  1) url=$url/hoogle?q=$1;;
+  *)
+    >&2 echo "Unexpected argument: $2"
+    exit 1
+esac
+
+xdg-open "$url"
