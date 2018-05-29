@@ -48,6 +48,9 @@
 "thunar"
   Mod4 + f
 
+"monx 0"
+  Mod4 + Control + 0
+
 "mon1"
   Mod4 + Control + 1
 

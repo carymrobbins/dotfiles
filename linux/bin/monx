@@ -23,6 +23,16 @@ fi
 xrandr_args=(-d "$DISPLAY")
 
 case "$num_monitors" in
+  0)
+    xrandr_args+=(
+      -d :0
+      --output HDMI-1 --off
+      --output DP-1 --off
+      --output eDP-1 --off
+      --output DP-2 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    )
+    num_monitors=1
+    ;;
   1)
     xrandr_args+=(
       -d :0
