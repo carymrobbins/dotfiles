@@ -19,9 +19,10 @@ hf=projects/intellij-haskforce
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+import Prelude hiding (log)
 import Control.Monad
 import Data.Char (toLower)
-import Data.List (elemIndex)
+import Data.List (elemIndex, sort)
 import Data.Monoid
 import Data.Maybe
 import qualified Data.Text as T
@@ -37,9 +38,14 @@ import System.IO.Unsafe (unsafePerformIO)
 usage :: String
 usage = "Usage: find-project-dir.hs <pattern> [--notify]"
 
+-- | Supply the FPD_DEBUG_LOG env var add debug logging.
+{-# NOINLINE debug #-}
+debug :: Bool
+debug = unsafePerformIO $ isJust . lookup "FPD_DEBUG_LOG" <$> getEnvironment
+
 main :: IO ()
 main = getArgs >>= \case
-  ["--debug"] -> readConfig >>= print
+  ["--show-config"] -> readConfig >>= print
   [pat, "--notify"] -> runWithArgs pat True
   [pat] -> runWithArgs pat False
   _ -> hPutStrLn stderr usage
@@ -73,9 +79,9 @@ instance Monoid Config where
   mempty = Config mempty mempty
   mappend (Config rs1 as1) (Config rs2 as2) = Config (rs1 <> rs2) (as1 <> as2)
 
+{-# NOINLINE homeDir #-}
 homeDir :: String
 homeDir = unsafePerformIO getHomeDirectory
-{-# NOINLINE homeDir #-}
 
 readConfig :: IO Config
 readConfig = do
@@ -114,22 +120,28 @@ run pat = do
 search :: Traversable t => String -> t FilePath -> IO (t [Maybe FilePath])
 search pat dirs = do
   for dirs $ \dir -> do
+    log $ "Checking dir: " <> dir
     let path = homeDir </> dir
     files <- getDirectoryContents path
-    for files $ \file -> do
-      let fullPath = path </> file
-      isDir <- doesDirectoryExist $ fullPath
-      if not isDir then
-        return Nothing
-      else if file `matches` pat then
-        return $ Just fullPath
-      else
-        return Nothing
+    for (sort files) $ \file ->
+      if file `elem` [".", ".."] then return Nothing else do
+        log $ "Checking: " <> file
+        let fullPath = path </> file
+        isDir <- doesDirectoryExist $ fullPath
+        if not isDir then
+          return Nothing
+        else if file `matches` pat then
+          return $ Just fullPath
+        else
+          return Nothing
 
 matches :: String -> String -> Bool
 file `matches` pat
   | fileLower == patLower = True
-  | otherwise = loop fileLower patLower
+  | otherwise =
+      case (fileLower, patLower) of
+        (x:xs, y:ys) | x == y -> loop xs ys
+        (_,    _)             -> False
   where
   patLower = map toLower pat
   fileLower = map toLower file
@@ -139,3 +151,6 @@ file `matches` pat
   loop restFile (c:restPat) = case c `elemIndex` restFile of
     Nothing -> False
     Just n -> loop (drop (n + 1) restFile) restPat
+
+log :: String -> IO ()
+log msg = when debug $ hPutStrLn stderr msg
