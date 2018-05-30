@@ -1,6 +1,7 @@
 import           XMonad
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
+import           XMonad.Actions.FloatKeys
 import           XMonad.Actions.UpdatePointer
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
@@ -39,7 +40,8 @@ myKeys =
 
   -- Scratchpads
   & ((shiftMask .|. myModKey, xK_h), scratch "hamster")
-  & ((shiftMask .|. myModKey, xK_t), scratch "trello")
+  -- & ((shiftMask .|. myModKey, xK_t), scratch "trello")
+  & ((shiftMask .|. myModKey, xK_t), scratch "toggl")
   & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
   & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
 
@@ -51,9 +53,12 @@ myKeys =
   & ((myModKey, xK_m), centerMouse)
 
   -- Sticky
-  -- TODO: Not quite perfect yet...
-  -- & ((              myModKey, xK_s), windows $ copy "1")
-  -- & ((shiftMask .|. myModKey, xK_s), killAllOtherCopies)
+  & ((              myModKey, xK_s), windows $ copyToAll)
+  & ((shiftMask .|. myModKey, xK_s), killAllOtherCopies)
+
+  & ((myModKey, xK_equal), withFocused $ keysResizeWindow (10,10) (1,1))
+  & ((myModKey, xK_minus), withFocused $ keysResizeWindow (-10,-10) (1,1))
+
   where
   scratch = namedScratchpadAction myScratchpads
   centerMouse = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
@@ -64,6 +69,12 @@ myScratchpads =
        -- Avoid spawning multiple instances of hamster
        "bash -c 'killall hamster 2>/dev/null || true && hamster'"
        (className =? "Hamster")
+       (customFloating $ centeredRect (1/3) (2/3))
+
+  , NS "toggl"
+       -- Avoid spawning multiple instances of hamster
+       "bash -c 'killall TogglDesktop 3>/dev/null || true && toggldesktop'"
+       (className =? "Toggl Desktop")
        (customFloating $ centeredRect (1/3) (2/3))
 
   , NS "trello"
