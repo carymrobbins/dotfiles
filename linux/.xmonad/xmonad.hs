@@ -1,7 +1,6 @@
 import           XMonad
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
-import           XMonad.Actions.FloatKeys
 import           XMonad.Actions.UpdatePointer
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
@@ -56,13 +55,23 @@ myKeys =
   & ((              myModKey, xK_s), windows $ copyToAll)
   & ((shiftMask .|. myModKey, xK_s), killAllOtherCopies)
 
-  & ((myModKey, xK_equal), withFocused $ keysResizeWindow (10,10) (1,1))
-  & ((myModKey, xK_minus), withFocused $ keysResizeWindow (-10,-10) (1,1))
-
+  -- Float to medium-ish window
+  & ((shiftMask .|. myModKey, xK_equal), floatScreenWidth $ const (1/3))
+  -- Float to small-ish window
+  & ((shiftMask .|. myModKey, xK_minus), floatScreenWidth $ const (1/5))
+  -- Increase/decrease floating window size by 5%
+  & ((              myModKey, xK_equal), floatScreenWidth $       (+ 0.05))
+  & ((              myModKey, xK_minus), floatScreenWidth $ subtract 0.05)
   where
+  (&) = flip (:)
   scratch = namedScratchpadAction myScratchpads
   centerMouse = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
-  (&) = flip (:)
+
+  -- Float the focused window, resizing relative to its current width
+  -- (which is relative to the screen size.
+  floatScreenWidth f = withFocused $ \wid -> do
+    (_, W.RationalRect x y w _) <- floatLocation wid
+    windows (W.float wid (W.RationalRect x y (f w) (f w)))
 
 myScratchpads =
   [ NS "hamster"
