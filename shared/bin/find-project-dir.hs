@@ -23,7 +23,6 @@ import Prelude hiding (log)
 import Control.Monad
 import Data.Char (toLower)
 import Data.List (elemIndex, sort)
-import Data.Monoid
 import Data.Maybe
 import qualified Data.Text as T
 import Data.Traversable
@@ -75,9 +74,11 @@ mkConfigRoot r = Config [r] mempty
 mkConfigAlias :: (String, String) -> Config
 mkConfigAlias kv = Config mempty [kv]
 
+instance Semigroup Config where
+  Config rs1 as1 <> Config rs2 as2 = Config (rs1 <> rs2) (as1 <> as2)
+
 instance Monoid Config where
   mempty = Config mempty mempty
-  mappend (Config rs1 as1) (Config rs2 as2) = Config (rs1 <> rs2) (as1 <> as2)
 
 {-# NOINLINE homeDir #-}
 homeDir :: String
