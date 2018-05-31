@@ -3,7 +3,7 @@ Description=redshift
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/bin/bash -c 'source %h/dotfiles/linux/.redshift ; redshift -v -l "$LATLON"'
+ExecStart=/usr/bin/redshift -c %h/dotfiles/linux/redshift.conf
 ExecStop=/usr/bin/pkill --signal INT redshift
 
 [Install]
