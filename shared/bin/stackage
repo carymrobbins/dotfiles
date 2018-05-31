@@ -1,6 +1,15 @@
 #!/bin/bash
 
-resolver=$(grep resolver stack.yaml | cut -d: -f2 | xargs)
+if [ -f stack.yaml ]; then
+  stack_yaml=stack.yaml
+elif [ -f ~/.stack/global-project/stack.yaml ]; then
+  stack_yaml=~/.stack/global-project/stack.yaml
+else
+  >&2 echo "No local or global stack.yaml found"
+  exit 1
+fi
+
+resolver=$(grep resolver "$stack_yaml" | cut -d: -f2 | xargs)
 
 url=https://www.stackage.org/$resolver
 
