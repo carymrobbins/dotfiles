@@ -48,6 +48,8 @@ nmap <Leader>c :call ToggleColorColumn()<CR>
 map <C-n> :NERDTreeToggle<CR>
 "Remap <Enter> to split the line and insert a new line in between for braces/parens
 inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
+"Redraw the screen, useful for fixing bad highlighting
+nmap <Leader>r :redraw!<CR>
 
 "Customize for solarized dark/light
 
