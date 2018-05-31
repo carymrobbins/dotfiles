@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeApplications #-}
 import           XMonad
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
@@ -11,9 +12,16 @@ import           XMonad.Layout.Spacing
 import           XMonad.Layout.Tabbed
 import           XMonad.Layout.ThreeColumns
 import qualified XMonad.StackSet as W
+import qualified XMonad.Util.ExtensibleState as XS
 import           XMonad.Util.NamedScratchpad
 import           XMonad.Util.EZConfig
 import           XMonad.Util.Run
+
+import           Control.Monad
+import           Control.Monad.Extra (whenM)
+import           Data.Coerce
+import           Data.IORef
+import           System.IO.Unsafe
 
 myModKey = mod4Mask
 
@@ -29,10 +37,17 @@ myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 myKeys =
   -- Set screen keys
   [
-    ((m .|. myModKey, key), screenWorkspace sc >>= flip whenJust (windows . f))
-    | (key, sc) <- myScreenKeys
-    , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
+    (
+      (m .|. myModKey, key),
+      -- Focus workspace, possibly refocusing the mouse.
+      screenWorkspace sc >>= flip whenJust (windows . f) >> refocusMouse
+    ) | (key, sc) <- myScreenKeys
+      , (f, m)    <- [(W.view, 0), (W.shift, shiftMask)]
   ]
+
+  -- Focus next/prev window, possibly refocusing the mouse.
+  & ((myModKey, xK_j), windows W.focusDown >> refocusMouse)
+  & ((myModKey, xK_k), windows W.focusUp   >> refocusMouse)
 
   -- Switch to NSP workspace
   &  ((myModKey, xK_0), windows $ W.greedyView "NSP")
@@ -48,8 +63,8 @@ myKeys =
   & ((myModKey,               xK_n), moveTo Next NonEmptyWS)
   & ((shiftMask .|. myModKey, xK_n), moveTo Prev NonEmptyWS)
 
-  -- Move mouse to center of focused window
-  & ((myModKey, xK_m), centerMouse)
+  -- Toggle mouse-follows-focus(-like) behavior
+  & ((myModKey, xK_m), toggleMouseFollowsFocus >> refocusMouse)
 
   -- Sticky
   & ((              myModKey, xK_s), windows $ copyToAll)
@@ -65,13 +80,26 @@ myKeys =
   where
   (&) = flip (:)
   scratch = namedScratchpadAction myScratchpads
-  centerMouse = updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
+
+  refocusMouse =
+    whenM (coerce <$> shouldRefocusMouse) $
+      updatePointer (0.5, 0.5) (0, 0) -- Exact center of window
+
+  shouldRefocusMouse = XS.get @MouseFollowsFocus
+  toggleMouseFollowsFocus = XS.modify (MouseFollowsFocus . not . coerce)
 
   -- Float the focused window, resizing relative to its current width
   -- (which is relative to the screen size.
   floatScreenWidth f = withFocused $ \wid -> do
     (_, W.RationalRect x y w _) <- floatLocation wid
     windows (W.float wid (W.RationalRect x y (f w) (f w)))
+
+newtype MouseFollowsFocus = MouseFollowsFocus Bool
+  deriving (Typeable, Read, Show)
+
+instance ExtensionClass MouseFollowsFocus where
+  initialValue = MouseFollowsFocus True
+  extensionType = PersistentExtension
 
 myScratchpads =
   [ NS "hamster"
