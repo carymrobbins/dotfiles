@@ -6,4 +6,4 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-diff -u <(jq --sort-keys . "$1") <(jq --sort-keys . "$2")
+diff --color=auto -u <(jq --sort-keys . "$1") <(jq --sort-keys . "$2")
