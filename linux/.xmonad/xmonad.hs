@@ -23,6 +23,8 @@ import           Data.Coerce
 import           Data.IORef
 import           System.IO.Unsafe
 
+useXMobar = True
+
 myModKey = mod4Mask
 
 -- 4 monitors
@@ -183,16 +185,19 @@ specificWindowManageHooks =
     , appName =? "sun-awt-X11-XWindowPeer" <&&> className =? "jetbrains-idea"
     ]
 
-myLogHooks xmobarProc =
+myLogHooks maybeXMobarProc =
   def
   <+> xmobarLog
   where
-  xmobarLog = dynamicLogWithPP xmobarPP
-    { ppOutput  = hPutStrLn xmobarProc
-    , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
-    -- No need for title since I use top bars/tabs
-    , ppTitle = const ""
-    }
+  xmobarLog = case maybeXMobarProc of
+    Nothing -> mempty
+    Just xmobarProc ->
+      dynamicLogWithPP xmobarPP
+        { ppOutput  = hPutStrLn xmobarProc
+        , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
+        -- No need for title since I use top bars/tabs
+        , ppTitle = const ""
+        }
 
 myLayoutHook = (avoidStruts $ two ||| three ||| full) ||| fullNoBar
   where
@@ -228,7 +233,11 @@ myBlue       = "#268bd2"
 windowRole = stringProperty "WM_WINDOW_ROLE"
 
 main = do
-  xmobarProc <- spawnPipe "xmobar ~/.xmonad/xmobarrc"
+  maybeXMobarProc <-
+    if useXMobar then
+      Just <$> spawnPipe "xmobar ~/.xmonad/xmobarrc"
+    else
+      return Nothing
   xmonad $ def
     { terminal = "bash -c 'term || terminator'"
     , modMask = myModKey
@@ -237,5 +246,5 @@ main = do
     , startupHook = setWMName "LG3D"
     , manageHook = myManageHook
     , layoutHook = myLayoutHook
-    , logHook = myLogHooks xmobarProc
+    , logHook = myLogHooks maybeXMobarProc
     } `additionalKeys` myKeys
