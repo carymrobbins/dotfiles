@@ -3,6 +3,7 @@ import           XMonad
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
 import           XMonad.Actions.UpdatePointer
+import qualified XMonad.DBus as D
 import           XMonad.Hooks.DynamicLog
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.SetWMName
@@ -23,7 +24,7 @@ import           Data.Coerce
 import           Data.IORef
 import           System.IO.Unsafe
 
-useXMobar = True
+useXMobar = False
 
 myModKey = mod4Mask
 
@@ -185,17 +186,22 @@ specificWindowManageHooks =
     , appName =? "sun-awt-X11-XWindowPeer" <&&> className =? "jetbrains-idea"
     ]
 
-myLogHooks maybeXMobarProc =
-  def
-  <+> xmobarLog
+myLogHooks maybeXMobarProc dbus = def <+> ppLog
   where
-  xmobarLog = case maybeXMobarProc of
-    Nothing -> mempty
+  ppLog = case maybeXMobarProc of
+    Nothing ->
+      dynamicLogWithPP def
+        { ppOutput = D.send dbus
+        , ppVisible = wrap " " " "
+        , ppCurrent = wrap ("%{u" <> myBlue <> " +u} ") " %{-u}"
+          -- No need for title since I use top bars/tabs
+        , ppTitle = const ""
+        }
     Just xmobarProc ->
       dynamicLogWithPP xmobarPP
         { ppOutput  = hPutStrLn xmobarProc
         , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
-        -- No need for title since I use top bars/tabs
+          -- No need for title since I use top bars/tabs
         , ppTitle = const ""
         }
 
@@ -233,6 +239,8 @@ myBlue       = "#268bd2"
 windowRole = stringProperty "WM_WINDOW_ROLE"
 
 main = do
+  dbus <- D.connect
+  D.requestAccess dbus
   maybeXMobarProc <-
     if useXMobar then
       Just <$> spawnPipe "xmobar ~/.xmonad/xmobarrc"
@@ -246,5 +254,5 @@ main = do
     , startupHook = setWMName "LG3D"
     , manageHook = myManageHook
     , layoutHook = myLayoutHook
-    , logHook = myLogHooks maybeXMobarProc
+    , logHook = myLogHooks maybeXMobarProc dbus
     } `additionalKeys` myKeys

@@ -1,0 +1,10 @@
+[Unit]
+Description=polybar
+
+[Service]
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/polybar main
+ExecStop=/usr/bin/pkill polybar
+
+[Install]
+WantedBy=wm.target
