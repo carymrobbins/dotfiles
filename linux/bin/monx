@@ -84,7 +84,8 @@ while [ "$elapsed" -lt "$timeout" ]; do
   sleep 1
   ((++elapsed))
 done
-systemctl --user restart stalonetray
+#systemctl --user restart stalonetray
+systemctl --user restart polybar
 
 # Reload x settings to fix wallpaper and screen refreshing
 reload-x-settings

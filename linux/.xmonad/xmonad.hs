@@ -193,7 +193,11 @@ myLogHooks maybeXMobarProc dbus = def <+> ppLog
       dynamicLogWithPP def
         { ppOutput = D.send dbus
         , ppVisible = wrap " " " "
-        , ppCurrent = wrap ("%{u" <> myBlue <> " +u} ") " %{-u}"
+        , ppHidden  = wrap " " " "
+        , ppCurrent = wrap ("%{F" <> myBlue <> "} ") " %{F-}"
+        -- , ppCurrent = wrap ("%{u" <> myBlue <> " +u} ") " %{-u}"
+        , ppUrgent  = wrap "%{F#f00}" "%{F-}"
+        , ppSep     = " "
           -- No need for title since I use top bars/tabs
         , ppTitle = const ""
         }
@@ -205,12 +209,19 @@ myLogHooks maybeXMobarProc dbus = def <+> ppLog
         , ppTitle = const ""
         }
 
-myLayoutHook = (avoidStruts $ two ||| three ||| full) ||| fullNoBar
+myLayoutHook =
+  (avoidStruts $ two ||| three ||| full) ||| fullNoBar
   where
-  two     = named "Two Column"   $ addBarGaps $ withDims Tall
-  three   = named "Three Column" $ addBarGaps $ withDims ThreeColMid
-  full    = named "Full"         $ tabbedAlways shrinkText myTopBarTheme
-  fullNoBar = named "Full No Bar" Full
+  two       = named twoName       $ addBarGaps $ withDims Tall
+  three     = named threeName     $ addBarGaps $ withDims ThreeColMid
+  full      = named fullName      $ tabbedAlways shrinkText myTopBarTheme
+  fullNoBar = named fullNoBarName Full
+
+  polyName s    = "%{F#555}" <> s <> "%{F-}"
+  twoName       = polyName "\xe131"
+  threeName     = polyName "\xe134"
+  fullName      = polyName "\xe0b7"
+  fullNoBarName = polyName "\xe130"
 
   addBarGaps = addTopBar . addGaps
   addTopBar = noFrillsDeco shrinkText myTopBarTheme

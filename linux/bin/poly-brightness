@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+backlight_dir = "/sys/class/backlight/intel_backlight"
+
+with open(backlight_dir + "/max_brightness") as f:
+    max_brightness = float(f.read())
+
+with open(backlight_dir + "/brightness") as f:
+    brightness = float(f.read())
+
+ratio = min(round(brightness / max_brightness * 10), 9)
+
+pre_bars = "─" * ratio
+post_bars = "─" * (10-ratio-1)
+pipe = "|"
+
+pre_color = ('%x' % min(15, (0 + ratio))) + ('%x' % min(255, (102 + (ratio * 17))))
+
+#print(pre_color)
+
+def fg(s, c): return '%{F#' + c + '}' + s + '%{F-}'
+
+print(fg(' ', '999') + fg(pre_bars, pre_color) + '|' + fg(post_bars, '555'))

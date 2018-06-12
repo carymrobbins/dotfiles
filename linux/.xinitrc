@@ -11,12 +11,14 @@ reload-x-settings
 # systemctl --user start wm.target
 systemctl --user start gnome-screensaver
 systemctl --user start blueman-applet
-systemctl --user start stalonetray
+# disabling in favor of polybar
+#systemctl --user start stalonetray
 systemctl --user start nm-applet
 systemctl --user start notify-osd
 systemctl --user start low-battery.timer
 systemctl --user start xcompmgr
 systemctl --user start redshift
+systemctl --user start polybar
 # TODO: Running xbindkeys with systemctl means it
 # can't find stuff in our $PATH
 xbindkeys
