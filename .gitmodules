@@ -52,3 +52,6 @@
 [submodule "shared/.vim/bundle/vim-csharp"]
 	path = shared/.vim/bundle/vim-csharp
 	url = git://github.com/OrangeT/vim-csharp.git
+[submodule "linux/.xmonad/xmonad-dbus"]
+	path = linux/.xmonad/xmonad-dbus
+	url = git@github.com:carymrobbins/xmonad-dbus.git
