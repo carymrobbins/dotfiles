@@ -73,8 +73,11 @@ output=$(xrandr "${xrandr_args[@]}" 2>&1)
 output=$(xmonad --restart 2>&1)
 [ $? -eq 0 ] || abort "$output"
 
+# Reload x settings to fix wallpaper and screen refreshing
+reload-x-settings
+
 # Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
-# This is so stalonetray can be positioned properly for the new layout.
+# This is so stalonetray/polybar can be positioned properly for the new layout.
 elapsed=0
 timeout=5
 while [ "$elapsed" -lt "$timeout" ]; do
@@ -84,8 +87,6 @@ while [ "$elapsed" -lt "$timeout" ]; do
   sleep 1
   ((++elapsed))
 done
-#systemctl --user restart stalonetray
-systemctl --user restart polybar
 
-# Reload x settings to fix wallpaper and screen refreshing
-reload-x-settings
+# systemctl --user restart stalonetray
+systemctl --user restart polybar

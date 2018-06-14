@@ -37,6 +37,10 @@ myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 -- 2 monitors
 -- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
 
+myWorkspaces@
+  [ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5, ws6, ws7, ws8, ws9 ] =
+  [ "\xf120", "\xf0ad", "\xf0ac", "\xf086", "\xf13b", "6", "8", "8", "9" ]
+
 myKeys =
   -- Set screen keys
   [
@@ -147,14 +151,14 @@ myManageHook =
 defaultWorkspaces =
   def
   -- IntelliJ, except the "exit" dialog should just appear on the active window
-  <+> (className =? "jetbrains-idea"    <&&> title /=? "Confirm Exit" --> doShift "2")
-  <+> (className =? "jetbrains-idea-ce" <&&> title /=? "Confirm Exit" --> doShift "2")
+  <+> (className =? "jetbrains-idea"    <&&> title /=? "Confirm Exit" --> doShift wsDev)
+  <+> (className =? "jetbrains-idea-ce" <&&> title /=? "Confirm Exit" --> doShift wsDev)
   -- Browsers
-  <+> (className =? "Google-chrome" --> doShift "3")
+  <+> (className =? "Google-chrome" --> doShift wsBrowse)
   -- Chat windows
-  <+> (className =? "Slack"    --> doShift "4")
-  <+> (title     =? "Gitter"   --> doShift "4")
-  <+> (className =? "Hexchat"  --> doShift "4")
+  <+> (className =? "Slack"    --> doShift wsChat)
+  <+> (title     =? "Gitter"   --> doShift wsChat)
+  <+> (className =? "Hexchat"  --> doShift wsChat)
 
 -- | Query for not-equal, negation of =?
 (/=?) :: Eq a => Query a -> a -> Query Bool
@@ -188,26 +192,28 @@ specificWindowManageHooks =
 
 myLogHooks maybeXMobarProc dbus = def <+> ppLog
   where
-  ppLog = case maybeXMobarProc of
-    Nothing ->
-      dynamicLogWithPP def
-        { ppOutput = D.send dbus
-        , ppVisible = wrap " " " "
-        , ppHidden  = wrap " " " "
-        , ppCurrent = wrap ("%{F" <> myBlue <> "} ") " %{F-}"
-        -- , ppCurrent = wrap ("%{u" <> myBlue <> " +u} ") " %{-u}"
-        , ppUrgent  = wrap "%{F#f00}" "%{F-}"
-        , ppSep     = " "
-          -- No need for title since I use top bars/tabs
-        , ppTitle = const ""
-        }
-    Just xmobarProc ->
-      dynamicLogWithPP xmobarPP
-        { ppOutput  = hPutStrLn xmobarProc
-        , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
-          -- No need for title since I use top bars/tabs
-        , ppTitle = const ""
-        }
+  ppLog = maybe polybarLog xmobarLog maybeXMobarProc
+
+  polybarLog = dynamicLogWithPP def
+    { ppOutput = D.send dbus
+    , ppVisible = wrap " " " "
+    , ppHidden  = hideNSP
+    , ppCurrent = wrap ("%{F" <> myBlue <> "} ") " %{F-}"
+    -- , ppCurrent = wrap ("%{u" <> myBlue <> " +u} ") " %{-u}"
+    , ppUrgent  = wrap "%{F#f00}" "%{F-}"
+    , ppSep     = " | "
+      -- No need for title since I use top bars/tabs
+    , ppTitle = const ""
+    }
+
+  xmobarLog xmobarProc = dynamicLogWithPP xmobarPP
+    { ppOutput  = hPutStrLn xmobarProc
+    , ppCurrent = xmobarColor myBlue "" . wrap "[" "]"
+      -- No need for title since I use top bars/tabs
+    , ppTitle = const ""
+    }
+
+  hideNSP wId = if wId == "NSP" then "" else wrap " " " " wId
 
 myLayoutHook =
   (avoidStruts $ two ||| three ||| full) ||| fullNoBar
@@ -266,4 +272,5 @@ main = do
     , manageHook = myManageHook
     , layoutHook = myLayoutHook
     , logHook = myLogHooks maybeXMobarProc dbus
+    , workspaces = myWorkspaces
     } `additionalKeys` myKeys

@@ -58,7 +58,7 @@ font-4 = FontAwesome:size=11;1
 modules-left = xmonad
 modules-center =
 ;modules-right = filesystem xbacklight volume xkeyboard memory cpu wlan eth battery temperature date powermenu
-modules-right = filesystem xleds volume memory cpu wlan battery temperature date
+modules-right = filesystem xleds volume memory cpu wlan battery temperature date restartpolybar padding
 
 tray-position = right
 ;tray-padding = 2
@@ -115,6 +115,17 @@ type = custom/script
 exec = xmonad-dbus
 tail = true
 interval = 1
+
+[module/restartpolybar]
+type = custom/script
+exec = echo "%{F#aaa}  %{F-}"
+interval = 3600
+click-left = systemctl --user restart polybar
+
+[module/padding]
+type = custom/script
+exec = echo "          "
+interval = 3600
 
 ;[module/bspwm]
 ;type = internal/bspwm
@@ -268,7 +279,7 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date = %A %B %e, %Y
+date = %a, %B %e, %Y
 date-alt = %Y-%m-%d
 
 time = %I:%M %p
@@ -279,7 +290,7 @@ format-prefix = 
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #0a6cf5
 
-label = " %date% %time%"
+label = " %date% | %time%"
 
 [module/volume]
 type = internal/volume
