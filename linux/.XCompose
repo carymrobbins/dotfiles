@@ -1,29 +1,40 @@
 # Special symbols, see: https://gist.github.com/carlobaldassi/8951743
 
-<Multi_key> <a> <space> : "α" U03B1 # GREEK SMALL LETTER ALPHA
-<Multi_key> <b> <space> : "β" U03B2 # GREEK SMALL LETTER BETA
-<Multi_key> <l> <space> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
-<Multi_key> <L> <space> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
-<Multi_key> <n> <space> : "ν" U03BD # GREEK SMALL LETTER NU
-<Multi_key> <p> <space> : "π" U03C0 # GREEK SMALL LETTER PI
-<Multi_key> <S> <space> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
-<Multi_key> <period> <space> : "∘" U0221
+<Multi_key> <a> : "α" U03B1 # GREEK SMALL LETTER ALPHA
+<Multi_key> <b> : "β" U03B2 # GREEK SMALL LETTER BETA
+<Multi_key> <l> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
+<Multi_key> <L> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
+<Multi_key> <n> : "ν" U03BD # GREEK SMALL LETTER NU
+<Multi_key> <p> : "π" U03C0 # GREEK SMALL LETTER PI
+<Multi_key> <S> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
+<Multi_key> <period> : "∘" U0221
+<Multi_key> <B> : "⊥" U22A5 # Bottom
+<Multi_key> <U> : "∀" U2200 # Universal Quantification
 
-<Multi_key> <l> <n> : "¬" U00AC # Logical negation
-<Multi_key> <l> <x> : "⊕" U2295 # Exclusive disjunction
-<Multi_key> <l> <i> : "∨" U2228 # Inclusive disjunction
-<Multi_key> <l> <c> : "∧" U2227 # Logical conjunction
+#<Multi_key> <a> <space> : "α" U03B1 # GREEK SMALL LETTER ALPHA
+#<Multi_key> <b> <space> : "β" U03B2 # GREEK SMALL LETTER BETA
+#<Multi_key> <l> <space> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
+#<Multi_key> <L> <space> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
+#<Multi_key> <n> <space> : "ν" U03BD # GREEK SMALL LETTER NU
+#<Multi_key> <p> <space> : "π" U03C0 # GREEK SMALL LETTER PI
+#<Multi_key> <S> <space> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
+#<Multi_key> <period> <space> : "∘" U0221
 
-<Multi_key> <g> <a> : "α" U03B1 # GREEK SMALL LETTER ALPHA
-<Multi_key> <g> <b> : "β" U03B2 # GREEK SMALL LETTER BETA
-<Multi_key> <g> <l> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
-<Multi_key> <g> <L> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
-<Multi_key> <g> <n> : "ν" U03BD # GREEK SMALL LETTER NU
-<Multi_key> <g> <p> : "π" U03C0 # GREEK SMALL LETTER PI
-<Multi_key> <g> <S> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
+#<Multi_key> <l> <n> : "¬" U00AC # Logical negation
+#<Multi_key> <l> <x> : "⊕" U2295 # Exclusive disjunction
+#<Multi_key> <l> <i> : "∨" U2228 # Inclusive disjunction
+#<Multi_key> <l> <c> : "∧" U2227 # Logical conjunction
 
-<Multi_key> <g> <B> : "⊥" U22A5 # Bottom
-<Multi_key> <g> <U> : "∀" U2200 # Universal Quantification
+#<Multi_key> <g> <a> : "α" U03B1 # GREEK SMALL LETTER ALPHA
+#<Multi_key> <g> <b> : "β" U03B2 # GREEK SMALL LETTER BETA
+#<Multi_key> <g> <l> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
+#<Multi_key> <g> <L> : "Λ" U039B # GREEK CAPITAL LETTER LAMBDA
+#<Multi_key> <g> <n> : "ν" U03BD # GREEK SMALL LETTER NU
+#<Multi_key> <g> <p> : "π" U03C0 # GREEK SMALL LETTER PI
+#<Multi_key> <g> <S> : "Σ" U03A3 # GREEK CAPITAL LETTER SIGMA
+
+#<Multi_key> <g> <B> : "⊥" U22A5 # Bottom
+#<Multi_key> <g> <U> : "∀" U2200 # Universal Quantification
 
 <Multi_key> <Right>                 : "⇒"   U21D2 # U+21D2 RIGHTWARDS DOUBLE ARROW
 <Multi_key> <Left>                  : "⇐"   U21D0 # U+21D0 LEFTWARDS DOUBLE ARROW
@@ -31,6 +42,13 @@
 <Multi_key> <space> <Left>          : "←"   U2190 # U+2190 LEFTWARDS ARROW
 <Multi_key> <space> <Up>            : "↑"   U2191 # up arrow
 <Multi_key> <space> <Down>          : "↓"   U2191 # down arrow
+
+<Multi_key> <space> <L>             : "⇒"   U21D2 # U+21D2 RIGHTWARDS DOUBLE ARROW
+<Multi_key> <space> <H>             : "⇐"   U21D0 # U+21D0 LEFTWARDS DOUBLE ARROW
+<Multi_key> <space> <l>             : "→"   U2192 # U+2192 RIGHTWARDS ARROW
+<Multi_key> <space> <h>             : "←"   U2190 # U+2190 LEFTWARDS ARROW
+<Multi_key> <space> <k>             : "↑"   U2191 # up arrow
+<Multi_key> <space> <j>             : "↓"   U2191 # down arrow
 
 # Defaults
 
