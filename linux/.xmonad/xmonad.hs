@@ -38,8 +38,16 @@ myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 -- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
 
 myWorkspaces@
-  [ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5, ws6, ws7, ws8, ws9 ] =
-  [ "\xf120", "\xf0ad", "\xf0ac", "\xf086", "\xf13b", "6", "8", "8", "9" ]
+  [ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5,   ws6, ws7, ws8, ws9 ] =
+  [ prompt,   rocket,   earth,    chats,    html5, "6", "7", "8", "9" ]
+  where
+  prompt = "\xf120"
+  wrench = "\xf0ad"
+  rocket = "\xf135"
+  earth  = "\xf0ac"
+  chats  = "\xf086"
+  html5  = "\xf13b"
+
 
 myKeys =
   -- Set screen keys
@@ -51,6 +59,9 @@ myKeys =
     ) | (key, sc) <- myScreenKeys
       , (f, m)    <- [(W.view, 0), (W.shift, shiftMask)]
   ]
+
+  -- Override the existing restart xmonad key binding.
+  & ((myModKey, xK_q), restartXMonad)
 
   -- Focus next/prev window, possibly refocusing the mouse.
   & ((myModKey, xK_j), windows W.focusDown >> refocusMouse)
@@ -100,6 +111,28 @@ myKeys =
   floatScreenWidth f = withFocused $ \wid -> do
     (_, W.RationalRect x y w _) <- floatLocation wid
     windows (W.float wid (W.RationalRect x y (f w) (f w)))
+
+  -- Augmented restart XMonad command. This restarts polybar after we restart XMonad
+  -- to ensure that the `avoidStruts` in the layout hook can properly detect it and
+  -- adjust the window layouts accordingly.
+  -- Also this will use notify-send instead of xmessage for error messages. It also
+  -- reports compilation errors instead of silently failing to restart.
+  -- Adapted logic from -
+  -- https://www.stackage.org/haddock/lts-11.14/xmonad-0.13/src/XMonad.Config.html#keys
+  restartXMonad = spawn $ unlines
+    [ "if type xmonad; then"
+    , "  out=$(xmonad --recompile 2>&1)"
+    , "  if [ $? -ne 0 ]; then"
+    , "    term  XMonad \"$out\""
+    , "  else"
+    , "    xmonad --restart &&"
+    , "      sleep 0.1 &&"
+    , "      systemctl --user restart polybar"
+    , "  fi"
+    , "else"
+    , "  notify-send XMonad \"xmonad not in \\$PATH: $PATH\""
+    , "fi"
+    ]
 
 newtype MouseFollowsFocus = MouseFollowsFocus Bool
   deriving (Typeable, Read, Show)
@@ -168,6 +201,7 @@ specificWindowManageHooks =
   def
   <+> foldMap (--> doFloat) floatQueries
   <+> foldMap (--> doIgnore) ignoreQueries
+  <+> foldMap (--> doShift "NSP") hideQueries
   where
   floatQueries =
     [ appName =? "Amethyst"
@@ -182,12 +216,18 @@ specificWindowManageHooks =
     , windowRole =? "gimp-toolbox"
     , title =? "Install user style"
     , windowRole =? "autoconfig" -- thunderbird config windows
+    , windowRole =? "gimp-action-search-dialog"
+    , className =? "Unity" <&&> title =? "Starting Unity..."
     ]
 
   ignoreQueries =
     [ title =? "Slack Call Minipanel"
     -- Help IntelliJ's autocomplete popup to appear on the top of the IDE
     , appName =? "sun-awt-X11-XWindowPeer" <&&> className =? "jetbrains-idea"
+    ]
+
+  hideQueries =
+    [ className =? "Unity" <&&> title =? "Starting Unity..."
     ]
 
 myLogHooks maybeXMobarProc dbus = def <+> ppLog
