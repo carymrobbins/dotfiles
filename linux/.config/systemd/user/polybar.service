@@ -3,7 +3,7 @@ Description=polybar
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/polybar main
+ExecStart=/usr/bin/polybar -r main
 ExecStop=/usr/bin/pkill polybar
 
 [Install]
