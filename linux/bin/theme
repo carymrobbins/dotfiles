@@ -23,12 +23,12 @@ set_wallpaper() {
   )
 }
 
-set_stalonetray_theme() {
-  (
-    cd ~/.xmonad
-    ln -s -f "stalonetrayrc.$1" stalonetrayrc
-  )
-}
+# set_stalonetray_theme() {
+#   (
+#     cd ~/.xmonad
+#     ln -s -f "stalonetrayrc.$1" stalonetrayrc
+#   )
+# }
 
 set_xmobar_theme() {
   (
@@ -40,7 +40,7 @@ set_xmobar_theme() {
 do_set_all() {
   set_theme_type_file   "$1"
   hexchat-theme         "$1"
-  set_stalonetray_theme "$1"
+  #set_stalonetray_theme "$1"
   set_xmobar_theme      "$1"
 
   # dark -> dark_desktop, light -> light_desktop
@@ -58,5 +58,5 @@ case "$typ" in
 esac
 
 xmonad --restart
-systemctl --user restart stalonetray
+#systemctl --user restart stalonetray
 reload-x-settings
