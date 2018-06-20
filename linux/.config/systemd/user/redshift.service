@@ -3,7 +3,7 @@ Description=redshift
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/redshift -c %h/dotfiles/linux/redshift.conf
+ExecStart=/usr/bin/redshift-gtk -c %h/dotfiles/linux/redshift.conf
 ExecStop=/usr/bin/pkill --signal INT redshift
 
 [Install]
