@@ -3,7 +3,7 @@ Description=polybar
 
 [Service]
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/polybar -r main
+ExecStart=/%h/dotfiles/linux/bin/polybar-wrapper -r main
 ExecStop=/usr/bin/pkill polybar
 
 [Install]

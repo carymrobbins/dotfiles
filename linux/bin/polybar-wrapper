@@ -1,0 +1,9 @@
+#!/bin/bash
+
+primary_monitor=$(xrandr | grep primary | cut -d ' ' -f1)
+if [ -n "$primary_monitor" ]; then
+  MONITOR="$primary_monitor" exec polybar "$@"
+else
+  exec polybar "$@"
+fi
+

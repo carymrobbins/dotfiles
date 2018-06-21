@@ -25,8 +25,7 @@ secondary = #e60053
 alert = #bd2c40
 
 [bar/main]
-;monitor = ${env:MONITOR:eDP-1}
-;monitor = ${env:MONITOR:DP-2}
+monitor = ${env:MONITOR}
 width = 100%
 height = 27
 ;offset-x = 1%
@@ -361,20 +360,27 @@ format-full-underline = ${self.format-charging-underline}
 ;ramp-capacity-0 = %{F#e25}%{F-}
 ;ramp-capacity-1 = %{F#ee5}%{F-}
 ;ramp-capacity-2 = %{F#2e5}%{F-}
-ramp-capacity-0 = %{F#e25} %{F-}
-ramp-capacity-1 = %{F#da5} %{F-}
-ramp-capacity-2 = %{F#ee5} %{F-}
-ramp-capacity-3 = %{F#ce5} %{F-}
-ramp-capacity-4 = %{F#2e5} %{F-}
+ramp-capacity-0 = %{F#e72d0f}%{F-}
+ramp-capacity-1 = %{F#e18d32}%{F-}
+ramp-capacity-2 = %{F#e1ca32}%{F-}
+ramp-capacity-3 = %{F#80b44f}%{F-}
+ramp-capacity-4 = %{F#3bd04a}%{F-}
 
 ;animation-charging-0 = 
 ;animation-charging-1 = 
 ;animation-charging-2 = 
 ;animation-charging-foreground = ${colors.foreground-alt}
-animation-charging-0 = %{F#e25}%{F-}
-animation-charging-1 = %{F#ee5}%{F-}
-animation-charging-2 = %{F#2e5}%{F-}
-animation-charging-framerate = 750
+;
+animation-charging-0 = %{F#e86742}%{F-}
+animation-charging-1 = %{F#e18d32}%{F-}
+animation-charging-2 = %{F#e1ca32}%{F-}
+animation-charging-3 = %{F#80b44f}%{F-}
+animation-charging-4 = %{F#3bd04a}%{F-}
+;animation-charging-0 = %{F#e75}%{F-}
+;animation-charging-1 = %{F#ee5}%{F-}
+;animation-charging-2 = %{F#ae5}%{F-}
+;animation-charging-3 = %{F#2e5}%{F-}
+animation-charging-framerate = 500
 
 [module/temperature]
 type = internal/temperature
