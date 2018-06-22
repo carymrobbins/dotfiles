@@ -20,4 +20,4 @@ pre_color = ('%x' % min(15, (0 + ratio))) + ('%x' % min(255, (102 + (ratio * 17)
 
 def fg(s, c): return '%{F#' + c + '}' + s + '%{F-}'
 
-print(fg(' ', '999') + fg(pre_bars, pre_color) + '|' + fg(post_bars, '555'))
+print(fg(' ', 'eee') + fg(pre_bars, pre_color) + '|' + fg(post_bars, '555'))
