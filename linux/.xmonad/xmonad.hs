@@ -126,7 +126,7 @@ myKeys =
     , "    term  XMonad \"$out\""
     , "  else"
     , "    xmonad --restart &&"
-    , "      sleep 0.1 &&"
+    , "      sleep 1 &&"
     , "      systemctl --user restart polybar"
     , "  fi"
     , "else"
