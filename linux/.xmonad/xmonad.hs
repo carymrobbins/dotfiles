@@ -72,8 +72,8 @@ myKeys =
 
   -- Scratchpads
   & ((shiftMask .|. myModKey, xK_h), scratch "hamster")
-  -- & ((shiftMask .|. myModKey, xK_t), scratch "trello")
-  & ((shiftMask .|. myModKey, xK_t), scratch "toggl")
+  & ((shiftMask .|. myModKey, xK_t), scratch "trello")
+  -- & ((shiftMask .|. myModKey, xK_t), scratch "toggl")
   & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
   & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
 
