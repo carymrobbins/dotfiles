@@ -48,7 +48,6 @@ myWorkspaces@
   chats  = "\xf086"
   html5  = "\xf13b"
 
-
 myKeys =
   -- Set screen keys
   [
@@ -68,7 +67,8 @@ myKeys =
   & ((myModKey, xK_k), windows W.focusUp   >> refocusMouse)
 
   -- Switch to NSP workspace
-  &  ((myModKey, xK_0), windows $ W.greedyView "NSP")
+  &  ((myModKey, xK_0), windows $ W.view "NSP")
+  &  ((shiftMask .|. myModKey, xK_0), windows $ W.shift "NSP")
 
   -- Scratchpads
   & ((shiftMask .|. myModKey, xK_h), scratch "hamster")
