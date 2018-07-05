@@ -16,6 +16,7 @@ systemctl --user start blueman-applet
 systemctl --user start nm-applet
 systemctl --user start notify-osd
 systemctl --user start low-battery.timer
+systemctl --user start tau.timer
 systemctl --user start xcompmgr
 systemctl --user start redshift
 systemctl --user start polybar
