@@ -22,7 +22,7 @@ hf=projects/intellij-haskforce
 import Prelude hiding (log)
 import Control.Monad
 import Data.Char (toLower)
-import Data.List (elemIndex, sort)
+import Data.List (elemIndex, isPrefixOf, nub, sort)
 import Data.Maybe
 import qualified Data.Text as T
 import Data.Traversable
@@ -35,7 +35,7 @@ import System.IO
 import System.IO.Unsafe (unsafePerformIO)
 
 usage :: String
-usage = "Usage: find-project-dir.hs <pattern> [--notify]"
+usage = "Usage: find-project-dir.hs <pattern> [--notify] [--complete] [--show-config]"
 
 -- | Supply the FPD_DEBUG_LOG env var add debug logging.
 {-# NOINLINE debug #-}
@@ -44,8 +44,9 @@ debug = unsafePerformIO $ isJust . lookup "FPD_DEBUG_LOG" <$> getEnvironment
 
 main :: IO ()
 main = getArgs >>= \case
-  ["--show-config"] -> readConfig >>= print
+  ["--show-config"] -> print _CONFIG
   [pat, "--notify"] -> runWithArgs pat True
+  [pat, "--complete"] -> runComplete pat
   [pat] -> runWithArgs pat False
   _ -> hPutStrLn stderr usage
   where
@@ -61,6 +62,23 @@ main = getArgs >>= \case
 
       -- Print the first match
       x:_ -> putStrLn x
+
+  runComplete :: String -> IO ()
+  runComplete pat = do
+    let Config {..} = _CONFIG
+    aliasCompletions <- fmap concat $
+      for configAliases $ \(alias, _) ->
+        return $ if pat `isPrefixOf` alias then [alias] else []
+    rootCompletions <- fmap (concat . concat) $
+      for configRoots $ \path -> do
+        files <- getDirectoryContents path
+        for files $ \file ->
+          if file `elem` [".", ".."] then return [] else do
+            let fullPath = path </> file
+            isDir <- doesDirectoryExist fullPath
+            return $ if isDir && pat `isPrefixOf` file then [file] else []
+    let completions = nub $ aliasCompletions ++ rootCompletions
+    forM_ completions putStrLn
 
 data Config = Config
   { configRoots :: [String]
@@ -83,6 +101,10 @@ instance Monoid Config where
 {-# NOINLINE homeDir #-}
 homeDir :: String
 homeDir = unsafePerformIO getHomeDirectory
+
+{-# NOINLINE _CONFIG #-}
+_CONFIG :: Config
+_CONFIG = unsafePerformIO readConfig
 
 readConfig :: IO Config
 readConfig = do
@@ -112,7 +134,7 @@ readConfig = do
 
 run :: String -> IO [[Maybe String]]
 run pat = do
-  Config {..} <- readConfig
+  let Config {..} = _CONFIG
   case lookup pat configAliases of
     Just found -> do
       return $ [[Just $ homeDir </> found]]
@@ -120,9 +142,8 @@ run pat = do
 
 search :: Traversable t => String -> t FilePath -> IO (t [Maybe FilePath])
 search pat dirs = do
-  for dirs $ \dir -> do
-    log $ "Checking dir: " <> dir
-    let path = homeDir </> dir
+  for dirs $ \path -> do
+    log $ "Checking path: " <> path
     files <- getDirectoryContents path
     for (sort files) $ \file ->
       if file `elem` [".", ".."] then return Nothing else do

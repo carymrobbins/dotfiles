@@ -33,6 +33,20 @@ alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
 
+_vbinfile() {
+  local filepath=$1/$2
+  shift
+  shift
+  if [ ! -f "$filepath" ]; then
+    echo "Initializing $filepath as a bash script..."
+    echo -e "#!/bin/bash\n\n" > "$filepath"
+    chmod +x "$filepath"
+  fi
+  "$EDITOR" "$filepath"
+}
+alias vsb='_vbinfile $HOME/dotfiles/shared/bin'
+alias vlb='_vbinfile $HOME/dotfiles/linux/bin'
+
 log_implicits='set scalacOptions in Global += "-Xlog-implicits"'
 
 # DISABLED AS THIS USES TOO MUCH MEMORY
@@ -81,7 +95,6 @@ cx() {
 
 vx() { ref_exec "$EDITOR" "$1"; }
 
-vcx() { ref_exec vimcat "$1"; }
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -188,3 +201,19 @@ done
 # if [ -n "$DISPLAY" -a -z "$TMUX" ] && command -v tmux >/dev/null; then
 #   tmux a 2>/dev/null || tmux
 # fi
+
+# Custom completions
+autoload -Uz compinit
+compinit
+# _path_commands autocompletes executables on the $PATH
+compdef _path_commands hl
+compdef _path_commands cx
+compdef _path_commands vx
+
+_find_project_dir_completions() {
+  find-project-dir "$1" --complete | while read line
+  do
+    compadd "$line"
+  done
+}
+compdef _find_project_dir_completions find-project-dir
