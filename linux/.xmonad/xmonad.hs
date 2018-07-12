@@ -32,10 +32,10 @@ myModKey = mod4Mask
 -- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [3,1,2,0]
 
 -- 3 monitors
-myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
+-- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,2,0]
 
 -- 2 monitors
--- myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
+myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
 
 myWorkspaces@
   [ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5,   ws6, ws7, ws8, ws9 ] =

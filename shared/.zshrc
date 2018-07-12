@@ -19,7 +19,6 @@ disable r
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias wo="source ~/dotfiles/shared/bin/workon"
 alias g=git
 # Conditionally use ./gradlew if it exists
 # Setting TERM to workaround gradle 4.5.1 bug
@@ -32,6 +31,18 @@ alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
+
+wo() {
+  if [ -z "$1" ]; then
+    >&2 echo "Usage: wo <project>"
+    return
+  fi
+
+  local found=$(find-project-dir "$1")
+  if [ "$?" -eq 0 ]; then
+    cd "$found"
+  fi
+}
 
 _vbinfile() {
   local filepath=$1/$2
@@ -217,3 +228,4 @@ _find_project_dir_completions() {
   done
 }
 compdef _find_project_dir_completions find-project-dir
+compdef _find_project_dir_completions wo

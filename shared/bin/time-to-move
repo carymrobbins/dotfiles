@@ -1,0 +1,26 @@
+#!/bin/bash
+
+TAU=$HOME/tau/tau
+
+if [ $($TAU active --minutes) -gt 45 ]; then
+
+  messages=(
+    'Move it!'
+    'How long you gonna sit for?'
+    'One with the chair?'
+    'Get up bro'
+    'Does your spine feel funny?'
+    "Betcha can't touch your toes"
+    "You're probably distracted, aren't you?"
+    'Need a break?'
+    'Got dem numb glutes'
+  )
+
+  i=$((RANDOM % ${#messages[@]}))
+  msg=" $($TAU active) | ${messages[$i]}"
+
+  echo "Notifying with message: $msg"
+  notify-send "$msg"
+else
+  echo "Threshold not exceeded"
+fi

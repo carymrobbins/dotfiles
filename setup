@@ -62,6 +62,8 @@ LINUX_FILES=(
   .config/systemd/user/nm-applet.service
   .config/systemd/user/redshift.service
   .config/systemd/user/stalonetray.service
+  .config/systemd/user/time-to-move.service
+  .config/systemd/user/time-to-move.timer
   .config/systemd/user/xcompmgr.service
   .config/systemd/user/wm.target
   .config/systemd/user/xbindkeys.service

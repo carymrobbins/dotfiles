@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+  >&2 echo "Usage: $0 <typename>"
+  exit 1
+fi
+
+pat=$1
+shift
+
+ack --haskell "^(?:data|newtype|type|class|type family) ($pat)\\b" "$@"
