@@ -76,7 +76,8 @@ main = getArgs >>= \case
           if file `elem` [".", ".."] then return [] else do
             let fullPath = path </> file
             isDir <- doesDirectoryExist fullPath
-            return $ if isDir && pat `isPrefixOf` file then [file] else []
+            -- return $ if isDir && file `matches` pat then [file] else []
+            return $ if isDir then [file] else []
     let completions = nub $ aliasCompletions ++ rootCompletions
     forM_ completions putStrLn
 

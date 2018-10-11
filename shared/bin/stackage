@@ -9,7 +9,7 @@ else
   exit 1
 fi
 
-resolver=$(grep resolver "$stack_yaml" | cut -d: -f2 | xargs)
+resolver=$(grep '^resolver' "$stack_yaml" | cut -d: -f2 | xargs)
 
 url=https://www.stackage.org/$resolver
 

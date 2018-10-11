@@ -22,71 +22,129 @@ fi
 
 xrandr_args=(-d "$DISPLAY")
 
-case "$num_monitors" in
-  0)
-    xrandr_args+=(
-      -d :0
-      --output HDMI-1 --off
-      --output DP-1 --off
-      --output eDP-1 --off
-      --output DP-2 --primary --mode 1920x1080 --pos 0x0 --rotate normal
-    )
-    num_monitors=1
-    ;;
-  1)
-    xrandr_args+=(
-      -d :0
-      --output HDMI-1 --off
-      --output DP-1 --off
-      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
-      --output DP-2 --off
-    )
-    ;;
-  2)
-    xrandr_args+=(
-      --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal
-      --output HDMI-1 --mode 1920x1080 --pos 0x0 --rotate normal
-      --output HDMI-2 --off
-      --output DP-1 --off
-      --output DP-2 --off
-    )
-    ;;
-  3)
-    xrandr_args+=(
-      --output HDMI-2 --off
-      --output DP-1 --off
-      --output eDP-1 --primary --mode 1920x1080 --pos 1920x1080 --rotate normal
-      --output HDMI-1 --mode 1920x1080 --pos 0x504 --rotate normal
-                      --set "Broadcast RGB" "Full"
-      --output DP-2 --mode 1920x1080 --pos 1920x0 --rotate normal
+main() {
+  case "$num_monitors" in
+    0) handle0;;
+    1) handle1;;
+    2) handle2;;
+    3) handle3;;
+    mirror) handleMirror;;
+    *) abort "Invalid num_monitors: $num_monitors";;
+  esac
+
+  output=$(xrandr "${xrandr_args[@]}" 2>&1)
+  [ $? -eq 0 ] || abort "$output"
+
+  output=$(xmonad --restart 2>&1)
+  [ $? -eq 0 ] || abort "$output"
+
+  # Reload x settings to fix wallpaper and screen refreshing
+  reload-x-settings
+
+  # Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
+  # This is so stalonetray/polybar can be positioned properly for the new layout.
+  elapsed=0
+  timeout=5
+  while [ "$elapsed" -lt "$timeout" ]; do
+    if [ "$(xrandr | fgrep '*+' | wc -l)" -eq "$num_monitors" ]; then
+      break
+    fi
+    sleep 1
+    ((++elapsed))
+  done
+
+  # systemctl --user restart stalonetray
+  systemctl --user restart polybar
+}
+
+handle0() {
+  xrandr_args+=(
+    # --output HDMI-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    # --output DP-1 --off
+    --output HDMI-1 --off
+    --output DP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    --output eDP-1 --off
+    --output DP-2 --off
+  )
+  num_monitors=1
+}
+
+handle1() {
+  xrandr_args+=(
+    --output HDMI-1 --off
+    --output DP-1 --off
+    --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    --output DP-2 --off
+  )
+}
+
+handle2() {
+  # Try to detect the connected monitor
+  second_monitor=$(
+    xrandr  | grep -v eDP-1 | grep connected | grep -v disconnected | cut -d ' ' -f 1
+  )
+
+  [ $? -eq 0 ] || abort "Failed to detect second monitor"
+
+  xrandr_args+=(
+    --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal
+  )
+
+  # We'll just assume 1920x1080 for now
+  xrandr_args+=(
+    --output "$second_monitor" --mode 1920x1080 --pos 0x0 --rotate normal
+  )
+
+  for x in HDMI-1 HDMI-2 DP-1 DP-2; do
+    if [ "$x" != "$second_monitor" ]; then
+      xrandr_args+=(--output "$x" --off)
+    fi
+  done
+}
+
+handle3() {
+  xrandr_args+=(
+    --output HDMI-2 --off
+    --output DP-1 --off
+    --output eDP-1 --primary --mode 1920x1080 --pos 1920x1080 --rotate normal
+    --output HDMI-1 --mode 1920x1080 --pos 0x504 --rotate normal
                     --set "Broadcast RGB" "Full"
-    )
-    ;;
-  *)
-    abort "Invalid num_monitors: $num_monitors"
-    ;;
-esac
+    --output DP-2 --mode 1920x1080 --pos 1920x0 --rotate normal
+                  --set "Broadcast RGB" "Full"
+  )
+}
 
-output=$(xrandr "${xrandr_args[@]}" 2>&1)
-[ $? -eq 0 ] || abort "$output"
+handleMirror() {
+  # Try to detect the connected monitor
+  second_monitor=$(
+    xrandr  | grep -v eDP-1 | grep connected | grep -v disconnected | cut -d ' ' -f 1
+  )
 
-output=$(xmonad --restart 2>&1)
-[ $? -eq 0 ] || abort "$output"
+  [ $? -eq 0 ] || abort "Failed to detect second monitor"
 
-# Reload x settings to fix wallpaper and screen refreshing
-reload-x-settings
+  # We'll just assume 1920x1080 for now
+  xrandr_args+=(
+    --output "$second_monitor" --primary --mode 1920x1080 --pos 0x0 --rotate normal
+  )
 
-# Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
-# This is so stalonetray/polybar can be positioned properly for the new layout.
-elapsed=0
-timeout=5
-while [ "$elapsed" -lt "$timeout" ]; do
-  if [ "$(xrandr | fgrep '*+' | wc -l)" -eq "$num_monitors" ]; then
-    break
-  fi
-  sleep 1
-  ((++elapsed))
-done
+  xrandr_args+=(
+    --output eDP-1 --same-as "$second_monitor"
+  )
 
-# systemctl --user restart stalonetray
-systemctl --user restart polybar
+  for x in HDMI-1 HDMI-2 DP-1 DP-2; do
+    if [ "$x" != "$second_monitor" ]; then
+      xrandr_args+=(--output "$x" --off)
+    fi
+  done
+}
+
+detect_external_monitor_or_abort() {
+  local monitor=$(unsafe_detect_external_monitor)
+}
+
+unsafe_detect_external_monitor() {
+  xrandr  | grep -v eDP-1 | grep connected | grep -v disconnected | cut -d ' ' -f 1
+}
+
+
+main

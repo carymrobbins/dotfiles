@@ -55,3 +55,6 @@
 [submodule "linux/.xmonad/xmonad-dbus"]
 	path = linux/.xmonad/xmonad-dbus
 	url = git@github.com:carymrobbins/xmonad-dbus.git
+[submodule "shared/.vim/bundle/vim-lastplace"]
+	path = shared/.vim/bundle/vim-lastplace
+	url = https://github.com/farmergreg/vim-lastplace

@@ -1,26 +1,61 @@
 #!/bin/bash
 
 TAU=$HOME/tau/tau
+ACTIVE_MINUTES_NOTIFY_THRESHOLD=60
+DEFAULT_SNOOZE_MINUTES=60
+SNOOZE_FILE=/tmp/time-to-move-snooze
 
-if [ $($TAU active --minutes) -gt 45 ]; then
+messages=(
+  'Move it!'
+  'How long you gonna sit for?'
+  'One with the chair?'
+  'Get up bro'
+  'Does your spine feel funny?'
+  "Betcha can't touch your toes"
+  "You're probably distracted, aren't you?"
+  'Need a break?'
+  'Got dem numb glutes'
+)
 
-  messages=(
-    'Move it!'
-    'How long you gonna sit for?'
-    'One with the chair?'
-    'Get up bro'
-    'Does your spine feel funny?'
-    "Betcha can't touch your toes"
-    "You're probably distracted, aren't you?"
-    'Need a break?'
-    'Got dem numb glutes'
-  )
+runTimeToMove() {
+  if [ $($TAU active --minutes) -gt "$ACTIVE_MINUTES_NOTIFY_THRESHOLD" ]; then
+    local snoozeUntil=$(cat $SNOOZE_FILE || echo 0)
+    local now=$(date +%s)
+    if [ "$now" -lt "$snoozeUntil" ]; then
+      echo "Time to move snoozed for $((($snoozeUntil - $now)/60)) more minutes"
+      return
+    fi
+    local i=$((RANDOM % ${#messages[@]}))
+    local msg=" $($TAU active) | ${messages[$i]}"
+    echo "Notifying with message: $msg"
+    notify-send "$msg"
+  else
+    echo "Threshold not exceeded"
+  fi
+}
 
-  i=$((RANDOM % ${#messages[@]}))
-  msg=" $($TAU active) | ${messages[$i]}"
+runSnooze() {
+  local snoozeMinutes=$2
+  if [ -z "$snoozeMinutes" ]; then
+    snoozeMinutes=$DEFAULT_SNOOZE_MINUTES
+  fi
+  local now=$(date +%s)
+  local snoozeUntil=$(($now + ($snoozeMinutes * 60)))
+  printf "$snoozeUntil" > "$SNOOZE_FILE"
+}
 
-  echo "Notifying with message: $msg"
-  notify-send "$msg"
-else
-  echo "Threshold not exceeded"
-fi
+abort() {
+  >&2 echo "$@"
+  exit 1
+}
+
+case $# in
+  0) runTimeToMove;;
+  *)
+    case "$1" in
+      snooze) runSnooze "$@";;
+      *) abort "Unexpected command: $1";;
+    esac
+    ;;
+esac
+

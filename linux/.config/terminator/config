@@ -1,4 +1,5 @@
 [global_config]
+  always_split_with_profile = True
   extra_styling = False
   inactive_color_offset = 1.0
   title_font = Noto Sans Mono Medium 12
@@ -8,6 +9,7 @@
   title_use_system_font = False
 [keybindings]
   layout_launcher = <Primary><Shift><Alt>l
+  ungroup_all = <Primary><Shift><Alt>g
 [layouts]
   [[default]]
     [[[child1]]]

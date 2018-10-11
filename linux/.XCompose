@@ -10,6 +10,7 @@
 <Multi_key> <period> : "∘" U0221
 <Multi_key> <B> : "⊥" U22A5 # Bottom
 <Multi_key> <U> : "∀" U2200 # Universal Quantification
+<Multi_key> <equal> : "≈" U2248 # Approximately equal
 
 #<Multi_key> <a> <space> : "α" U03B1 # GREEK SMALL LETTER ALPHA
 #<Multi_key> <b> <space> : "β" U03B2 # GREEK SMALL LETTER BETA

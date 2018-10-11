@@ -15,3 +15,7 @@ C-w t C-w K
 ## Horizontal to Vertical split
 
 C-w t C-w H
+
+# Sorting
+
+:sort

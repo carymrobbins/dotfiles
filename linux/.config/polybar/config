@@ -57,7 +57,7 @@ font-4 = FontAwesome:size=11;1
 modules-left = xmonad
 modules-center =
 ;modules-right = filesystem xbacklight volume xkeyboard memory cpu wlan eth battery temperature date powermenu
-modules-right = filesystem xleds volume memory cpu wlan battery temperature date editpolybar restartpolybar padding
+modules-right = tauactive filesystem xleds volume memory cpu wlan battery temperature date editpolybar restartpolybar padding
 
 tray-position = right
 ;tray-padding = 2
@@ -118,14 +118,17 @@ interval = 1
 [module/editpolybar]
 type = custom/script
 exec = echo "%{F#aaa}%{F-}"
-interval = 3600
 click-left = terminator -p white -x "vim ~/.config/polybar/config"
 
 [module/restartpolybar]
 type = custom/script
 exec = echo "%{F#aaa}%{F-}"
-interval = 3600
 click-left = systemctl --user restart polybar
+
+[module/tauactive]
+type = custom/script
+exec = echo "τ $($HOME/tau/tau active)"
+interval = 1
 
 [module/padding]
 type = custom/script

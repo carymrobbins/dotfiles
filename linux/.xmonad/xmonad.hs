@@ -42,6 +42,7 @@ myWorkspaces@
   [ prompt,   rocket,   earth,    chats,    html5, "6", "7", "8", "9" ]
   where
   prompt = "\xf120"
+  -- prompt = "\xe695" -- Devicons, need to fix polybar config maybe
   wrench = "\xf0ad"
   rocket = "\xf135"
   earth  = "\xf0ac"
@@ -76,6 +77,7 @@ myKeys =
   -- & ((shiftMask .|. myModKey, xK_t), scratch "toggl")
   & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
   & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
+  & ((shiftMask .|. myModKey, xK_g), scratch "glances")
 
   -- Cycle through workspaces
   & ((myModKey,               xK_n), moveTo Next NonEmptyWS)
@@ -163,11 +165,17 @@ myScratchpads =
        "terminator -T vim-cheatsheet -x 'vim ~/dotfiles/notes/vim-cheatsheet.md'"
        (title =? "vim-cheatsheet")
        (customFloating $ centeredRect (1/3) (2/3))
+
   , NS "thunderbird"
        "bash -c 'env GTK_THEME=Adwaita:light thunderbird'"
        (className =? "Thunderbird")
        nonFloating
        --(customFloating $ centeredRect (13/14) (13/14))
+
+  , NS "glances"
+       "terminator -p black -T glances -x glances"
+       (title =? "glances")
+       nonFloating
   ]
 
 -- | Rectangle centered on screen with specified width and height, sizes

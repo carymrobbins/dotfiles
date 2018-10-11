@@ -36,7 +36,7 @@
 	l1 = log --oneline
 	ll1 = log --graph --decorate --oneline
 	lp = log -p
-	f = fetch
+	f = fetch --all
 	unstage = reset HEAD --
 	r = rebase
 	ri = rebase -i

@@ -12,6 +12,10 @@ ZSH_THEME="carymrobbins"
 
 # Enable 256 colors
 export TERM=xterm-256color
+
+# Disable virtualenv prompt
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
 # ZSH disabled features
 # The 'r' command isn't really used
 disable r
@@ -20,10 +24,6 @@ disable r
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias g=git
-# Conditionally use ./gradlew if it exists
-# Setting TERM to workaround gradle 4.5.1 bug
-# See https://github.com/gradle/gradle/issues/4426
-alias gr='TERM=xterm-color $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi)'
 alias c='curl -sS'
 alias v='$EDITOR'
 alias sv='sudoedit'
@@ -31,6 +31,45 @@ alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
+
+# Load a virtualenv
+vnv() {
+  if [ $# -ne 1 ]; then
+    >&2 echo "$0: Expected exactly 1 argument, got: $#"
+    return 1
+  fi
+  vpath=$HOME/.pyenv/$1
+  if [ ! -f "$vpath/bin/python" ]; then
+    >&2 echo "$0: virtualenv does not exist: $vpath"
+  fi
+  echo $1 > "$HOME/.pyenv/current-env"
+  source "$vpath/bin/activate"
+}
+
+unvn() {
+  rm "$HOME/.pyenv/current-env"
+  deactivate
+}
+
+ipy() {
+  if [ -z "$VIRTUAL_ENV" ]; then
+    ipython
+  else
+    "$VIRTUAL_ENV/bin/ipython"
+  fi
+}
+
+# Auto-load virtualenv, if current one exists
+# if [ -f "$HOME/.pyenv/current-env" ]; then
+#   vnv "$(cat "$HOME/.pyenv/current-env")"
+# fi
+
+# Conditionally use ./gradlew if it exists
+# Setting TERM to workaround gradle 4.5.1 bug
+# See https://github.com/gradle/gradle/issues/4426
+gr() {
+  TERM=xterm-color $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi) "$@"
+}
 
 wo() {
   if [ -z "$1" ]; then
@@ -166,6 +205,12 @@ git_prompt_info() {
   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_CLEAN}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
 }
 
+venv_prompt_info() {
+  [ -n "$VIRTUAL_ENV" ] || return
+  local name=$(basename "$VIRTUAL_ENV")
+  echo "${ZSH_THEME_VENV_PROMPT_PREFIX}${name}${ZSH_THEME_VENV_PROMPT_SUFFIX} "
+}
+
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
 setopt interactivecomments
 
@@ -229,3 +274,19 @@ _find_project_dir_completions() {
 }
 compdef _find_project_dir_completions find-project-dir
 compdef _find_project_dir_completions wo
+
+_tau_completions() {
+  # Not included 'track' since it's more of an internal command which
+  # shouldn't be invoked manually by a user.
+  compadd 'active'
+  compadd 'view'
+  compadd 'timecard'
+}
+compdef _tau_completions tau
+
+_vnv_completions() {
+  for x in $(find $HOME/.pyenv/* -maxdepth 0 -type d -exec basename {} \;); do
+    compadd "$x"
+  done
+}
+compdef _vnv_completions vnv

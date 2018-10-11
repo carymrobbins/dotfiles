@@ -4,4 +4,5 @@
 --ignore-dir=build
 --ignore-dir=out
 --ignore-dir=target
+--ignore-dir=.pytest_cache
 --ignore-file=ext:sqlite

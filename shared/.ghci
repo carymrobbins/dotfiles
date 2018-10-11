@@ -1,4 +1,5 @@
-:set prompt "\x1b[35mλ\x1b[0m "
+:set prompt "\x1b[35m\xe677\x1b[0m "
+-- :set prompt "\x1b[35mλ\x1b[0m "
 
 -- Default imports
 :m + Prelude

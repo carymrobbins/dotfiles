@@ -4,3 +4,9 @@ source ~/dotfiles/shared/common.vimrc
 "Unfortunately, the one in vimrc can't be reused
 "because toggling doesn't seem to work.
 nmap <Leader>h :noh<CR>
+
+" Simulate tmux move-to-pane bindings which work in normal vim
+nmap <C-a>h <C-w>h
+nmap <C-a>j <C-w>j
+nmap <C-a>k <C-w>k
+nmap <C-a>l <C-w>l
