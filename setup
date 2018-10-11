@@ -81,7 +81,7 @@ MAC_FILES=(
   .chunkwmrc
   .config/karabiner
   .iterm
-  .khdrc
+  .skhdrc
   .path
   Library/Preferences/IntelliJIdea2017.1
 )

@@ -1,6 +1,6 @@
 #!/usr/bin/env stack
 {- stack
-  --resolver lts-8.20
+  --resolver lts-12.11
   --install-ghc runghc
   --package aeson
   --package aeson-pretty
@@ -23,6 +23,8 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wall -Werror #-}
+-- Don't fail to compile due to unused local binds
+{-# OPTIONS_GHC -Wno-error=unused-local-binds #-}
 
 import Prelude hiding (mod)
 import Data.Aeson
@@ -30,7 +32,6 @@ import Data.Aeson.Types
 import Data.Aeson.Encode.Pretty
 import qualified Data.ByteString.Lazy.Char8 as LC
 import Data.Maybe
-import Data.Monoid
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified GHC.TypeLits as TL
@@ -43,12 +44,20 @@ root :: Root
 root = Root "Linux Compat" [rule]
   where
   rule = Rule "Various remappings to make it feel like linux" $ mempty
+    <> generalRemaps
     <> terminalRemaps
     <> intellijRemaps
     <> notTerminalOrIntelliJRemaps
-    <> chunkwmRemaps
-    <> workspaceRemaps
-    <> vimArrowsRemaps
+    <> skhdRemaps
+    -- <> switchWorkspaceRemaps
+    -- <> moveWindowToWorkspaceRemaps
+    -- <> chunkwmRemaps
+    -- <> vimArrowsRemaps
+
+  generalRemaps =
+    [ -- Spotlight
+      Command |+| P !> RightCommand |+| Spacebar
+    ]
 
   terminalRemaps =
     [ -- Copy
@@ -111,51 +120,59 @@ root = Root "Linux Compat" [rule]
       , Control |+| Backspace !> RightOption |+| Backspace
         -- Chrome: Private tab
       , [Control, Shift] |+| N !> [RightCommand, RightShift] |+| N
+        -- Firefox: Private tab
+      , [Control, Shift] |+| P !> [RightCommand, RightShift] |+| P
         -- Slack: Go to conversation
       , Control |+| K !> RightCommand |+| K
       , Control |+| ReturnOrEnter !> RightCommand |+| ReturnOrEnter
       ]
     ) ??! [iterm, intellij]
 
-  -- Key maps to use simulate Xmonad.
-  chunkwmRemaps =
-    [
-      -- Focus monitor 1
-      Command |+| W !> chunkMod |+| W
-      -- Focus monitor 2
-    , Command |+| E !> chunkMod |+| E
-      -- Focus monitor 3
-    , Command |+| R !> chunkMod |+| R
-      -- Move window to monitor 1
-    , [Shift, Command] |+| W !> chunkShiftMod |+| W
-      -- Move window to monitor 2
-    , [Shift, Command] |+| E !> chunkShiftMod |+| E
-      -- Move window to monitor 3
-    , [Shift, Command] |+| R !> chunkShiftMod |+| R
-      -- Focus previous window
-    , Command |+| J !> chunkMod |+| J
-      -- Focus next window
-    , Command |+| K !> chunkMod |+| K
-      -- Move window to previous
-    , [Shift, Command] |+| J !> chunkShiftMod |+| J
-      -- Move window to next
-    , [Shift, Command] |+| K !> chunkShiftMod |+| K
-      -- Spotlight
-    , Command |+| P !> RightCommand |+| Spacebar
-      -- Default (bsp) layout
-    , Command |+| Spacebar !> chunkMod |+| Spacebar
-      -- Full (monocle) layout
-    , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
-      -- Toggle float current window
-    , Command |+| T !> chunkMod |+| T
+  skhdRemaps = [One, Two, Three, Four] >>= \n ->
+    [ -- Mapped in ~/.skhdrc
+      Command |+| n !> chunkMod |+| n
     ]
 
-  workspaceRemaps = numbers >>= \n ->
-    [ -- Use Command+number instead of Control+number for switching workspaces.
-      Command          |+| n !> RightControl  |+| n
-      -- Use Shift+Command+number to move window to workspace via chunkwm
-    , [Shift, Command] |+| n !> chunkShiftMod |+| n
-    ]
+  -- Key maps to use simulate Xmonad.
+  -- chunkwmRemaps =
+  --   [
+  --     -- Focus monitor 1
+  --     Command |+| W !> chunkMod |+| W
+  --     -- Focus monitor 2
+  --   , Command |+| E !> chunkMod |+| E
+  --     -- Focus monitor 3
+  --   , Command |+| R !> chunkMod |+| R
+  --     -- Move window to monitor 1
+  --   , [Shift, Command] |+| W !> chunkShiftMod |+| W
+  --     -- Move window to monitor 2
+  --   , [Shift, Command] |+| E !> chunkShiftMod |+| E
+  --     -- Move window to monitor 3
+  --   , [Shift, Command] |+| R !> chunkShiftMod |+| R
+  --     -- Focus previous window
+  --   , Command |+| J !> chunkMod |+| J
+  --     -- Focus next window
+  --   , Command |+| K !> chunkMod |+| K
+  --     -- Move window to previous
+  --   , [Shift, Command] |+| J !> chunkShiftMod |+| J
+  --     -- Move window to next
+  --   , [Shift, Command] |+| K !> chunkShiftMod |+| K
+  --     -- Default (bsp) layout
+  --   , Command |+| Spacebar !> chunkMod |+| Spacebar
+  --     -- Full (monocle) layout
+  --   , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
+  --     -- Toggle float current window
+  --   , Command |+| T !> chunkMod |+| T
+  --   ]
+
+  -- switchWorkspaceRemaps = numbers >>= \n ->
+  --   [ -- Use Command+number instead of Control+number for switching workspaces.
+  --     Command          |+| n !> RightControl  |+| n
+  --   ]
+
+  -- moveWindowToWorkspaceRemaps = numbers >>= \n ->
+  --   [ -- Use Shift+Command+number to move window to workspace via chunkwm
+  --     [Shift, Command] |+| n !> chunkShiftMod |+| n
+  --   ]
 
   vimArrowsRemaps =
     [ -- Remap Option+h/j/k/l to arrow keys

@@ -1,8 +1,17 @@
 #!/bin/bash
 
+if command -v ghc >/dev/null; then
+  GHC=(ghc)
+elif command -v stack >/dev/null; then
+  GHC=(stack exec ghc --)
+else
+  >&2 echo "$0 failed, cannot find ghc or stack binaries in PATH"
+  exit 1
+fi
+
 cd /tmp
 cp $(dirname $0)/find-project-dir.hs .
 
-ghc --make -dynamic find-project-dir
+"${GHC[@]}" --make -dynamic find-project-dir
 
 cp find-project-dir ~/bin

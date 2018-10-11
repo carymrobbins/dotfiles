@@ -21,6 +21,7 @@ hf=projects/intellij-haskforce
 
 import Prelude hiding (log)
 import Control.Monad
+import Control.Monad.Extra (ifM)
 import Data.Char (toLower)
 import Data.List (elemIndex, isPrefixOf, nub, sort)
 import Data.Maybe
@@ -68,16 +69,16 @@ main = getArgs >>= \case
     let Config {..} = _CONFIG
     aliasCompletions <- fmap concat $
       for configAliases $ \(alias, _) ->
-        return $ if pat `isPrefixOf` alias then [alias] else []
+        pure $ if pat `isPrefixOf` alias then [alias] else []
     rootCompletions <- fmap (concat . concat) $
       for configRoots $ \path -> do
-        files <- getDirectoryContents path
+        files <- getDirectoryContentsIfExists path
         for files $ \file ->
-          if file `elem` [".", ".."] then return [] else do
+          if file `elem` [".", ".."] then pure [] else do
             let fullPath = path </> file
-            isDir <- doesDirectoryExist fullPath
-            -- return $ if isDir && file `matches` pat then [file] else []
-            return $ if isDir then [file] else []
+            ifM (doesDirectoryExist fullPath)
+              (pure [file])
+              (pure [])
     let completions = nub $ aliasCompletions ++ rootCompletions
     forM_ completions putStrLn
 
@@ -110,11 +111,9 @@ _CONFIG = unsafePerformIO readConfig
 readConfig :: IO Config
 readConfig = do
   let path = homeDir </> ".find-project-dir"
-  exists <- doesFileExist path
-  if exists then
-    parse parseInit mempty . lines <$> readFile path
-  else
-    return mempty
+  ifM (doesFileExist path)
+    (parse parseInit mempty . lines <$> readFile path)
+    (pure mempty)
   where
   parse p config fileLines = case fileLines of
     [] -> config
@@ -138,25 +137,32 @@ run pat = do
   let Config {..} = _CONFIG
   case lookup pat configAliases of
     Just found -> do
-      return $ [[Just $ homeDir </> found]]
+      pure $ [[Just $ homeDir </> found]]
     Nothing -> search pat configRoots
+
+-- | Returns an empty list if the directory does not exist.
+getDirectoryContentsIfExists :: FilePath -> IO [FilePath]
+getDirectoryContentsIfExists path =
+  ifM (doesDirectoryExist path)
+    (getDirectoryContents path)
+    (pure [])
 
 search :: Traversable t => String -> t FilePath -> IO (t [Maybe FilePath])
 search pat dirs = do
   for dirs $ \path -> do
     log $ "Checking path: " <> path
-    files <- getDirectoryContents path
+    files <- getDirectoryContentsIfExists path
     for (sort files) $ \file ->
-      if file `elem` [".", ".."] then return Nothing else do
+      if file `elem` [".", ".."] then pure Nothing else do
         log $ "Checking: " <> file
         let fullPath = path </> file
-        isDir <- doesDirectoryExist $ fullPath
-        if not isDir then
-          return Nothing
-        else if file `matches` pat then
-          return $ Just fullPath
-        else
-          return Nothing
+        -- Only match directories.
+        ifM (doesDirectoryExist fullPath)
+          (if file `matches` pat then
+            pure $ Just fullPath
+          else
+            pure Nothing)
+          (pure Nothing)
 
 matches :: String -> String -> Bool
 file `matches` pat

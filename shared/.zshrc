@@ -96,6 +96,7 @@ _vbinfile() {
 }
 alias vsb='_vbinfile $HOME/dotfiles/shared/bin'
 alias vlb='_vbinfile $HOME/dotfiles/linux/bin'
+alias vmb='_vbinfile $HOME/dotfiles/mac/bin'
 
 log_implicits='set scalacOptions in Global += "-Xlog-implicits"'
 

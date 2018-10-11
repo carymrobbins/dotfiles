@@ -3,6 +3,8 @@
 
 [user]
 	useConfigOnly = true
+	email = carymrobbins@gmail.com
+	name = Cary Robbins
 [push]
 	default = current
 [pull]
