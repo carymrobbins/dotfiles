@@ -41,6 +41,7 @@ SHARED_FILES=(
   .gitconfig
   .gitignore
   .ideavimrc
+  .ipython
   .npmrc
   .oh-my-zsh
   .psqlrc
