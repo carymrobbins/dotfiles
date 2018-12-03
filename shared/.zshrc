@@ -34,11 +34,18 @@ alias rm=trash
 
 # Load a virtualenv
 vnv() {
-  if [ $# -ne 1 ]; then
-    >&2 echo "$0: Expected exactly 1 argument, got: $#"
+  local vname
+  if [ -f .vnv ]; then
+    vname=$(cat .vnv)
+  fi
+  if [ $# -eq 1 ]; then
+    vname=$1
+  fi
+  if [ -z "$vname" ]; then
+    >&2 echo "$0: Expected .vnv file in cwd or exactly 1 argument, got: $#"
     return 1
   fi
-  vpath=$HOME/.pyenv/$1
+  vpath=$HOME/.pyenv/$vname
   if [ ! -f "$vpath/bin/python" ]; then
     >&2 echo "$0: virtualenv does not exist: $vpath"
   fi
@@ -290,3 +297,13 @@ _vnv_completions() {
   done
 }
 compdef _vnv_completions vnv
+
+_ghc_completions() {
+  local prog=$1
+  if command -v "$prog" >/dev/null; then
+    local opts=($("$prog" --show-options))
+    compadd -a opts
+  fi
+}
+compdef '_ghc_completions ghc'  ghc
+compdef '_ghc_completions ghci' ghci

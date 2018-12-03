@@ -18,7 +18,7 @@
 	ap = add -p
 	ci = commit
 	cf = commit --fixup
-	ca = commit -a --amend
+	ca = commit --amend
 	fu = commit --fixup
 	sq = commit --squash
 	fq = !git commit -a --fixup HEAD && git rebase -i --autosquash HEAD^^

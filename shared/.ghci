@@ -2,7 +2,6 @@
 -- :set prompt "\x1b[35mλ\x1b[0m "
 
 -- Default imports
-:m + Prelude
 :m + Control.Monad
 :m + Data.List
 :m + Data.List.Split

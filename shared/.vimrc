@@ -18,6 +18,9 @@ set tags=./tags,tags,codex.tags;
 "Use line numbers, color them grey.
 set number
 highlight LineNr ctermfg=grey
+
+highlight Visual ctermfg=darkgrey ctermbg=lightgrey
+highlight Search ctermfg=darkgrey ctermbg=lightgrey
 "Enable backspace.
 set backspace=indent,eol,start
 "Tab settings.
@@ -109,9 +112,6 @@ let g:syntastic_python_checkers = ['pylint']
 
 "Highlight trailing whitespace
 match Todo /\s\+$/
-
-"Highlight long lines
-set colorcolumn=101
 
 fun ToggleColorColumn()
   if (&colorcolumn > 0)

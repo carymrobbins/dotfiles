@@ -53,6 +53,7 @@ font-1 = Noto Sans Mono:size=11;1
 font-2 = unifont:fontformat=truetype:size=11:antialias=false;0
 font-3 = WunconSiji:size=11;1
 font-4 = FontAwesome:size=11;1
+font-5 = icomoon:style=Regular:size=15;1
 
 modules-left = xmonad
 modules-center =
