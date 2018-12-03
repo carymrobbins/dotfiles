@@ -24,6 +24,10 @@ disable r
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias g=git
+alias s=stack
+alias ds='stack build --ghc-options "
+  -Wno-error=deprecations -Wno-error=unused-imports"'
+alias sg=stackage
 alias c='curl -sS'
 alias v='$EDITOR'
 alias sv='sudoedit'
@@ -122,8 +126,11 @@ if [ "$(uname -s)" = "Linux" ]; then
   alias scu='systemctl --user'
 elif [ "$(uname -s)" = "Darwin" ]; then
   # Mac-specific aliases
-  for c in java javac; do alias "${c}7"='$(/usr/libexec/java_home -v 1.7)/bin/'$c; done
-  for c in java javac; do alias "${c}8"='$(/usr/libexec/java_home -v 1.8)/bin/'$c; done
+  for c in java javac; do
+    alias "${c}8"='$(/usr/libexec/java_home -v 1.8)/bin/'$c;
+  done
+  alias usejavadefault='unset JAVA_HOME'
+  alias usejava8='export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)'
 fi
 
 ref_exec() {
@@ -279,9 +286,8 @@ compdef _find_project_dir_completions wo
 _tau_completions() {
   # Not included 'track' since it's more of an internal command which
   # shouldn't be invoked manually by a user.
-  compadd 'active'
-  compadd 'view'
-  compadd 'timecard'
+  local opts=('active' 'view' 'timecard')
+  compadd -a opts
 }
 compdef _tau_completions tau
 
@@ -291,3 +297,32 @@ _vnv_completions() {
   done
 }
 compdef _vnv_completions vnv
+
+_stack_completions() {
+  local opts=(
+    'test' 'build' 'exec' 'ghci'
+    '--exec'
+    '--dependencies-only'
+    '--only-dependencies'
+    * # Directory structure
+    )
+  local binaries=()
+  local bindir
+  local binary
+  # TODO: Calling `basename` in `find` is too slow...
+  #while IFS= read -r -d '' binary; do
+  #  binaries+=("$binary")
+  #done <<< $(
+  #  find .stack-work/install/*/*/*/bin \
+  #    -type f -perm +111 -print0 -exec basename {} \;)
+  compadd -a opts
+  compadd -a binaries
+}
+compdef _stack_completions stack
+
+_psql_completions() {
+  for x in $(psql -l -t -X | cut -d'|' -f1 | grep -v template | grep -o '[A-Za-z].*'); do
+    compadd "$x"
+  done
+}
+compdef _psql_completions psql

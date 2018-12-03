@@ -18,6 +18,15 @@ set tags=./tags,tags,codex.tags;
 "Use line numbers, color them grey.
 set number
 highlight LineNr ctermfg=grey
+
+"Search highlighting color
+"
+"highlight Visual ctermbg=lightgrey ctermfg=darkgrey
+"highlight Search ctermbg=lightgrey ctermfg=darkgrey
+
+highlight Visual ctermbg=darkgrey ctermfg=lightgrey
+highlight Search ctermbg=darkgrey ctermfg=lightgrey
+
 "Enable backspace.
 set backspace=indent,eol,start
 "Tab settings.
@@ -77,6 +86,7 @@ com Bgl :call Bgl()
 "Highlighting for custom file types
 
 au BufNewFile,BufRead kwmrc set filetype=c
+au BufNewFile,BufRead .skhdrc set filetype=python
 au BufNewFile,BufRead *.json set filetype=javascript
 au BufNewFile,BufRead xmobarrc set filetype=haskell
 au BufNewFile,BufRead .ghci set filetype=haskell
@@ -109,9 +119,6 @@ let g:syntastic_python_checkers = ['pylint']
 
 "Highlight trailing whitespace
 match Todo /\s\+$/
-
-"Highlight long lines
-set colorcolumn=101
 
 fun ToggleColorColumn()
   if (&colorcolumn > 0)

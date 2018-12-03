@@ -58,3 +58,6 @@
 [submodule "shared/.vim/bundle/vim-lastplace"]
 	path = shared/.vim/bundle/vim-lastplace
 	url = https://github.com/farmergreg/vim-lastplace
+[submodule "shared/.vim/swift.vim"]
+	path = shared/.vim/swift.vim
+	url = https://github.com/keith/swift.vim

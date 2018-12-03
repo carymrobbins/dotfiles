@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
 if [ -f stack.yaml ]; then
   stack_yaml=stack.yaml
 elif [ -f ~/.stack/global-project/stack.yaml ]; then
@@ -9,7 +15,15 @@ else
   exit 1
 fi
 
-resolver=$(grep '^resolver' "$stack_yaml" | cut -d: -f2 | xargs)
+find_resolver() {
+  grep '^resolver' "$1" | cut -d: -f2 | xargs
+}
+
+resolver=$(find_resolver "$stack_yaml")
+# Resolver can point to a yaml file, so resolve this if need be.
+if grep '\.yaml' <<< "$resolver" >/dev/null; then
+  resolver=$(find_resolver "$resolver")
+fi
 
 url=https://www.stackage.org/$resolver
 
@@ -21,4 +35,4 @@ case $# in
     exit 1
 esac
 
-xdg-open "$url"
+"$OPEN" "$url"

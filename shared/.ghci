@@ -3,8 +3,22 @@
 -- or
 -- stack build split pretty-show hscolour
 
+-- Allow these packages to be used even if they are not defined in
+-- the cabal file
+:set -package split
+:set -package pretty-show
+:set -package hscolour
+
+-- Purple for normal prompt
 :set prompt "\x1b[35m\xe677\x1b[0m "
+
+-- Blue for continuation `:{` prompt
+:set prompt-cont "\x1b[34m\xe677 |\x1b[0m "
 -- :set prompt "\x1b[35mλ\x1b[0m "
+
+:def lambdaprompt (\_ -> return $ ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
+
+:def logoprompt (\_ -> return $ ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
 
 -- Default imports
 :m + Prelude

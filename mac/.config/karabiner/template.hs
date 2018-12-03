@@ -29,9 +29,10 @@
 import Prelude hiding (mod)
 import Data.Aeson
 import Data.Aeson.Types
-import Data.Aeson.Encode.Pretty
+import Data.Aeson.Encode.Pretty hiding (Tab)
 import qualified Data.ByteString.Lazy.Char8 as LC
 import Data.Maybe
+import Data.String
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified GHC.TypeLits as TL
@@ -47,23 +48,33 @@ root = Root "Linux Compat" [rule]
     <> generalRemaps
     <> terminalRemaps
     <> intellijRemaps
+    <> slackRemaps
     <> notTerminalOrIntelliJRemaps
     <> skhdRemaps
-    -- <> switchWorkspaceRemaps
-    -- <> moveWindowToWorkspaceRemaps
-    -- <> chunkwmRemaps
+    <> chunkwmRemaps
     -- <> vimArrowsRemaps
+    -- <> moveWindowToWorkspaceRemaps
+    -- <> switchWorkspaceRemaps
 
   generalRemaps =
     [ -- Spotlight
       Command |+| P !> RightCommand |+| Spacebar
     ]
 
-  terminalRemaps =
-    [ -- Copy
-      [Control, Shift] |+| C !> RightCommand |+| C
-      -- Paste
-    , [Control, Shift] |+| V !> RightCommand |+| V
+  terminalRemaps = concat
+    [
+      -- Tmux: Switch windows with Ctrl+<number>
+      numbers >>= \n -> [ Option |+| n !> tmuxPrefix |-> singleKey n ]
+    , [
+        -- Tmux: Next window
+        Option |+| N !> tmuxPrefix |-> singleKey N
+        -- Tmux: Previous window
+      , Option |+| P !> tmuxPrefix |-> singleKey P
+        -- Copy
+      , [Control, Shift] |+| C !> RightCommand |+| C
+        -- Paste
+      , [Control, Shift] |+| V !> RightCommand |+| V
+      ]
     ] ?? [iterm]
 
   -- The Option + Key mappings in IntelliJ don't work consistently due
@@ -72,7 +83,15 @@ root = Root "Linux Compat" [rule]
   intellijRemaps =
     [ -- Jump to Super method
       Option |+| U !> RightCommand |+| U
+      -- Preferences
+    , [Control, Option] |+| S !> RightCommand |+| Comma
+      -- Project Structure
+    , [Shift, Control, Option] |+| S !> RightCommand |+| Semicolon
     ] ?? [intellij]
+
+  slackRemaps =
+    (numbers >>= \n -> [ Control |+| n !> RightCommand |+| n ])
+    ?? [slack]
 
   -- These bindings don't work well with iterm2 or intellij due
   -- to clashes with vim, tmux, etc, so excluding them with ??!
@@ -128,41 +147,41 @@ root = Root "Linux Compat" [rule]
       ]
     ) ??! [iterm, intellij]
 
-  skhdRemaps = [One, Two, Three, Four] >>= \n ->
+  skhdRemaps = [One, Two, Three, Four, Five] >>= \n ->
     [ -- Mapped in ~/.skhdrc
       Command |+| n !> chunkMod |+| n
     ]
 
   -- Key maps to use simulate Xmonad.
-  -- chunkwmRemaps =
-  --   [
-  --     -- Focus monitor 1
-  --     Command |+| W !> chunkMod |+| W
-  --     -- Focus monitor 2
-  --   , Command |+| E !> chunkMod |+| E
-  --     -- Focus monitor 3
-  --   , Command |+| R !> chunkMod |+| R
-  --     -- Move window to monitor 1
-  --   , [Shift, Command] |+| W !> chunkShiftMod |+| W
-  --     -- Move window to monitor 2
-  --   , [Shift, Command] |+| E !> chunkShiftMod |+| E
-  --     -- Move window to monitor 3
-  --   , [Shift, Command] |+| R !> chunkShiftMod |+| R
-  --     -- Focus previous window
-  --   , Command |+| J !> chunkMod |+| J
-  --     -- Focus next window
-  --   , Command |+| K !> chunkMod |+| K
-  --     -- Move window to previous
-  --   , [Shift, Command] |+| J !> chunkShiftMod |+| J
-  --     -- Move window to next
-  --   , [Shift, Command] |+| K !> chunkShiftMod |+| K
-  --     -- Default (bsp) layout
-  --   , Command |+| Spacebar !> chunkMod |+| Spacebar
-  --     -- Full (monocle) layout
-  --   , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
-  --     -- Toggle float current window
-  --   , Command |+| T !> chunkMod |+| T
-  --   ]
+  chunkwmRemaps =
+    [
+      -- Focus monitor 1
+      Command |+| W !> chunkMod |+| W
+      -- Focus monitor 2
+    , Command |+| E !> chunkMod |+| E
+      -- Focus monitor 3
+    , Command |+| R !> chunkMod |+| R
+      -- Move window to monitor 1
+    , [Shift, Command] |+| W !> chunkShiftMod |+| W
+      -- Move window to monitor 2
+    , [Shift, Command] |+| E !> chunkShiftMod |+| E
+      -- Move window to monitor 3
+    , [Shift, Command] |+| R !> chunkShiftMod |+| R
+      -- Focus previous window
+    , Command |+| J !> chunkMod |+| J
+      -- Focus next window
+    , Command |+| K !> chunkMod |+| K
+      -- Move window to previous
+    , [Shift, Command] |+| J !> chunkShiftMod |+| J
+      -- Move window to next
+    , [Shift, Command] |+| K !> chunkShiftMod |+| K
+      -- Default (bsp) layout
+    , Command |+| Spacebar !> chunkMod |+| Spacebar
+      -- Full (monocle) layout
+    , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
+      -- Toggle float current window
+    , Command |+| T !> chunkMod |+| T
+    ]
 
   -- switchWorkspaceRemaps = numbers >>= \n ->
   --   [ -- Use Command+number instead of Control+number for switching workspaces.
@@ -174,23 +193,25 @@ root = Root "Linux Compat" [rule]
   --     [Shift, Command] |+| n !> chunkShiftMod |+| n
   --   ]
 
-  vimArrowsRemaps =
-    [ -- Remap Option+h/j/k/l to arrow keys
-      Option |+| H !> LeftArrow
-    , Option |+| J !> DownArrow
-    , Option |+| K !> UpArrow
-    , Option |+| L !> RightArrow
-      -- Remap Shift+Option+h/j/k/l to shift+arrow keys
-      -- Useful when highlighting with vim arrows
-    , [Shift, Option] |+| H !> RightShift |+| LeftArrow
-    , [Shift, Option] |+| J !> RightShift |+| DownArrow
-    , [Shift, Option] |+| K !> RightShift |+| UpArrow
-    , [Shift, Option] |+| L !> RightShift |+| RightArrow
-    ]
+  -- vimArrowsRemaps =
+  --   [ -- Remap Option+h/j/k/l to arrow keys
+  --     Option |+| H !> LeftArrow
+  --   , Option |+| J !> DownArrow
+  --   , Option |+| K !> UpArrow
+  --   , Option |+| L !> RightArrow
+  --     -- Remap Shift+Option+h/j/k/l to shift+arrow keys
+  --     -- Useful when highlighting with vim arrows
+  --   , [Shift, Option] |+| H !> RightShift |+| LeftArrow
+  --   , [Shift, Option] |+| J !> RightShift |+| DownArrow
+  --   , [Shift, Option] |+| K !> RightShift |+| UpArrow
+  --   , [Shift, Option] |+| L !> RightShift |+| RightArrow
+  --   ]
 
   -- My ~/.chunkwmrc uses these keys as "mod" keys
   chunkMod = [RightControl, RightOption, RightCommand]
   chunkShiftMod = RightShift : chunkMod
+
+  tmuxPrefix = RightControl |+| A
 
   -- Number keys on the keyboard, useful for generating key maps via loops.
   numbers = [One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Zero]
@@ -199,6 +220,7 @@ root = Root "Linux Compat" [rule]
   iterm = litPat "com.googlecode.iterm2"
   -- chrome = litPat "com.google.Chrome"
   intellij = litPat "com.jetbrains.intellij"
+  slack = litPat "com.tinyspeck.slackmacgap"
 
 -----------------------------------
 
@@ -207,6 +229,18 @@ litPat :: Text -> Text
 litPat t = '^' `T.cons` (T.replace "." "\\." t) `T.snoc` '$'
 
 data KeyBinding a = KeyBinding [a] KeyCode
+
+-- | Key binding with no modifiers.
+singleKey :: KeyCode -> KeyBinding PhysicalModifier
+singleKey = KeyBinding []
+
+-- | Helper for a key binding sequence, only slightly prettier than using a list.
+-- Later we can refactor this if we need to chain more than two; that will probably
+-- require a type class.
+(|->) :: KeyBinding a -> KeyBinding a -> [KeyBinding a]
+x |-> y = [x, y]
+
+infix 5 |->
 
 class ToKeyBinding a b c | a b -> c where
   (|+|) :: a -> b -> KeyBinding c
@@ -241,6 +275,15 @@ instance AsAnyModifier a
     where
     mf = ManipulatorFrom fromK (FromModifiers $ map asAnyModifier fromMods)
     mt = ManipulatorTo   toK   toMods
+
+instance AsAnyModifier a
+  => ManipulatorBuilder (KeyBinding a) [KeyBinding PhysicalModifier] where
+  (KeyBinding fromMods fromK) !> toBindingSeq =
+    Manipulator Basic mf mts Nothing
+    where
+    mf = ManipulatorFrom fromK (FromModifiers $ map asAnyModifier fromMods)
+    mts = flip map toBindingSeq $ \(KeyBinding toMods toK) ->
+            ManipulatorTo toK toMods
 
 instance AsAnyModifier a
   => ManipulatorBuilder (KeyBinding a) KeyCode where
@@ -453,9 +496,11 @@ data KeyCode
   | OpenBracket | CloseBracket
   | RightArrow | LeftArrow | UpArrow | DownArrow
   | ReturnOrEnter
+  | Tab
+  | Comma | Semicolon
 
-instance ToJSON KeyCode where
-  toJSON = \case
+keyCodeToString :: IsString a => KeyCode -> a
+keyCodeToString = \case
     A -> "a"
     B -> "b"
     C -> "c"
@@ -501,3 +546,9 @@ instance ToJSON KeyCode where
     DownArrow -> "down_arrow"
     UpArrow -> "up_arrow"
     ReturnOrEnter -> "return_or_enter"
+    Tab -> "tab"
+    Comma -> "comma"
+    Semicolon -> "semicolon"
+
+instance ToJSON KeyCode where
+  toJSON = keyCodeToString
