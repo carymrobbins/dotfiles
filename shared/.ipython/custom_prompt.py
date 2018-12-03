@@ -8,6 +8,8 @@ from IPython.terminal.prompts import Prompts, Token
 class CustomPrompt(Prompts):
     if os.environ.get('IPYTHON_SIMPLE_PROMPT'):
         __CUSTOM_PROMPT = '>>> '
+    elif os.environ.get('IPYTHON_UNICODE_PROMPT'):
+        __CUSTOM_PROMPT = '🐍 '
     else:
         __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', ' ')
 

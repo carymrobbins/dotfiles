@@ -22,7 +22,7 @@
 [profiles]
   [[default]]
     background_color = "#002b36"
-    background_darkness = 0.8
+    background_darkness = 0.66
     background_type = transparent
     cursor_color = "#aaaaaa"
     font = Noto Sans Mono Medium 12
@@ -35,12 +35,16 @@
   [[black]]
     cursor_color = "#aaaaaa"
   [[dark]]
-    background_color = "#002b36"
-    cursor_color = "#aaaaaa"
-    foreground_color = "#839496"
-    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#905014:#000000:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    background_color = "#232322"
+    background_darkness = 0.87
+    background_type = transparent
+    cursor_color = "#16afca"
+    font = Noto Sans Mono 12
+    foreground_color = "#e5e5e5"
+    palette = "#212121:#b7141f:#457b24:#f6981e:#134eb2:#963bcb:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
     scrollbar_position = hidden
     show_titlebar = False
+    use_system_font = False
   [[light]]
     background_color = "#fdf6e3"
     background_darkness = 0.9
@@ -50,9 +54,28 @@
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#f1c49a:#839496:#6c71c4:#93a1a1:#fdf6e3"
     scrollbar_position = hidden
     show_titlebar = False
+  [[material]]
+    background_color = "#eaeaea"
+    background_darkness = 0.82
+    background_type = transparent
+    cursor_blink = False
+    cursor_color = "#16afca"
+    font = Source Code Pro Medium 14
+    foreground_color = "#232322"
+    palette = "#212121:#b7141f:#457b24:#f6981e:#134eb2:#560088:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
+    scrollbar_position = hidden
+    show_titlebar = False
+    use_system_font = False
+  [[olddark]]
+    background_color = "#002b36"
+    cursor_color = "#aaaaaa"
+    foreground_color = "#839496"
+    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#905014:#000000:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    scrollbar_position = hidden
+    show_titlebar = False
   [[white]]
     background_color = "#ffffff"
-    background_darkness = 0.85
+    background_darkness = 0.93
     background_type = transparent
     cursor_color = "#aaaaaa"
     font = Noto Sans Mono Medium 12

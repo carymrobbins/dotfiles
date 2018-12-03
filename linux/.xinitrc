@@ -19,6 +19,7 @@ systemctl --user start low-battery.timer
 systemctl --user start tau.timer
 systemctl --user start time-to-move.timer
 systemctl --user start xcompmgr
+systemctl --user start geoclue-redshift-agent
 systemctl --user start redshift
 systemctl --user start polybar
 # TODO: Running xbindkeys with systemctl means it

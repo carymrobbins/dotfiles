@@ -21,7 +21,6 @@
 :def logoprompt (\_ -> return $ ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
 
 -- Default imports
-:m + Prelude
 :m + Control.Monad
 :m + Data.List
 :m + Data.List.Split

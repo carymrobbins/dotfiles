@@ -9,3 +9,6 @@ ScratchPad.scala
 # Ignore IntelliJ project files
 .idea/
 *.iml
+
+# Ignore special .vnv files for my vnv zsh function
+.vnv

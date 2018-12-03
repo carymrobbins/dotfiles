@@ -1,3 +1,14 @@
+# This depends on the user service geoclue-redshift-agent
+#
+# Note that you'll want to add the following in /etc/geoclue/geoclue.conf
+# so you don't have to manually enable access for redshift via a geoclue
+# dialog prompt.
+#
+# [redshift]
+# allowed=true
+# system=false
+# users=
+
 [Unit]
 Description=redshift
 

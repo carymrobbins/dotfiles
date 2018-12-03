@@ -56,6 +56,7 @@ SHARED_FILES=(
 LINUX_FILES=(
   .config/terminator/config
   .config/systemd/user/blueman-applet.service
+  .config/systemd/user/geoclue-redshift-agent.service
   .config/systemd/user/gnome-screensaver.service
   .config/systemd/user/low-battery.service
   .config/systemd/user/low-battery.timer

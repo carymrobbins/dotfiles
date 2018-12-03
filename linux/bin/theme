@@ -10,7 +10,7 @@ set -x
 
 typ=$1
 dark_desktop=black-triangles.jpg
-light_desktop=ice-mountains.jpeg
+light_desktop=white-abstract.png
 
 set_theme_type_file() {
   echo "$1" > ~/.theme-type
@@ -30,18 +30,53 @@ set_wallpaper() {
 #   )
 # }
 
-set_xmobar_theme() {
-  (
-    cd ~/.xmonad
-    ln -s -f "xmobarrc.$1" xmobarrc
-  )
+#set_xmobar_theme() {
+#  (
+#    cd ~/.xmonad
+#    ln -s -f "xmobarrc.$1" xmobarrc
+#  )
+#}
+
+set_intellij_theme() {
+  local jba_config_root="$HOME/.IntelliJIdea2018.1/config/jba_config"
+  case "$1" in
+    light)
+      # Need an empty file
+      echo > "$jba_config_root/colors.scheme.xml"
+      # Set the theme
+      cat <<'HERE' > "$jba_config_root/laf.xml"
+<application>
+  <component name="LafManager">
+    <laf class-name="com.intellij.ide.ui.laf.IntelliJLaf" />
+  </component>
+</application>
+HERE
+      ;;
+    dark)
+      # Set the editor colors
+      cat <<'HERE' > "$jba_config_root/colors.scheme.xml"
+<application>
+  <component name="EditorColorsManagerImpl">
+    <global_color_scheme name="_@user_Darcula" />
+  </component>
+</application>
+HERE
+      # Set the theme
+      cat <<'HERE' > "$jba_config_root/laf.xml"
+<application>
+  <component name="LafManager">
+    <laf class-name="com.intellij.ide.ui.laf.darcula.DarculaLaf" />
+  </component>
+</application>
+HERE
+      ;;
+  esac
 }
 
 do_set_all() {
   set_theme_type_file   "$1"
   hexchat-theme         "$1"
-  #set_stalonetray_theme "$1"
-  set_xmobar_theme      "$1"
+  set_intellij_theme   "$1"
 
   # dark -> dark_desktop, light -> light_desktop
   wallpaper=$(eval 'echo $'$(echo "$(eval 'echo $1')_desktop"))
@@ -60,3 +95,4 @@ esac
 xmonad --restart
 #systemctl --user restart stalonetray
 reload-x-settings
+systemctl --user restart polybar

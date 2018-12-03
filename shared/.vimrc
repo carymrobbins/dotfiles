@@ -26,7 +26,6 @@ highlight LineNr ctermfg=grey
 
 highlight Visual ctermbg=darkgrey ctermfg=lightgrey
 highlight Search ctermbg=darkgrey ctermfg=lightgrey
-
 "Enable backspace.
 set backspace=indent,eol,start
 "Tab settings.
