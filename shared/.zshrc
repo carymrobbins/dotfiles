@@ -226,6 +226,22 @@ venv_prompt_info() {
   echo "${ZSH_THEME_VENV_PROMPT_PREFIX}${name}${ZSH_THEME_VENV_PROMPT_SUFFIX} "
 }
 
+stack_prompt_info() {
+  if [ ! -f stack.yaml ]; then
+    return
+  fi
+  local resolver=$(stack_find_resolver stack.yaml)
+  # Resolver can point to a yaml file, so resolve this if need be.
+  if grep '\.yaml' <<< "$resolver" >/dev/null; then
+    local resolver=$(stack_find_resolver "$resolver")
+  fi
+  echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}${resolver}${ZSH_THEME_STACK_PROMPT_SUFFIX} "
+}
+
+stack_find_resolver() {
+  grep '^resolver' "$1" | cut -d: -f2 | xargs
+}
+
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
 setopt interactivecomments
 
