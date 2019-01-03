@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Kill Slack, if exists. This pattern catches the main app.
+pkill 'Slack$'
+
+echo light > ~/.theme-type
+open -a Slack.app
