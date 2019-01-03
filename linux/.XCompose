@@ -12,6 +12,8 @@
 <Multi_key> <U> : "∀" U2200 # Universal Quantification
 <Multi_key> <equal> : "≈" U2248 # Approximately equal
 
+<Multi_key> <2> : "²" U00B2 # Superscript 2
+
 #<Multi_key> <a> <space> : "α" U03B1 # GREEK SMALL LETTER ALPHA
 #<Multi_key> <b> <space> : "β" U03B2 # GREEK SMALL LETTER BETA
 #<Multi_key> <l> <space> : "λ" U03BB # GREEK SMALL LETTER LAMBDA
