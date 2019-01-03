@@ -25,6 +25,7 @@ disable r
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias g=git
 alias s=stack
+alias se='stack exec -- '
 alias ds='stack build --ghc-options "
   -Wno-error=deprecations -Wno-error=unused-imports"'
 alias sg=stackage

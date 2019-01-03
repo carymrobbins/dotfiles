@@ -181,6 +181,10 @@ root = Root "Linux Compat" [rule]
     , [Shift, Command] |+| Spacebar !> chunkShiftMod |+| Spacebar
       -- Toggle float current window
     , Command |+| T !> chunkMod |+| T
+      -- Grow region
+    , Command |+| H !> chunkMod |+| H
+      -- Shrink region
+    , Command |+| L !> chunkMod |+| L
     ]
 
   -- switchWorkspaceRemaps = numbers >>= \n ->

@@ -28,6 +28,8 @@ nmap <Leader>j f xi<CR><ESC>l
 nmap <Leader>0 f)i<CR><ESC>l
 "Insert a newline without going into insert mode
 nmap <Leader>o o<ESC>
+"Toggle wrap mode
+nmap <Leader>W :set wrap!<CR>
 "Append to end of lines of selection
 xmap <Leader>a $A
 
@@ -36,6 +38,8 @@ xmap <Leader>a $A
 vmap <Leader>ff c<frag><ESC>:set paste<CR>a<C-r>"</frag><ESC>:set nopaste<CR>
 "Sort selection
 vmap <Leader>s :sort<CR>
+"Sort and remove duplicates in selection
+vmap <Leader>u :sort u<CR>
 "Insert fragment divs for markdown slides
 nmap <Leader>fd I<div class=fragment><CR><ESC>
 "Insert code block for markdown slides

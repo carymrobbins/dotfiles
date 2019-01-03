@@ -21,7 +21,6 @@ hf=projects/intellij-haskforce
 
 import Prelude hiding (log)
 import Control.Monad
-import Control.Monad.Extra (ifM)
 import Data.Char (toLower)
 import Data.List (elemIndex, isPrefixOf, nub, sort)
 import Data.Maybe
@@ -183,3 +182,8 @@ file `matches` pat
 
 log :: String -> IO ()
 log msg = when debug $ hPutStrLn stderr msg
+
+-- | Like @if@, but where the test can be monadic.
+-- Copy-pasta from 'extra:Control.Monad.Extra' to avoid the dep.
+ifM :: Monad m => m Bool -> m a -> m a -> m a
+ifM mb t f = do b <- mb; if b then t else f
