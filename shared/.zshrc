@@ -16,6 +16,9 @@ export TERM=xterm-256color
 # Disable virtualenv prompt
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
+# nvm junk
+#source ~/.zsh-nvm/zsh-nvm.plugin.zsh
+
 # ZSH disabled features
 # The 'r' command isn't really used
 disable r
@@ -26,8 +29,6 @@ disable r
 alias g=git
 alias s=stack
 alias se='stack exec -- '
-alias ds='stack build --ghc-options "
-  -Wno-error=deprecations -Wno-error=unused-imports"'
 alias sg=stackage
 alias c='curl -sS'
 alias v='$EDITOR'
@@ -36,6 +37,11 @@ alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
+
+# Function for `stack build [opts..] | less`
+sbl() {
+  stack build --color always "$@" 2>&1 | less
+}
 
 # Load a virtualenv
 vnv() {
@@ -245,6 +251,8 @@ stack_find_resolver() {
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
 setopt interactivecomments
+# Disable zsh-specific globbing, like special matching of the ? char.
+unsetopt nomatch
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -290,9 +298,11 @@ done
 #   tmux a 2>/dev/null || tmux
 # fi
 
-# Custom completions
-autoload -Uz compinit
-compinit
+############## Custom completions ###############
+# Enable bash compatibility
+autoload -U +X compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+
 # _path_commands autocompletes executables on the $PATH
 compdef _path_commands hl
 compdef _path_commands cx
@@ -322,27 +332,29 @@ _vnv_completions() {
 }
 compdef _vnv_completions vnv
 
-_stack_completions() {
-  local opts=(
-    'test' 'build' 'exec' 'ghci'
-    '--exec'
-    '--dependencies-only'
-    '--only-dependencies'
-    * # Directory structure
-    )
-  local binaries=()
-  local bindir
-  local binary
-  # TODO: Calling `basename` in `find` is too slow...
-  #while IFS= read -r -d '' binary; do
-  #  binaries+=("$binary")
-  #done <<< $(
-  #  find .stack-work/install/*/*/*/bin \
-  #    -type f -perm +111 -print0 -exec basename {} \;)
-  compadd -a opts
-  compadd -a binaries
-}
-compdef _stack_completions stack
+# The REAL stack completions
+eval "$(stack --bash-completion-script stack)"
+# _stack_completions() {
+#   local opts=(
+#     'test' 'build' 'exec' 'ghci'
+#     '--exec'
+#     '--dependencies-only'
+#     '--only-dependencies'
+#     * # Directory structure
+#     )
+#   local binaries=()
+#   local bindir
+#   local binary
+#   # TODO: Calling `basename` in `find` is too slow...
+#   #while IFS= read -r -d '' binary; do
+#   #  binaries+=("$binary")
+#   #done <<< $(
+#   #  find .stack-work/install/*/*/*/bin \
+#   #    -type f -perm +111 -print0 -exec basename {} \;)
+#   compadd -a opts
+#   compadd -a binaries
+# }
+# compdef _stack_completions stack
 
 _psql_completions() {
   for x in $(psql -l -t -X | cut -d'|' -f1 | grep -v template | grep -o '[A-Za-z].*'); do

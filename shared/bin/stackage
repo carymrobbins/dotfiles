@@ -1,5 +1,22 @@
 #!/bin/bash
 
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --resolver=*)
+      RESOLVER=$(cut -d= -f2- <<< "$1")
+      shift
+      ;;
+    *)
+      if [ -n "$SEARCH_CRITERIA" ]; then
+        >&2 echo "Unexpected argument: $1"
+        exit 1
+      fi
+      SEARCH_CRITERIA=$1
+      shift
+      ;;
+  esac
+done
+
 if [ "$(uname)" = "Darwin" ]; then
   OPEN=open
 else
@@ -19,20 +36,18 @@ find_resolver() {
   grep '^resolver' "$1" | cut -d: -f2 | xargs
 }
 
-resolver=$(find_resolver "$stack_yaml")
-# Resolver can point to a yaml file, so resolve this if need be.
-if grep '\.yaml' <<< "$resolver" >/dev/null; then
-  resolver=$(find_resolver "$resolver")
+if [ -z "$RESOLVER" ]; then
+  RESOLVER=$(find_resolver "$stack_yaml")
+  # Resolver can point to a yaml file, so resolve this if need be.
+  if grep '\.yaml' <<< "$RESOLVER" >/dev/null; then
+    RESOLVER=$(find_resolver "$RESOLVER")
+  fi
 fi
 
-url=https://www.stackage.org/$resolver
+url=https://www.stackage.org/$RESOLVER
 
-case $# in
-  0) ;;
-  1) url=$url/hoogle?q=$1;;
-  *)
-    >&2 echo "Unexpected argument: $2"
-    exit 1
-esac
+if [ -n "$SEARCH_CRITERIA" ]; then
+  url=$url/hoogle?q=$SEARCH_CRITERIA
+fi
 
 "$OPEN" "$url"

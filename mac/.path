@@ -3,7 +3,9 @@ $HOME/dotfiles/shared/bin
 $HOME/dotfiles/mac/bin
 $HOME/opt/eta
 $HOME/.local/bin
+$HOME/.cargo/bin
 $HOME/.cabal/bin
+$HOME/.node/bin
 /usr/local/bin
 /usr/local/sbin
 $HOME/build/ansible/bin

@@ -8,6 +8,7 @@
 :set -package split
 :set -package pretty-show
 :set -package hscolour
+:set -package parsec
 
 -- Purple for normal prompt
 :set prompt "\x1b[35m\xe677\x1b[0m "
@@ -25,18 +26,28 @@
 :m + Data.List
 :m + Data.List.Split
 :m + Data.Monoid
+:m + Data.String
+:m + Data.Time
+
+-- Default extensions
+:set -XDerivingVia
+:set -XFlexibleContexts
+:set -XGeneralizedNewtypeDeriving
+:set -XOverloadedStrings
+:set -XStandaloneDeriving
+:set -XTypeApplications
 
 -- START HASKELL CODE
 :{
 
 -- Pretty print a number with commas
 pp :: Show a => a -> IO ()
-pp x = putStrLn $ h ++ t
+pp x = putStrLn $ h ++ t'
   where
   --n = Numeric.showFFloat ()
   sp = break (== '.') $ show x
   h = reverse (intercalate "," $ chunksOf 3 $ reverse $ fst sp)
-  t = snd sp
+  t' = snd sp
 
 removeCRsFromFile :: FilePath -> IO ()
 removeCRsFromFile file = do
@@ -67,6 +78,72 @@ colorPrint =
       Language.Haskell.HsColour.TTY
       Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False
   . Text.Show.Pretty.ppShow
+
+-------------------------------------------------
+-- TimeLit stuff --------------------------------
+-------------------------------------------------
+
+newtype TimeLit = TimeLit { unTimeLit :: DiffTime }
+  deriving (Num)
+
+instance Show TimeLit where
+  show x = show h ++ ":" ++ f02 m ++ ":" ++ f02 s
+    where
+    (h, m, s) = timeLitToTuple x
+    f02 n = reverse $ take 2 $ reverse $ "0" ++ show n
+
+instance IsString TimeLit where
+  fromString = parseTimeLit
+
+-- A sad way of converting DiffTime to seconds
+diffTimeToSeconds :: DiffTime -> Int
+diffTimeToSeconds dt = case reads @Int $ show dt of
+  [(x, "s")] -> x
+  _ -> error $ "Invalid Int from DiffTime: " ++ show dt
+
+timeLitToTuple :: TimeLit -> (Int, Int, Int)
+timeLitToTuple (TimeLit inp) =
+  let initial   = diffTimeToSeconds inp
+      (h, rest) = initial `divMod` 3600
+      (m, s)    = rest    `divMod`   60
+  in (h, m, s)
+
+parseTimeLit :: String -> TimeLit
+parseTimeLit inp = case Text.Parsec.parse p srcName inp of
+  Right x -> x
+  Left e -> error $ unlines
+    [ "Failed to parse TimeLit: " ++ show inp
+    , "Error: " ++ show e
+    ]
+  where
+  srcName = ""
+  integer = read @Integer <$> Text.Parsec.many1 Text.Parsec.digit
+  colon = void $ Text.Parsec.char ':'
+  (<?>) = (Text.Parsec.<?>)
+  p = do
+    h <- integer <?> "hour"
+    _ <- colon <?> "colon after hour"
+    m <- integer <?> "minute"
+    when (m > 59) $ fail $ "Minute must be 0-59, got: " ++ show m
+    _ <- colon <?> "colon after minute"
+    s <- integer <?> "second"
+    when (s > 59) $ fail $ "Second must be 0-59, got: " ++ show s
+    Text.Parsec.eof
+    pure $ fromInteger $ h * 3600 + m * 60 + s
+
+-- h:mm:ss TimeLit
+t :: String -> TimeLit
+t = parseTimeLit
+
+-- h:mm TimeLit
+th :: String -> TimeLit
+th = parseTimeLit . (++ ":0")
+
+-- m:ss TimeLit
+tm :: String -> TimeLit
+tm = parseTimeLit . ("0:" ++)
+
+-------------------------------------------------
 
 -- Helper to do hour/minute time math
 -- data HourMinTime = HourMinTime Int Int

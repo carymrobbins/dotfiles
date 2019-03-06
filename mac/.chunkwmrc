@@ -7,8 +7,8 @@
 #       loading a plugin. '~' expansion is supported.
 #
 
-#chunkc core::plugin_dir ~/.chunkwm_plugins
-chunkc core::plugin_dir /usr/local/opt/chunkwm/share/chunkwm/plugins
+chunkc core::plugin_dir ~/.chunkwm_plugins
+#chunkc core::plugin_dir /usr/local/opt/chunkwm/share/chunkwm/plugins
 
 #
 # NOTE: if enabled, chunkwm will monitor the specified plugin_dir
@@ -90,6 +90,8 @@ chunkc tiling::rule --owner "Karabiner-Elements" --state float
 chunkc tiling::rule --owner "Event Viewer" --state float
 # Float all IntelliJ windows *except* the main window.
 chunkc tiling::rule --owner "IntelliJ IDEA" --except '\[[^]+\]' --state float
+chunkc tiling::rule --owner iTerm2 --name Preferences --state float
+chunkc tiling::rule --owner GIMP --state float
 #
 # NOTE: if chunkc plugin_dir is not set, the absolutepath is necessary.
 #

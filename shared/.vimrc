@@ -6,6 +6,8 @@ syntax on
 filetype plugin on
 filetype indent on
 
+"Default to nowrap, toggle with <Leader>W (see common.vimrc)
+set nowrap
 "Show line, column numbers in status bar.
 set ruler
 "Always show file name.
