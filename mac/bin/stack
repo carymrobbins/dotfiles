@@ -1,0 +1,27 @@
+#!/bin/bash
+
+EXTRA_BUILD_FLAGS=(--profile --haddock)
+
+if ! command -v haskell-stack >/dev/null; then
+  >&2 echo "Expected 'haskell-stack' to be on PATH, not found"
+  >&2 echo "Be sure to have 'stack' installed and its binary named 'haskell-stack'"
+  exit 1
+fi
+
+args=()
+found_command_name=
+for arg in "$@"; do
+  args+=("$arg")
+  if [ -z "$found_command_name" ]; then
+    if [[ "$arg" =~ ^[a-z] ]]; then
+      found_command_name=1
+      case "$arg" in
+        build|install|test|bench|haddock|install)
+          args+=("${EXTRA_BUILD_FLAGS[@]}");;
+      esac
+    fi
+  fi
+done
+
+set -ex
+exec haskell-stack "${args[@]}"
