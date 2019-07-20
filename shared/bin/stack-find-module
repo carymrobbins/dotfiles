@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -ex
+exec stack exec -- ghc-pkg find-module "$1"

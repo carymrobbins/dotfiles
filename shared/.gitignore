@@ -2,7 +2,6 @@ stuff/
 worksheet.sc
 *.worksheet.sc
 .DS_Store
-*.swp
 
 ScratchPad.scala
 
@@ -12,3 +11,6 @@ ScratchPad.scala
 
 # Ignore special .vnv files for my vnv zsh function
 .vnv
+
+# Ignore GHC profile output
+*.prof

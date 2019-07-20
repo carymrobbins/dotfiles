@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $(basename $0) <file>"
+  exit 1
+fi
+
+dest=$1
+
+if [ -z "$EDITOR" ]; then
+  >&2 echo "EDITOR env var is not defined!"
+  exit 1
+fi
+
+sudo true
+tmp="$(mktemp -d)/$(basename "$dest")"
+cp "$dest" "$tmp"
+$EDITOR "$tmp"
+
+retcode=$?
+if [ "$retcode" -ne 0 ]; then
+  >&2 echo "$EDITOR returned nonzero exit code"
+  exit "$retcode"
+fi
+
+sudo mv "$tmp" "$dest"

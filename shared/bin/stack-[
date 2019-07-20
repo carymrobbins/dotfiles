@@ -1,0 +1,27 @@
+#!/bin/bash
+
+args=()
+code=0
+
+run_stack() {
+  (set -x ; stack "${args[@]}")
+  code=$?
+  if [ "$code" -ne 0 ]; then
+    exit "$code"
+  fi
+  args=()
+}
+
+while [ "$#" -ne 0 ]; do
+  case "$1" in
+    ',') run_stack; shift;;
+    '\\,') args+=(','); shift;;
+    ']') break;;
+    '\\]') args+=(']'); shift;;
+    *) args+=("$1"); shift;;
+  esac
+done
+
+if [ "${#args[@]}" -gt 0 ]; then
+  run_stack
+fi

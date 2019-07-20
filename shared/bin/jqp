@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Combines jq and underscore-cli to produce prettier-printed JSON.
+# Uses jq's interface and underscore-cli's pretty printer.
+
+jqopts=()
+
+# THIS DOESN'T WORK WELL, DISABLING FOR NOW
+#
+# If a filter is not supplied, helpfully supply the default '.' filter.
+#found_filter=
+#for arg in "$@"; do
+#  # Assume that all filters start with a dot.
+#  if [[ "$1" =~ ^\. ]]; then
+#    found_filter=1
+#  fi
+#done
+#if [ -z "$found_filter" ]; then
+#  jqopts+=(.)
+#fi
+
+# Let's always compact jq's output and let underscore do the pretty-printing.
+jqopts+=(-c)
+
+# If output is a terminal, default to colorized output.
+# This matches the behavior of jq.
+# This can be changed with jq flags (handled in the $@ for loop below).
+if [ -t 1 ]; then
+  colorize=1
+fi
+
+# Adjust options passed to underscore based on options passed to jq.
+for arg in "$@"; do
+  case "$arg" in
+    # Don't pass color arguments to jq because we always want it to
+    # not produce color output as this will break underscore's json parsing.
+    -M|--monochrome-output) colorize=;;
+    -C|--color-output) colorize=1;;
+    # Any other arguments should be passed to jq.
+    *) jqopts+=("$arg");;
+  esac
+done
+
+if [ -n "$colorize" ]; then
+  underscoreopts+=('--color')
+fi
+
+exec jq "${jqopts[@]}" | underscore print "${underscoreopts[@]}"

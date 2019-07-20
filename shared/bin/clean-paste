@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ostype=$(uname)
+
+case "$(uname)" in
+  Darwin)
+    pastecmd=pbpaste
+    copycmd=pbcopy
+    ;;
+  *)
+    >&2 echo "Unsupported os type: $ostype"
+    exit 1
+esac
+
+pyfind=
+#pyrepl=⋙
+pyrepl=🐍
+
+hsfind=
+hsrepl=⋙
+#hsrepl=λ
+#hsrepl=λ⥫
+#hsrepl=⋋⥫
+#hsrepl=≫⥫
+
+pgfind=
+#pgrepl=⋙
+pgrepl=🐘
+
+exec $pastecmd \
+  | sed "s/$pyfind/$pyrepl/g" \
+  | sed "s/$hsfind/$hsrepl/g" \
+  | sed "s/$pgfind/$hsrepl/g" \
+  | $copycmd

@@ -7,6 +7,13 @@ export ZSH=$HOME/.oh-my-zsh
 # Load ~/.env, if it exists.
 [ ! -f "$HOME/.env" ] || source "$HOME/.env"
 
+## # Try to load projects as env vars
+## proj_env_vars=$(find-project-dir --print-project-vars)
+## if [ $? -eq 0 ]; then
+##   eval "$proj_env_vars"
+## fi
+## unset proj_env_vars
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -19,6 +26,13 @@ export TERM=xterm-256color
 # Disable virtualenv prompt
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
+# nvm junk, lazy load it
+nvm() {
+  echo "NVM is not enabled, enabling..."
+  source ~/.zsh-nvm/zsh-nvm.plugin.zsh
+  nvm "$@"
+}
+
 # ZSH disabled features
 # The 'r' command isn't really used
 disable r
@@ -27,9 +41,7 @@ disable r
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias g=git
-alias s=stack
-alias ds='stack build --ghc-options "
-  -Wno-error=deprecations -Wno-error=unused-imports"'
+alias se='stack exec -- '
 alias sg=stackage
 alias c='curl -sS'
 alias v='$EDITOR'
@@ -38,6 +50,57 @@ alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
+
+# Function for a magical stack
+s() {
+  local args=()
+  local saveOutput=1
+
+  for arg in "$@"; do
+    if [ "$arg" = "--no-save-output" ]; then
+      saveOutput=
+    else
+      args+=("$arg")
+    fi
+  done
+
+  if [ $# -eq 1 ] && [[ $1 =~ ^l(ast)?$ ]]; then
+    less -R ~/.last-stack-output
+  elif [ -z "$saveOutput" ]; then
+    stack "${args[@]}"
+  else
+    (
+      (
+        printf "%% stack"
+        printf ' %q' "${args[@]}"
+        echo
+      ) > ~/.last-stack-output
+      stack --color always "$@" 2>&1 | tee -a ~/.last-stack-output
+    )
+  fi
+}
+
+# Repeat the last stack command
+ss() {
+  if [ $# -ne 0 ]; then
+    >&2 echo "Try again, ss doesn't take arguments!"
+    return 1
+  fi
+  local args=($(
+    head -n1 ~/.last-stack-output \
+      | grep '^% stack ' \
+      | cut -d' ' -f 3-
+  ))
+  printf "%% stack"
+  printf ' %q' "${args[@]}"
+  echo
+  s "${args[@]}"
+}
+
+# Function for `stack build [opts..] | less`
+sbl() {
+  stack build --color always "$@" 2>&1 | less
+}
 
 # Load a virtualenv
 vnv() {
@@ -91,8 +154,16 @@ auto_vnv() {
 # Conditionally use ./gradlew if it exists
 # Setting TERM to workaround gradle 4.5.1 bug
 # See https://github.com/gradle/gradle/issues/4426
+# Also, optionally use a file named ./.javaversion to
+# determine the java version to be used; e.g. 1.8
 gr() {
-  TERM=xterm-color $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi) "$@"
+  (
+    export TERM=xterm-color
+    if [ -f .javaversion ]; then
+      export JAVA_HOME=$(/usr/libexec/java_home -v $(cat .javaversion))
+    fi
+    $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi) "$@"
+  )
 }
 
 wo() {
@@ -211,7 +282,13 @@ DISABLE_AUTO_TITLE="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git last-working-dir path ssh-agent titles)
+plugins=(
+  git
+  last-working-dir
+  path
+  ssh-agent
+  titles
+)
 
 # Mac-specific plugins
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -248,6 +325,10 @@ stack_prompt_info() {
   if grep '\.yaml' <<< "$resolver" >/dev/null; then
     local resolver=$(stack_find_resolver "$resolver")
   fi
+  # Special hack to make lts-123 become ʟᴛs-123 because it's pretty
+  if grep '^lts-' <<< "$resolver" >/dev/null; then
+    local resolver=$(sed 's/lts/ʟᴛs/' <<< "$resolver")
+  fi
   echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}${resolver}${ZSH_THEME_STACK_PROMPT_SUFFIX} "
 }
 
@@ -258,6 +339,8 @@ stack_find_resolver() {
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
 setopt interactivecomments
+# Disable zsh-specific globbing, like special matching of the ? char.
+unsetopt nomatch
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -303,9 +386,11 @@ done
 #   tmux a 2>/dev/null || tmux
 # fi
 
-# Custom completions
-autoload -Uz compinit
-compinit
+############## Custom completions ###############
+# Enable bash compatibility
+autoload -U +X compinit && compinit
+autoload -U +X bashcompinit && bashcompinit
+
 # _path_commands autocompletes executables on the $PATH
 compdef _path_commands hl
 compdef _path_commands cx
@@ -335,27 +420,29 @@ _vnv_completions() {
 }
 compdef _vnv_completions vnv
 
-_stack_completions() {
-  local opts=(
-    'test' 'build' 'exec' 'ghci'
-    '--exec'
-    '--dependencies-only'
-    '--only-dependencies'
-    * # Directory structure
-    )
-  local binaries=()
-  local bindir
-  local binary
-  # TODO: Calling `basename` in `find` is too slow...
-  #while IFS= read -r -d '' binary; do
-  #  binaries+=("$binary")
-  #done <<< $(
-  #  find .stack-work/install/*/*/*/bin \
-  #    -type f -perm +111 -print0 -exec basename {} \;)
-  compadd -a opts
-  compadd -a binaries
-}
-compdef _stack_completions stack
+# The REAL stack completions
+eval "$(stack --bash-completion-script stack)"
+# _stack_completions() {
+#   local opts=(
+#     'test' 'build' 'exec' 'ghci'
+#     '--exec'
+#     '--dependencies-only'
+#     '--only-dependencies'
+#     * # Directory structure
+#     )
+#   local binaries=()
+#   local bindir
+#   local binary
+#   # TODO: Calling `basename` in `find` is too slow...
+#   #while IFS= read -r -d '' binary; do
+#   #  binaries+=("$binary")
+#   #done <<< $(
+#   #  find .stack-work/install/*/*/*/bin \
+#   #    -type f -perm +111 -print0 -exec basename {} \;)
+#   compadd -a opts
+#   compadd -a binaries
+# }
+# compdef _stack_completions stack
 
 _psql_completions() {
   for x in $(psql -l -t -X | cut -d'|' -f1 | grep -v template | grep -o '[A-Za-z].*'); do
@@ -365,9 +452,8 @@ _psql_completions() {
 compdef _psql_completions psql
 
 _ghc_completions() {
-  local prog=$1
-  if command -v "$prog" >/dev/null; then
-    local opts=($("$prog" --show-options))
+  if command -v ghc >/dev/null; then
+    local opts=($(ghc --show-options))
     compadd -a opts
   fi
 }

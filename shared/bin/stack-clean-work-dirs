@@ -1,0 +1,42 @@
+#!/bin/bash
+
+stack_work_dirs=()
+
+if [ "$1" = '-f' ]; then
+  FORCE=1
+fi
+
+for x in $(find . -name .stack-work -type d ); do
+  # Omit 'downloaded' so we can retain cached git repos, unless FORCEd
+  if [ -z "$FORCE" -a -n "$(fgrep '.stack-work/downloaded' <<< "$x")" ]; then
+    continue
+  fi
+  # Skip nested .stack-work dirs.
+  if [ $(fgrep -o .stack-work <<< "$x" | wc -l) -ne 1 ]; then
+    continue
+  fi
+  stack_work_dirs+=("$x")
+done
+
+if [ "${#stack_work_dirs[@]}" -eq 0 ]; then
+  echo "No stack work directories detected, nothing to do!"
+  exit
+fi
+
+echo "Stack work directories detected:"
+for x in "${stack_work_dirs[@]}"; do
+  echo "  * $x"
+done
+read -p "Remove stack work directories? [y/N] " -n 1 -r
+echo
+
+if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+  for x in "${stack_work_dirs[@]}"; do
+    (set -x
+     rm -rf "$x"
+    )
+  done
+else
+  echo "Aborting per user request"
+  exit 1
+fi

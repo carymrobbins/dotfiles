@@ -94,6 +94,12 @@ ctrl + alt + cmd + shift - r  : chunkc tiling::window --send-to-monitor 2
 # ctrl + cmd - 3  : chunkc tiling::window --send-to-monitor 3; chunkc tiling::monitor -f 3
 
 # increase region size
+ctrl + alt + cmd - h : /bin/bash -c 'for x in east west; do chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge $x; done'
+
+# descrease region size
+ctrl + alt + cmd - l : /bin/bash -c 'for x in east west; do chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge $x; done'
+
+# increase region size
 # shift + alt - a : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge west
 # shift + alt - s : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge south # shift + alt - w : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge north # shift + alt - d : chunkc tiling::window --use-temporary-ratio 0.1 --adjust-window-edge east # decrease region size # shift + cmd - a : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge west
 # shift + cmd - s : chunkc tiling::window --use-temporary-ratio -0.1 --adjust-window-edge south

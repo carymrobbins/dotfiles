@@ -49,6 +49,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -80,6 +81,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -111,6 +113,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -142,6 +145,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -173,6 +177,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -204,6 +209,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -235,6 +241,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -266,6 +273,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -297,6 +305,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -328,6 +337,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -359,6 +369,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -390,6 +401,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -418,6 +430,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -446,6 +459,135 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "h",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "j",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "k",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "k",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "l",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$"
               ]
             }
@@ -538,6 +680,130 @@
         {
           "type": "basic",
           "from": {
+            "key_code": "h",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "h",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "j",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "k",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "k",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "a",
+              "modifiers": [
+                "right_control"
+              ]
+            },
+            {
+              "key_code": "l",
+              "modifiers": []
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
             "key_code": "1",
             "modifiers": {
               "mandatory": [
@@ -827,6 +1093,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -855,6 +1122,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -883,6 +1151,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -911,6 +1180,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -939,6 +1209,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -967,6 +1238,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -995,6 +1267,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1023,6 +1296,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1051,6 +1325,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1079,6 +1354,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1107,6 +1383,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1137,6 +1414,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1165,6 +1443,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1193,6 +1472,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1221,6 +1501,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1249,6 +1530,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1279,6 +1561,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1307,6 +1590,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1335,6 +1619,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1363,6 +1648,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1393,6 +1679,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1421,6 +1708,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1449,6 +1737,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1477,6 +1766,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1507,6 +1797,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1537,6 +1828,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1565,6 +1857,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1593,6 +1886,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1621,6 +1915,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1651,6 +1946,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1681,6 +1977,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1709,6 +2006,7 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -1737,6 +2035,36 @@
             {
               "type": "frontmost_application_unless",
               "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$",
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "p",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "p",
+              "modifiers": [
+                "right_command"
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
                 "^com\\.jetbrains\\.intellij$"
               ]
@@ -2125,6 +2453,48 @@
           "to": [
             {
               "key_code": "t",
+              "modifiers": [
+                "right_control",
+                "right_option",
+                "right_command"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "h",
+              "modifiers": [
+                "right_control",
+                "right_option",
+                "right_command"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "l",
               "modifiers": [
                 "right_control",
                 "right_option",
