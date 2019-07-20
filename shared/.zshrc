@@ -1,3 +1,6 @@
+### TODO: Driving me crazy, where is this coming from?
+unset VIRTUAL_ENV
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -70,10 +73,20 @@ ipy() {
   fi
 }
 
-# Auto-load virtualenv, if current one exists
-# if [ -f "$HOME/.pyenv/current-env" ]; then
-#   vnv "$(cat "$HOME/.pyenv/current-env")"
-# fi
+# Auto-load virtualenv, useful for helper functions.
+auto_vnv() {
+  if [ -f .vnv ]; then
+    vnv
+  elif [ -n "$VIRTUAL_ENV" ]; then
+    unvn
+  fi
+}
+
+### ## TODO: Not sure what's up, maybe multiple terminals? But this is acting weird.
+### # Try to auto-load virtualenv on zsh startup.
+###  auto_vnv
+### # Otherwise, try to auto-load virtualenv on cd.
+###  chpwd_functions+=(auto_vnv)
 
 # Conditionally use ./gradlew if it exists
 # Setting TERM to workaround gradle 4.5.1 bug
@@ -239,7 +252,8 @@ stack_prompt_info() {
 }
 
 stack_find_resolver() {
-  grep '^resolver' "$1" | cut -d: -f2 | xargs
+  # Parse between the ':' and before the '#', if applicable.
+  grep '^resolver' "$1" | cut -d: -f2 | cut -d'#' -f1 | xargs
 }
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")

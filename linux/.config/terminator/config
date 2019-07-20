@@ -22,7 +22,7 @@
 [profiles]
   [[default]]
     background_color = "#002b36"
-    background_darkness = 0.66
+    background_darkness = 0.93
     background_type = transparent
     cursor_color = "#aaaaaa"
     font = Noto Sans Mono Medium 12
@@ -41,7 +41,18 @@
     cursor_color = "#16afca"
     font = Noto Sans Mono 12
     foreground_color = "#e5e5e5"
-    palette = "#212121:#b7141f:#457b24:#f6981e:#134eb2:#963bcb:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
+    palette = "#212121:#b7141f:#457b24:#f6981e:#226ae2:#963bcb:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
+    scrollbar_position = hidden
+    show_titlebar = False
+    use_system_font = False
+  [[darkmana]]
+    background_color = "#232322"
+    background_darkness = 0.87
+    background_type = transparent
+    cursor_color = "#16afca"
+    font = Manaspace 12
+    foreground_color = "#e5e5e5"
+    palette = "#212121:#b7141f:#457b24:#f6981e:#226ae2:#963bcb:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
     scrollbar_position = hidden
     show_titlebar = False
     use_system_font = False
@@ -56,13 +67,13 @@
     show_titlebar = False
   [[material]]
     background_color = "#eaeaea"
-    background_darkness = 0.82
+    background_darkness = 0.74
     background_type = transparent
     cursor_blink = False
     cursor_color = "#16afca"
     font = Source Code Pro Medium 14
     foreground_color = "#232322"
-    palette = "#212121:#b7141f:#457b24:#f6981e:#134eb2:#560088:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#ffea2e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
+    palette = "#212121:#b7141f:#457b24:#f6981e:#134eb2:#560088:#0e717c:#efefef:#424242:#e83b3f:#7aba3a:#d5c21e:#54a4f3:#aa4dbc:#26bbd1:#d9d9d9"
     scrollbar_position = hidden
     show_titlebar = False
     use_system_font = False

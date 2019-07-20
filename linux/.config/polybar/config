@@ -58,7 +58,7 @@ font-5 = icomoon:style=Regular:size=15;1
 modules-left = xmonad
 modules-center =
 ;modules-right = filesystem xbacklight volume xkeyboard memory cpu wlan eth battery temperature date powermenu
-modules-right = tauactive filesystem xleds volume memory cpu wlan battery temperature date editpolybar restartpolybar padding
+modules-right = tauactive filesystem xleds volume memory cpu wlan battery temperature date toggletheme editpolybar restartpolybar padding
 
 tray-position = right
 ;tray-padding = 2
@@ -120,6 +120,11 @@ interval = 1
 type = custom/script
 exec = echo "%{F#aaa}%{F-}"
 click-left = terminator -p white -x "vim ~/.config/polybar/config"
+
+[module/toggletheme]
+type = custom/script
+exec = echo "%{F#aaa}%{F-}"
+click-left = $HOME/dotfiles/linux/bin/theme toggle
 
 [module/restartpolybar]
 type = custom/script
@@ -376,11 +381,16 @@ ramp-capacity-4 = %{F#3bd04a}%{F-}
 ;animation-charging-2 = 
 ;animation-charging-foreground = ${colors.foreground-alt}
 ;
+
 animation-charging-0 = %{F#e86742}%{F-}
 animation-charging-1 = %{F#e18d32}%{F-}
 animation-charging-2 = %{F#e1ca32}%{F-}
 animation-charging-3 = %{F#80b44f}%{F-}
 animation-charging-4 = %{F#3bd04a}%{F-}
+
+;animation-charging-5 = %{F#5555ff}%{F-}
+;animation-charging-6 = %{F#800080}%{F-}
+
 ;animation-charging-0 = %{F#e75}%{F-}
 ;animation-charging-1 = %{F#ee5}%{F-}
 ;animation-charging-2 = %{F#ae5}%{F-}

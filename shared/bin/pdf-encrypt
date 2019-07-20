@@ -8,7 +8,7 @@ done
 
 if [ $# -ne 2 ] || [ -n "$showHelp" ]; then
   cat <<HERE
-Usage: $0 <file> <password>
+Usage: $0 <file> [-p | <password>]
 
 The output file will be file.pdf-encrypted.pdf
 HERE
@@ -17,10 +17,16 @@ fi
 
 targetFile=$1-encrypted.pdf
 
-#if [ -f "$targetFile" ]; then
-#  >&2 echo "$targetFile already exists!"
-#  exit 1
-#fi
+if [ -n "$2" ]; then
+  case "$2" in
+    -p)
+      read -p "PDF Password: " -s password
+      echo
+      ;;
+    *)
+      password=$2
+  esac
+fi
 
 args=(
   -q
@@ -28,12 +34,11 @@ args=(
   -dBATCH
   -sDEVICE=pdfwrite
   -sOutputFile="$targetFile"
-  -sUserPassword="$2"
-  -sOwnerPassword="$2"
+  -sUserPassword="$password"
+  -sOwnerPassword="$password"
   -c
   .setpdfwrite
   -f "$1"
 )
 
-set -x
 gs "${args[@]}"

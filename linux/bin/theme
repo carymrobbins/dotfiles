@@ -9,6 +9,15 @@ set -x
 # terminator
 
 typ=$1
+
+if [ "$typ" = "toggle" ]; then
+  if grep dark ~/.theme-type >/dev/null; then
+    typ=light
+  else
+    typ=dark
+  fi
+fi
+
 dark_desktop=black-triangles.jpg
 light_desktop=white-abstract.png
 

@@ -61,3 +61,6 @@
 [submodule "shared/.vim/swift.vim"]
 	path = shared/.vim/swift.vim
 	url = https://github.com/keith/swift.vim
+[submodule "shared/.vim/bundle/typescript-vim"]
+	path = shared/.vim/bundle/typescript-vim
+	url = https://github.com/leafgarland/typescript-vim

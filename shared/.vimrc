@@ -6,6 +6,8 @@ syntax on
 filetype plugin on
 filetype indent on
 
+"Default to nowrap
+set nowrap
 "Show line, column numbers in status bar.
 set ruler
 "Always show file name.
@@ -14,6 +16,9 @@ set ls=2
 command ClearSearch :let @/ = ""
 "Look for tags starting with current directory traversing upwards.
 set tags=./tags,tags,codex.tags;
+
+set wildignore+=*.pyc
+set wildignore+=*/out/*
 
 "Use line numbers, color them grey.
 set number
@@ -37,6 +42,9 @@ set shiftwidth=2  "An indent is 4 spaces
 set smarttab      "Indent instead of tab at start of line
 set shiftround    "Round spaces to nearest shiftwidth multiple
 set nojoinspaces  "Don't convert spaces to tabs
+
+nnoremap j gj
+nnoremap k gk
 
 "Key mappings
 """""""""""""

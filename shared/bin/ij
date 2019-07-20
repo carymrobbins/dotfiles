@@ -14,4 +14,4 @@ if [ -z "$1" -o "$1" = "--help" -o "$1" = "-h" ]; then
 fi
 
 proj=$(find-project-dir "$1" --notify)
-idea "$proj"
+~/opt/idea/bin/idea.sh "$proj"

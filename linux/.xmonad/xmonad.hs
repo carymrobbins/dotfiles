@@ -80,6 +80,7 @@ myKeys =
   & ((shiftMask .|. myModKey, xK_v), scratch "vim-cheatsheet")
   & ((shiftMask .|. myModKey, xK_m), scratch "thunderbird")
   & ((shiftMask .|. myModKey, xK_g), scratch "glances")
+  & ((shiftMask .|. myModKey, xK_l), scratch "wunderlist")
 
   -- Cycle through workspaces
   & ((myModKey,               xK_n), moveTo Next NonEmptyWS)
@@ -178,6 +179,11 @@ myScratchpads =
        "terminator -p black -T glances -x glances"
        (title =? "glances")
        nonFloating
+
+  , NS "wunderlist"
+       "/opt/wunderlistux-bin/Wunderlistux"
+       (className =? "Wunderlistux")
+       (customFloating $ centeredRect (2/3) (2/3))
   ]
 
 -- | Rectangle centered on screen with specified width and height, sizes

@@ -20,9 +20,10 @@ list() { $baseCmd list-timezones; }
 
 case "$1" in
   -l) list;;
+  pt) run America/Los_Angeles;;
+  mt) run America/Denver;;
   ct) run America/Chicago;;
   et) run America/New_York;;
-  pt) run America/Los_Angeles;;
   *)
     if ! list | fgrep "$1"; then
       >&2 echo "Invalid time zone '$1'"

@@ -34,9 +34,13 @@ xmap <Leader>a $A
 "Helpers for revealjs hacks
 "Insert fragment spans for markdown slides
 vmap <Leader>ff c<frag><ESC>:set paste<CR>a<C-r>"</frag><ESC>:set nopaste<CR>
+vmap <Leader>gg c<gray><ESC>:set paste<CR>a<C-r>"</gray><ESC>:set nopaste<CR>
+vmap <Leader>sf c<span class="fragment"><ESC>:set paste<CR>a<C-r>"</span><ESC>:set nopaste<CR>
 "Sort selection
 vmap <Leader>s :sort<CR>
 "Insert fragment divs for markdown slides
 nmap <Leader>fd I<div class=fragment><CR><ESC>
 "Insert code block for markdown slides
-vmap <Leader>cb c<pre><code data-noescape data-trim class=scala><CR><C-r>"<CR></code></pre><ESC>
+vmap <Leader>cb c<pre><code data-noescape data-trim class=haskell><CR><C-r>"<CR></code></pre><ESC>
+
+nmap <Leader>ef A <!-- .element: class="fragment" --><ESC>
