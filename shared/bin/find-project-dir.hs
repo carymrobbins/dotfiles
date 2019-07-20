@@ -16,16 +16,20 @@ hf=projects/intellij-haskforce
 
 {-# OPTIONS_GHC -Wall -Werror #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TupleSections #-}
 
 import Prelude hiding (log)
 import Control.Monad
-import Data.Char (toLower)
+import Data.Char (toLower, toUpper, isAlphaNum)
+import Data.Foldable
 import Data.List (elemIndex, isPrefixOf, nub, sort)
 import Data.Maybe
+import Data.IORef
 import qualified Data.Text as T
 import Data.Traversable
+import qualified Data.Set as Set
 import System.Directory
 import System.Environment
 import System.Exit
@@ -45,6 +49,7 @@ debug = unsafePerformIO $ isJust . lookup "FPD_DEBUG_LOG" <$> getEnvironment
 main :: IO ()
 main = getArgs >>= \case
   ["--show-config"] -> print _CONFIG
+  ["--print-project-vars"] -> printProjectVars
   [pat, "--notify"] -> runWithArgs pat True
   [pat, "--complete"] -> runComplete pat
   [pat] -> runWithArgs pat False
@@ -71,7 +76,7 @@ main = getArgs >>= \case
         pure $ if pat `isPrefixOf` alias then [alias] else []
     rootCompletions <- fmap (concat . concat) $
       for configRoots $ \path -> do
-        files <- getDirectoryContentsIfExists path
+        files <- listDirectoryIfExists path
         for files $ \file ->
           if file `elem` [".", ".."] then pure [] else do
             let fullPath = path </> file
@@ -140,28 +145,28 @@ run pat = do
     Nothing -> search pat configRoots
 
 -- | Returns an empty list if the directory does not exist.
-getDirectoryContentsIfExists :: FilePath -> IO [FilePath]
-getDirectoryContentsIfExists path =
+-- Also, removes hidden files (those that start with dot '.')
+listDirectoryIfExists :: FilePath -> IO [FilePath]
+listDirectoryIfExists path =
   ifM (doesDirectoryExist path)
-    (getDirectoryContents path)
+    (filter (not . isPrefixOf ".") <$> listDirectory path)
     (pure [])
 
 search :: Traversable t => String -> t FilePath -> IO (t [Maybe FilePath])
 search pat dirs = do
   for dirs $ \path -> do
     log $ "Checking path: " <> path
-    files <- getDirectoryContentsIfExists path
-    for (sort files) $ \file ->
-      if file `elem` [".", ".."] then pure Nothing else do
-        log $ "Checking: " <> file
-        let fullPath = path </> file
-        -- Only match directories.
-        ifM (doesDirectoryExist fullPath)
-          (if file `matches` pat then
-            pure $ Just fullPath
-          else
-            pure Nothing)
-          (pure Nothing)
+    files <- listDirectoryIfExists path
+    for (sort files) $ \file -> do
+      log $ "Checking: " <> file
+      let fullPath = path </> file
+      -- Only match directories.
+      ifM (doesDirectoryExist fullPath)
+        (if file `matches` pat then
+          pure $ Just fullPath
+        else
+          pure Nothing)
+        (pure Nothing)
 
 matches :: String -> String -> Bool
 file `matches` pat
@@ -179,6 +184,26 @@ file `matches` pat
   loop restFile (c:restPat) = case c `elemIndex` restFile of
     Nothing -> False
     Just n -> loop (drop (n + 1) restFile) restPat
+
+printProjectVars :: IO ()
+printProjectVars = do
+  rootsAndProjects <- getRootsAndProjects
+  seen <- newIORef Set.empty
+  for_ rootsAndProjects $ \(root, projects) -> do
+      for_ projects $ \project -> do
+        let k = map toUpper $ filter isAlphaNum project
+        inserted <- atomicModifyIORef' seen $ \s ->
+          if Set.member k s then
+            (s, False)
+          else
+            (Set.insert k s, True)
+        when inserted $ putStrLn $
+          "export PROJ_" <> k <> "=" <> root <> "/" <> project
+  where
+  Config {..} = _CONFIG
+
+  getRootsAndProjects :: IO [(FilePath, [FilePath])]
+  getRootsAndProjects = traverse (\r -> (r,) <$> listDirectoryIfExists r) configRoots
 
 log :: String -> IO ()
 log msg = when debug $ hPutStrLn stderr msg

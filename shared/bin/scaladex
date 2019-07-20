@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
+url="https://index.scala-lang.org/search?q=$1"
+
+"$OPEN" "$url"

@@ -1,2 +1,5 @@
 \x auto
-\timing
+\pset null '∅'
+\set PROMPT1 '%[%033[34;1m%][%/] \n %[%033[0m%]%'
+\set PROMPT2 '  '
+\set PROMPT3 '  '

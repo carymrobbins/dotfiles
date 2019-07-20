@@ -67,3 +67,9 @@
 [submodule "shared/.vim/bundle/typescript-vim"]
 	path = shared/.vim/bundle/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim
+[submodule "shared/.vim/bundle/vim-json"]
+	path = shared/.vim/bundle/vim-json
+	url = https://github.com/elzr/vim-json
+[submodule "shared/.vim/bundle/vim-indent-guides"]
+	path = shared/.vim/bundle/vim-indent-guides
+	url = git://github.com/nathanaelkane/vim-indent-guides.git

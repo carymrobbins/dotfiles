@@ -31,6 +31,7 @@ import Data.Aeson
 import Data.Aeson.Types
 import Data.Aeson.Encode.Pretty hiding (Tab)
 import qualified Data.ByteString.Lazy.Char8 as LC
+import Data.Functor ((<&>))
 import Data.Maybe
 import Data.String
 import Data.Text (Text)
@@ -75,18 +76,29 @@ root = Root "Linux Compat" [rule]
         -- Paste
       , [Control, Shift] |+| V !> RightCommand |+| V
       ]
-    ] ?? [iterm]
+
+      -- Tmux: Use option+hjkl for moving between panes
+    , [H, J, K, L] <&> \hjkl ->
+        Option |+| hjkl !> tmuxPrefix |-> singleKey hjkl
+    ] ?? [macterm, iterm]
 
   -- The Option + Key mappings in IntelliJ don't work consistently due
   -- to Mac's preference to insert unicode chars instead.
   -- These mappings override that behavior.
-  intellijRemaps =
-    [ -- Jump to Super method
-      Option |+| U !> RightCommand |+| U
-      -- Preferences
-    , [Control, Option] |+| S !> RightCommand |+| Comma
-      -- Project Structure
-    , [Shift, Control, Option] |+| S !> RightCommand |+| Semicolon
+  intellijRemaps = concat
+    [ [ -- Jump to Super method
+        Option |+| U !> RightCommand |+| U
+        -- Preferences
+      , [Control, Option] |+| S !> RightCommand |+| Comma
+        -- Project Structure
+      , [Shift, Control, Option] |+| S !> RightCommand |+| Semicolon
+      ]
+
+      -- Tmux-ish: Use option+hjkl for moving between panes
+      -- This works because I already have some bindings in IntelliJ for
+      -- tmuxPrefix + hjkl
+    , [H, J, K, L] <&> \hjkl ->
+        Option |+| hjkl !> tmuxPrefix |-> singleKey hjkl
     ] ?? [intellij]
 
   slackRemaps =
@@ -144,8 +156,10 @@ root = Root "Linux Compat" [rule]
         -- Slack: Go to conversation
       , Control |+| K !> RightCommand |+| K
       , Control |+| ReturnOrEnter !> RightCommand |+| ReturnOrEnter
+        -- Print
+      , Control |+| P !> RightCommand |+| P
       ]
-    ) ??! [iterm, intellij]
+    ) ??! [macterm, iterm, intellij]
 
   skhdRemaps = [One, Two, Three, Four, Five] >>= \n ->
     [ -- Mapped in ~/.skhdrc
@@ -222,6 +236,7 @@ root = Root "Linux Compat" [rule]
 
   -- Patterns for binding keys only for certain apps.
   iterm = litPat "com.googlecode.iterm2"
+  macterm = litPat "com.apple.Terminal"
   -- chrome = litPat "com.google.Chrome"
   intellij = litPat "com.jetbrains.intellij"
   slack = litPat "com.tinyspeck.slackmacgap"

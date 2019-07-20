@@ -1,0 +1,81 @@
+#!/bin/bash
+
+SSB_INTEROP_JS=/Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js
+SSB_PATCH_FILE=$HOME/dotfiles/mac/resources/slack-dark.patch
+#DARK_THEME_CSS_URL=https://gist.githubusercontent.com/carymrobbins/d9441dcb81b186d3d73bc7dc6c655ce0/raw/738e42c48b1434da6cd9c4f3935122f55e93848c/slack-dark.css
+DARK_THEME_CSS_URL=https://gist.githubusercontent.com/carymrobbins/d9441dcb81b186d3d73bc7dc6c655ce0/raw/51e59e0ed0489ca9e2cc6d0691a2878536fd19b0/slack-dark.css
+
+usage() {
+  cat <<HERE
+Usage: $0 <dark|light|patch|edit|restart> [--no-restart]
+
+dark      Restart slack with dark theme enabled
+light     Restart slack with light theme enabled
+patch     Initialize the slack dark theme patch
+edit      Edit slack's ssb-interop.js file
+restart   Restart slack (but make no theme changes)
+HERE
+}
+
+restart_slack() { pkill 'Slack$'; open -a Slack.app; }
+
+do_dark()  { sudo patch    "$SSB_INTEROP_JS" "$SSB_PATCH_FILE"; }
+do_light() { sudo patch -R "$SSB_INTEROP_JS" "$SSB_PATCH_FILE"; }
+
+do_edit()  {
+  local sudoedit
+  if command -v sudoedit >/dev/null; then
+    sudoedit=sudoedit
+  elif [ -z "$EDITOR" ]; then
+    sudoedit="sudo vim"
+  else
+    sudoedit="sudo $EDITOR"
+  fi
+  $sudoedit "$SSB_INTEROP_JS"
+}
+
+do_patch() {
+  sudo cp "$SSB_INTEROP_JS" "$SSB_INTEROP_JS.copy"
+  echo "$DARK_MODE_JS" | sudo tee -a "$SSB_INTEROP_JS.copy"
+  diff "$SSB_INTEROP_JS" "$SSB_INTEROP_JS.copy" > "$SSB_PATCH_FILE" || true
+}
+
+main() {
+  case "$1" in
+    dark)  do_dark  ; [ "$2" = '--no-restart' ] || restart_slack;;
+    light) do_light ; [ "$2" = '--no-restart' ] || restart_slack;;
+    patch) do_patch ;;
+    edit) do_edit ;;
+    restart) restart_slack;;
+    "")
+      >&2 echo "Missing argument"
+      >&2 usage
+      exit 1
+      ;;
+    *)
+      >&2 echo "Invalid argument: $1"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+}
+
+DARK_MODE_JS=$(cat <<HERE
+////////////////////////////////////////////////////////////////////////
+// BEGIN DARK THEME ////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+document.addEventListener('DOMContentLoaded', function() {
+  $.ajax({
+      url: '$DARK_THEME_CSS_URL',
+      success: function(css) {
+          \$('<style></style>').appendTo('head').html(css);
+      }
+  });
+});
+////////////////////////////////////////////////////////////////////////
+// END DARK THEME //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+HERE
+)
+
+main "$@"

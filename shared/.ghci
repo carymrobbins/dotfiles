@@ -10,6 +10,10 @@
 :set -package hscolour
 :set -package parsec
 
+:def logoprompt (\_ -> return $ ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
+
+:def lambdaprompt (\_ -> return $ ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
+
 -- Purple for normal prompt
 :set prompt "\x1b[35m\xe677\x1b[0m "
 
@@ -17,19 +21,18 @@
 :set prompt-cont "\x1b[34m\xe677 |\x1b[0m "
 -- :set prompt "\x1b[35mλ\x1b[0m "
 
-:def lambdaprompt (\_ -> return $ ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
-
-:def logoprompt (\_ -> return $ ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
-
 -- Default imports
 :m + Control.Monad
-:m + Data.List
-:m + Data.List.Split
+import qualified Data.List
+import qualified Data.List.Split
 :m + Data.Monoid
 :m + Data.String
 :m + Data.Time
 
 -- Default extensions
+:set -XDeriveAnyClass
+:set -XDeriveGeneric
+:set -XDerivingStrategies
 :set -XDerivingVia
 :set -XFlexibleContexts
 :set -XGeneralizedNewtypeDeriving
@@ -84,7 +87,7 @@ colorPrint =
 -------------------------------------------------
 
 newtype TimeLit = TimeLit { unTimeLit :: DiffTime }
-  deriving (Num)
+  deriving newtype (Num)
 
 instance Show TimeLit where
   show x = show h ++ ":" ++ f02 m ++ ":" ++ f02 s

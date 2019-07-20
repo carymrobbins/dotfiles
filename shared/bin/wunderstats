@@ -1,0 +1,69 @@
+#!/bin/bash
+
+BASE_URL=https://a.wunderlist.com/api/v1
+
+for v in WUNDERLIST_ACCESS_TOKEN WUNDERLIST_CLIENT_ID; do
+  if [ -z "$(eval echo "\$${v}")" ]; then
+    >&2 echo "Env var $v required"
+    requirementsFailed=1
+  fi
+done
+
+if [ -n "$requirementsFailed" ]; then
+  exit 1
+fi
+
+req() {
+  local arg
+  local checkFail
+  for arg in "$@"; do
+    if [ "$arg" = '-f' ]; then
+      checkFail=1
+    fi
+  done
+  local res=$(
+    curl -Ss \
+      -HX-Access-Token:"$WUNDERLIST_ACCESS_TOKEN" \
+      -HX-Client-ID:"$WUNDERLIST_CLIENT_ID" \
+      "$@"
+  )
+  if [ -n "$checkFail" -a $? -ne 0 ]; then
+    >&2 echo "Request failed: req $@"
+    exit 1
+  fi
+  echo "$res"
+}
+
+myUserId=$(req "$BASE_URL/user" | jq .id -r)
+
+allMyLists=$(req "$BASE_URL/lists" | jq "map(select(.owner_id == $myUserId))|.[]" -c)
+
+today=$(date '+%Y-%m-%d')
+
+totalNumTodoTasks=0
+totalNumCompletedTasks=0
+
+(
+echo 'ID,List,Todo,Completed'
+
+while read list; do
+  if [ -z "$list" ]; then
+    continue
+  fi
+  listId=$(jq .id <<< "$list")
+  listTitle=$(jq .title -r <<< "$list")
+  numTodoTasks=$(
+    req "$BASE_URL/tasks?list_id=$listId" \
+      | jq length
+  )
+  numCompletedTasks=$(
+    req "$BASE_URL/tasks?list_id=$listId&completed=true" \
+      | jq length
+  )
+  ((totalNumTodoTasks += numTodoTasks))
+  ((totalNumCompletedTasks += numCompletedTasks))
+  echo "$listId,$listTitle,$numTodoTasks,$numCompletedTasks"
+done <<< "$allMyLists"
+
+echo "-,Total,$totalNumTodoTasks,$totalNumCompletedTasks"
+) | column -t -s,
