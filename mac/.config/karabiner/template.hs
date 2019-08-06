@@ -78,8 +78,8 @@ root = Root "Linux Compat" [rule]
       ]
 
       -- Tmux: Use option+hjkl for moving between panes
-    , [H, J, K, L] <&> \hjkl ->
-        Option |+| hjkl !> tmuxPrefix |-> singleKey hjkl
+    -- , [H, J, K, L] <&> \hjkl ->
+    --     Option |+| hjkl !> tmuxPrefix |-> singleKey hjkl
     ] ?? [macterm, iterm]
 
   -- The Option + Key mappings in IntelliJ don't work consistently due
