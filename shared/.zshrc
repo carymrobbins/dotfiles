@@ -422,6 +422,10 @@ compdef _vnv_completions vnv
 
 # The REAL stack completions
 eval "$(stack --bash-completion-script stack)"
+# Piggy-back off of generated _stack function to
+# add completion to our 's' stack alias-function thing.
+complete -o filenames -F _stack s
+
 # _stack_completions() {
 #   local opts=(
 #     'test' 'build' 'exec' 'ghci'

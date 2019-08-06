@@ -26,17 +26,21 @@
 import qualified Data.List
 import qualified Data.List.Split
 :m + Data.Monoid
+:m + Data.Proxy
 :m + Data.String
 :m + Data.Time
 
 -- Default extensions
+:set -XDataKinds
 :set -XDeriveAnyClass
 :set -XDeriveGeneric
 :set -XDerivingStrategies
 :set -XDerivingVia
 :set -XFlexibleContexts
 :set -XGeneralizedNewtypeDeriving
+:set -XKindSignatures
 :set -XOverloadedStrings
+:set -XPolyKinds
 :set -XStandaloneDeriving
 :set -XTypeApplications
 
