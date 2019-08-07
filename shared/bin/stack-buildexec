@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+  >&2 echo "Usage: stack buildexec <exe> [options]"
+  exit 1
+fi
+exe=$1
+shift
+
+target=$(stack ide targets 2>&1 | grep ":exe:$exe\$")
+
+if [ -z "$target" ]; then
+  >&2 echo "exe target not found: $exe"
+  exit 1
+elif [ "$(echo "$target" | wc -l)" -gt 1 ]; then
+  >&2 echo "Ambiguous exe target, matching targets:"
+  >&2 echo "$target"
+  exit 1
+fi
+
+set -x
+exec stack build "$target" --exec "$exe" "$@"
