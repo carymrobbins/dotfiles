@@ -68,6 +68,9 @@ s() {
     less -R ~/.last-stack-output
   elif [ -z "$saveOutput" ]; then
     stack "${args[@]}"
+  # Detect custom stack commands, don't run these through our magic.
+  elif command -v "stack-$1" >/dev/null; then
+    stack "$@"
   else
     (
       (
