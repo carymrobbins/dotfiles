@@ -26,8 +26,13 @@ systemctl --user start polybar
 # can't find stuff in our $PATH
 xbindkeys
 
-if command -v mon1 >/dev/null; then
-  mon1
+if command -v monx >/dev/null; then
+  # Assume this is our hidpi monitor (for now)
+  if xrandr | grep 'DP-1 connected' > /dev/null; then
+    monx 0
+  else
+    monx 1
+  fi
 fi
 
 # This is needed for java apps to work properly within xmonad

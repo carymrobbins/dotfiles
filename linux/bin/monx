@@ -62,7 +62,7 @@ handle0() {
     # --output HDMI-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
     # --output DP-1 --off
     --output HDMI-1 --off
-    --output DP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    --output DP-1 --primary --mode 3840x2160 --pos 0x0 --rotate normal
     --output eDP-1 --off
     --output DP-2 --off
   )
@@ -73,7 +73,7 @@ handle1() {
   xrandr_args+=(
     --output HDMI-1 --off
     --output DP-1 --off
-    --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+    --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 2x2
     --output DP-2 --off
   )
 }
@@ -87,7 +87,7 @@ handle2() {
   [ $? -eq 0 ] || abort "Failed to detect second monitor"
 
   xrandr_args+=(
-    --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal
+    --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal --scale 2x2
   )
 
   # We'll just assume 1920x1080 for now
@@ -106,7 +106,7 @@ handle3() {
   xrandr_args+=(
     --output HDMI-2 --off
     --output DP-1 --off
-    --output eDP-1 --primary --mode 1920x1080 --pos 1920x1080 --rotate normal
+    --output eDP-1 --primary --mode 1920x1080 --pos 1920x1080 --rotate normal --scale 2x2
     --output HDMI-1 --mode 1920x1080 --pos 0x504 --rotate normal
                     --set "Broadcast RGB" "Full"
     --output DP-2 --mode 1920x1080 --pos 1920x0 --rotate normal

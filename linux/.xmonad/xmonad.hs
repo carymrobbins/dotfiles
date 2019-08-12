@@ -294,13 +294,13 @@ myLayoutHook =
   ratio   = 1/2
 
 myTopBarTheme = def
-  { fontName = "xft:Noto:style=Bold:pixelsize=10:hinting=true"
+  { fontName = "xft:Noto:style=Bold:pixelsize=20:hinting=true"
   , activeTextColor = activeFG
   , activeColor = activeBG
   , activeBorderColor = activeBG
   , inactiveColor = inactiveBG
   , inactiveBorderColor = inactiveBG
-  , decoHeight = 15
+  , decoHeight = 30
   }
   where
   -- green
