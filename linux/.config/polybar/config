@@ -117,9 +117,16 @@ exec = xmonad-dbus
 tail = true
 interval = 1
 
+; logos
+; 
+; 
+; 
+; 
+
 [module/editpolybar]
 type = custom/script
-exec = echo "%{F#aaa}%{F-}"
+;exec = echo "%{F#aaa}%{F-}"
+exec = echo "%{F#aaa}%{F-}"
 click-left = terminator -p white -x "vim ~/.config/polybar/config"
 
 [module/toggletheme]
@@ -325,6 +332,7 @@ ramp-headphones-0 = 
 ;label-volume = 
 ;label-volume-foreground = #aaa
 
+
 format-muted-prefix = " "
 format-muted-foreground = ${colors.foreground-alt}
 label-muted = sound muted
@@ -383,11 +391,16 @@ ramp-capacity-4 = %{F#3bd04a}%{F-}
 ;animation-charging-foreground = ${colors.foreground-alt}
 ;
 
-animation-charging-0 = %{F#e86742}%{F-}
-animation-charging-1 = %{F#e18d32}%{F-}
-animation-charging-2 = %{F#e1ca32}%{F-}
-animation-charging-3 = %{F#80b44f}%{F-}
-animation-charging-4 = %{F#3bd04a}%{F-}
+; Disabled color changes when charging
+;animation-charging-0 = %{F#e86742}%{F-}
+;animation-charging-1 = %{F#e18d32}%{F-}
+;animation-charging-2 = %{F#e1ca32}%{F-}
+;animation-charging-3 = %{F#80b44f}%{F-}
+;animation-charging-4 = %{F#3bd04a}%{F-}
+animation-charging-0 = %{F#3bd04a}%{F-}
+animation-charging-1 = %{F#3bd04a}%{F-}
+animation-charging-2 = %{F#3bd04a}%{F-}
+animation-charging-3 = %{F#3bd04a}%{F-}
 
 ;animation-charging-5 = %{F#5555ff}%{F-}
 ;animation-charging-6 = %{F#800080}%{F-}
