@@ -1,11 +1,20 @@
 #!/bin/sh
 
 case $# in
-  0) output=HDMI-1;;
   1) output=$1;;
+  0) output=$(
+      xrandr | grep connected | grep -v disconnected | grep -v '^eDP-1' \
+        | head -n1 | cut -d' ' -f1
+     );;
   *) >& echo "Unexpected argument: $2"; exit 1;;
 esac
 
+if [ "$output" = "DP-1" ]; then
+  mode=3840x2160
+else
+  mode=1920x1080
+fi
+
 xrandr \
-  --output "$output" --primary --mode 1920x1080 \
+  --output "$output" --primary --mode "$mode" \
   --output eDP-1 --same-as "$output"
