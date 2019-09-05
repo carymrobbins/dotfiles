@@ -1,18 +1,21 @@
+# The PATH isn't detected easily from systemctl, so we just specify
+# the exact path to custom scripts in dotfiles.
+
 # The mute key is not named, so we can't use XF86AudioMute
 # Use our mute key's code from `xbindkeys -k` instead
-"pamixer -t"
+"~/dotfiles/linux/bin/megamixer -t"
   m:0x0 + c:121
 
-"pamixer -d 5"
+"~/dotfiles/linux/bin/megamixer -d 5"
   XF86AudioLowerVolume
 
-"pamixer -i 5"
+"~/dotfiles/linux/bin/megamixer -i 5"
   XF86AudioRaiseVolume
 
-"pamixer -d 1"
+"~/dotfiles/linux/bin/megamixer -d 1"
   Shift + XF86AudioLowerVolume
 
-"pamixer -i 1"
+"~/dotfiles/linux/bin/megamixer -i 1"
   Shift + XF86AudioRaiseVolume
 
 "xleds screen - 10%"
@@ -42,20 +45,20 @@
 "gnome-screenshot -i"
   Print
 
-"lock"
+"~/dotfiles/linux/bin/lock"
   Alt+Mod4 + l
 
 "thunar"
   Mod4 + f
 
-"monx 0"
+"~/dotfiles/linux/bin/monx 0"
   Mod4 + Control + 0
 
-"mon1"
+"~/dotfiles/linux/bin/monx 1"
   Mod4 + Control + 1
 
-"mon2"
+"~/dotfiles/linux/bin/monx 2"
   Mod4 + Control + 2
 
-"mon3"
+"~/dotfiles/linux/bin/monx 3"
   Mod4 + Control + 3

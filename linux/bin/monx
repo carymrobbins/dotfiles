@@ -3,7 +3,7 @@
 # Note we use --set "Broadcast RGB" "Full" to avoid the washed out colors
 # over HDMI; see https://askubuntu.com/questions/621964/colors-on-display-are-washed-out
 
-num_monitors=$1
+monitor_layout=$1
 cmd_name=$(basename $0)
 cmd_args=("$@")
 
@@ -13,8 +13,8 @@ abort() {
   exit 1
 }
 
-if [ -z "$num_monitors" ]; then
-  >&2 echo "Usage: $0 <num_monitors>"
+if [ -z "$monitor_layout" ]; then
+  >&2 echo "Usage: $0 <monitor_layout>"
   exit 1
 fi
 
@@ -23,13 +23,14 @@ fi
 xrandr_args=(-d "$DISPLAY")
 
 main() {
-  case "$num_monitors" in
+  case "$monitor_layout" in
+    auto) handleAuto;;
     0) handle0;;
     1) handle1;;
     2) handle2;;
     3) handle3;;
     mirror) handleMirror;;
-    *) abort "Invalid num_monitors: $num_monitors";;
+    *) abort "Invalid monitor layout: $monitor_layout";;
   esac
 
   output=$(xrandr "${xrandr_args[@]}" 2>&1)
@@ -57,13 +58,19 @@ main() {
   systemctl --user restart polybar
 }
 
+handleAuto() {
+  if xrandr | grep '^DP-1 connected' > /dev/null; then
+    handle0
+  else
+    handle1
+  fi
+}
+
 handle0() {
   xrandr_args+=(
-    # --output HDMI-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
-    # --output DP-1 --off
     --output HDMI-1 --off
     --output DP-1 --primary --mode 3840x2160 --pos 0x0 --rotate normal
-    --output eDP-1 --off
+    --output eDP-1 --same-as DP-1 --scale 2x2 # mirror displays
     --output DP-2 --off
   )
   num_monitors=1

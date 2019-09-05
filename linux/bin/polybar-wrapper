@@ -1,9 +1,18 @@
 #!/bin/bash
 
+# Hack to detect mirroring to DP-1 @ 4k to eDP-1.
+is_mirroring_4k() {
+  xrandr | grep '^DP-1 connected primary 3840x2160' >/dev/null \
+    && xrandr | grep '^eDP-1 connected 3840x2160' >/dev/null
+}
+
 primary_monitor=$(xrandr | grep primary | cut -d ' ' -f1)
 if [ -n "$primary_monitor" ]; then
-  MONITOR="$primary_monitor" exec polybar "$@"
-else
-  exec polybar "$@"
+  if is_mirroring_4k; then
+    # For some reason, telling polybar to use DP-1 doesn't work.
+    export MONITOR=eDP-1
+  else
+    export MONITOR=$primary_monitor
+  fi
 fi
-
+exec polybar "$@"

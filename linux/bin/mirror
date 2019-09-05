@@ -11,10 +11,12 @@ esac
 
 if [ "$output" = "DP-1" ]; then
   mode=3840x2160
+  scale=2x2
 else
   mode=1920x1080
+  scale=1x1
 fi
 
 xrandr \
   --output "$output" --primary --mode "$mode" \
-  --output eDP-1 --same-as "$output"
+  --output eDP-1 --same-as "$output" --scale "$scale"

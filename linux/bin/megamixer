@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Similar to pamixer except commands are syncronized for
+# all sinks.
+
+if [ -z "$DEFAULT_SINK" ]; then
+  # zero is the default sink used by pamixer
+  DEFAULT_SINK=0
+fi
+
+if [ "$1" = '--help' ]; then
+  >&2 echo "Usage: $0 <-d|-i|-t> [int]"
+  exit
+fi
+
+# Get all sinks that are not $DEFAULT_SINK
+other_sinks() {
+  # the tail -n+2 is to skip the initial 'Sink:' line in the pamixer output.
+  pamixer --list-sinks | cut -d' ' -f1 | tail -n+2 | grep -v "^$DEFAULT_SINK\$"
+}
+
+each_other_sink() {
+  local s
+  for s in $(other_sinks); do
+    pamixer --sink "$s" "$@"
+  done
+}
+
+update_volume() {
+  if ! egrep '^[0-9]+$' <<< "$2" >/dev/null; then
+    >&2 echo "Invalid amount: $2"
+    exit 1
+  fi
+  # $1 should be -d or -i, checked by caller
+  # $2 has been verified via egrep to be an int
+  pamixer --sink "$DEFAULT_SINK" "$1" "$2"
+  # get the updated sink volume
+  local v=$(pamixer --sink "$DEFAULT_SINK" --get-volume)
+  # sync the volume of all sinks
+  each_other_sink --set-volume "$v"
+}
+
+toggle_mute() {
+  pamixer --sink "$DEFAULT_SINK" -t
+  local m=$(pamixer --sink "$DEFAULT_SINK" --get-mute)
+  local action
+  case "$m" in
+    true)  action=-m ;;
+    false) action=-u ;;
+    *)
+      >&2 echo "Unexpected --get-mute response: $m"
+      exit 1
+  esac
+  each_other_sink "$action"
+}
+
+case "$1" in
+  -d|-i) update_volume "$1" "$2" ;;
+  -t)    toggle_mute ;;
+  *)
+    >&2 echo "Invalid action: $action"
+    exit 1
+    ;;
+esac

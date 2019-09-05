@@ -22,17 +22,10 @@ systemctl --user start xcompmgr
 systemctl --user start geoclue-redshift-agent
 systemctl --user start redshift
 systemctl --user start polybar
-# TODO: Running xbindkeys with systemctl means it
-# can't find stuff in our $PATH
-xbindkeys
+systemctl --user start xbindkeys
 
 if command -v monx >/dev/null; then
-  # Assume this is our hidpi monitor (for now)
-  if xrandr | grep 'DP-1 connected' > /dev/null; then
-    monx 0
-  else
-    monx 1
-  fi
+  monx auto
 fi
 
 # This is needed for java apps to work properly within xmonad
