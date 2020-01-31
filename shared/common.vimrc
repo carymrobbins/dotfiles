@@ -38,10 +38,10 @@ xmap <Leader>a $A
 vmap <Leader>ff c<frag><ESC>:set paste<CR>a<C-r>"</frag><ESC>:set nopaste<CR>
 vmap <Leader>gg c<gray><ESC>:set paste<CR>a<C-r>"</gray><ESC>:set nopaste<CR>
 vmap <Leader>sf c<span class="fragment"><ESC>:set paste<CR>a<C-r>"</span><ESC>:set nopaste<CR>
-"Sort selection
-vmap <Leader>s :sort<CR>
+"Sort selection (case insensitive)
+vmap <Leader>s :sort i<CR>
 "Sort and remove duplicates in selection
-vmap <Leader>u :sort u<CR>
+vmap <Leader>u :sort iu<CR>
 "Insert fragment divs for markdown slides
 nmap <Leader>fd I<div class=fragment><CR><ESC>
 "Insert code block for markdown slides

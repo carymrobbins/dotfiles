@@ -132,6 +132,7 @@ au BufNewFile,BufRead .ghci set filetype=haskell
 au BufNewFile,BufRead *.hsfiles set filetype=haskell
 au BufNewFile,BufRead *.zsh-theme set filetype=zsh
 au BufNewFile,BufRead *.x set filetype=alex
+au BufNewFile,BufRead *.sh.sql set filetype=sh
 
 "Prevent YouCompleteMe scratch preview from staying open.
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif

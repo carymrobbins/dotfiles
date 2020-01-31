@@ -55,6 +55,8 @@ alias rm=trash
 s() {
   local args=()
   local saveOutput=1
+  # Relative to pwd
+  local lastOutputFile=.stack-work/last-stack-output
 
   for arg in "$@"; do
     if [ "$arg" = "--no-save-output" ]; then
@@ -64,22 +66,26 @@ s() {
     fi
   done
 
-  if [ $# -eq 1 ] && [[ $1 =~ ^l(ast)?$ ]]; then
-    less -R ~/.last-stack-output
+  if [ $# -eq 1 ] && [[ $1 =~ ^l(ast)?$ ]] && [ -f "$lastOutputFile" ]; then
+    less -R "$lastOutputFile"
   elif [ -z "$saveOutput" ]; then
     stack "${args[@]}"
   # Detect custom stack commands, don't run these through our magic.
   elif command -v "stack-$1" >/dev/null; then
     stack "$@"
   else
-    (
+    if [ -d .stack-work ]; then
       (
-        printf "%% stack"
-        printf ' %q' "${args[@]}"
-        echo
-      ) > ~/.last-stack-output
-      stack --color always "$@" 2>&1 | tee -a ~/.last-stack-output
-    )
+        (
+          printf "%% stack"
+          printf ' %q' "${args[@]}"
+          echo
+        ) > "$lastOutputFile"
+        stack --color always "$@" 2>&1 | tee -a "$lastOutputFile"
+      )
+    else
+        stack --color always "$@" 2>&1
+    fi
   fi
 }
 
@@ -90,7 +96,7 @@ ss() {
     return 1
   fi
   local args=($(
-    head -n1 ~/.last-stack-output \
+    head -n1 .stack-work/last-stack-output \
       | grep '^% stack ' \
       | cut -d' ' -f 3-
   ))
@@ -118,7 +124,11 @@ vnv() {
     >&2 echo "$0: Expected .vnv file in cwd or exactly 1 argument, got: $#"
     return 1
   fi
-  vpath=$HOME/.pyenv/$vname
+  if [ -d "/./$vname" ]; then
+    vpath=$vname
+  else
+    vpath=$HOME/.pyenv/$vname
+  fi
   if [ ! -f "$vpath/bin/python" ]; then
     >&2 echo "$0: virtualenv does not exist: $vpath"
   fi
@@ -132,7 +142,9 @@ unvn() {
 }
 
 ipy() {
-  if [ -z "$VIRTUAL_ENV" ]; then
+  if [ -f Pipfile ]; then
+    pipenv run ipython
+  elif [ -z "$VIRTUAL_ENV" ]; then
     ipython
   else
     "$VIRTUAL_ENV/bin/ipython"
@@ -291,6 +303,7 @@ plugins=(
   path
   ssh-agent
   titles
+  curl
 )
 
 # Mac-specific plugins
@@ -317,6 +330,12 @@ venv_prompt_info() {
   [ -n "$VIRTUAL_ENV" ] || return
   local name=$(basename "$VIRTUAL_ENV")
   echo "${ZSH_THEME_VENV_PROMPT_PREFIX}${name}${ZSH_THEME_VENV_PROMPT_SUFFIX} "
+}
+
+minikube_prompt_info() {
+  if command -v minikube >/dev/null && minikube status | grep Running >/dev/null; then
+    echo "  "
+  fi
 }
 
 stack_prompt_info() {

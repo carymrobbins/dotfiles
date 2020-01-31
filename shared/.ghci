@@ -15,20 +15,41 @@
 :def lambdaprompt (\_ -> return $ ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
 
 -- Purple for normal prompt
-:set prompt "\x1b[35m\xe677\x1b[0m "
+-- :set prompt "\x1b[35m\xe677\x1b[0m "
+-- :set prompt "\x1b[35m⋙\x1b[0m "
+:set prompt "\x1b[35mℋ \x1b[0m "
 
 -- Blue for continuation `:{` prompt
-:set prompt-cont "\x1b[34m\xe677 |\x1b[0m "
+-- :set prompt-cont "\x1b[34m\xe677 ⋮\x1b[0m "
+-- :set prompt-cont "\x1b[34m⋙ ⋮\x1b[0m "
+:set prompt-cont "\x1b[34mℋ ⋮\x1b[0m "
+
 -- :set prompt "\x1b[35mλ\x1b[0m "
 
 -- Default imports
+:m + Control.Applicative
 :m + Control.Monad
-import qualified Data.List
-import qualified Data.List.Split
+:m + Data.Coerce
 :m + Data.Monoid
 :m + Data.Proxy
 :m + Data.String
 :m + Data.Time
+:m + Data.Typeable
+
+import Data.ByteString (ByteString)
+import Data.Text (Text)
+
+import qualified Control.Monad.Fail
+import qualified Data.ByteString
+import qualified Data.ByteString.Lazy
+import qualified Data.List as List
+import qualified Data.List.Split
+import qualified Data.Text as Text
+import qualified Data.Text.Encoding as Text
+import qualified Data.Typeable
+import qualified GHC.TypeLits
+
+type LazyByteString = Data.ByteString.Lazy.ByteString
 
 -- Default extensions
 :set -XDataKinds
@@ -53,7 +74,7 @@ pp x = putStrLn $ h ++ t'
   where
   --n = Numeric.showFFloat ()
   sp = break (== '.') $ show x
-  h = reverse (intercalate "," $ chunksOf 3 $ reverse $ fst sp)
+  h = reverse (List.intercalate "," $ Data.List.Split.chunksOf 3 $ reverse $ fst sp)
   t' = snd sp
 
 removeCRsFromFile :: FilePath -> IO ()
@@ -90,8 +111,24 @@ colorPrint =
 -- TimeLit stuff --------------------------------
 -------------------------------------------------
 
+newtype AltEither e a = AltEither { unAltEither :: Either e a }
+  deriving newtype (Functor, Applicative, Monad)
+
+instance (IsString e) => Control.Monad.Fail.MonadFail (AltEither e) where
+  fail s = AltEither $ Left $ fromString s
+
+instance (IsString e) => Alternative (AltEither e) where
+  empty = fail "empty"
+  x@(AltEither x') <|> y = case x' of
+    Left _ -> y
+    Right a -> x
+
 newtype TimeLit = TimeLit { unTimeLit :: DiffTime }
   deriving newtype (Num)
+
+-- Helper to specialize the type of an expression.
+timeExpr :: TimeLit -> TimeLit
+timeExpr = id
 
 instance Show TimeLit where
   show x = show h ++ ":" ++ f02 m ++ ":" ++ f02 s
@@ -100,7 +137,11 @@ instance Show TimeLit where
     f02 n = reverse $ take 2 $ reverse $ "0" ++ show n
 
 instance IsString TimeLit where
-  fromString = parseTimeLit
+  fromString s =
+    either error id $ unAltEither $
+          AltEither (parseTimeLit s)
+      <|> AltEither (parseTimeLit (s <> ":0"))
+      <|> AltEither (Left $ "Invalid TimeLit: " <> show s)
 
 -- A sad way of converting DiffTime to seconds
 diffTimeToSeconds :: DiffTime -> Int
@@ -115,10 +156,10 @@ timeLitToTuple (TimeLit inp) =
       (m, s)    = rest    `divMod`   60
   in (h, m, s)
 
-parseTimeLit :: String -> TimeLit
+parseTimeLit :: String -> Either String TimeLit
 parseTimeLit inp = case Text.Parsec.parse p srcName inp of
-  Right x -> x
-  Left e -> error $ unlines
+  Right x -> Right x
+  Left e -> Left $ unlines
     [ "Failed to parse TimeLit: " ++ show inp
     , "Error: " ++ show e
     ]
@@ -140,45 +181,21 @@ parseTimeLit inp = case Text.Parsec.parse p srcName inp of
 
 -- h:mm:ss TimeLit
 t :: String -> TimeLit
-t = parseTimeLit
+t = either error id . parseTimeLit
 
 -- h:mm TimeLit
 th :: String -> TimeLit
-th = parseTimeLit . (++ ":0")
+th = either error id . parseTimeLit . (++ ":0")
 
 -- m:ss TimeLit
 tm :: String -> TimeLit
-tm = parseTimeLit . ("0:" ++)
-
--------------------------------------------------
-
--- Helper to do hour/minute time math
--- data HourMinTime = HourMinTime Int Int
---
--- h #: m
---   | abs h > 23 -> error $ "Invalid hour for HourMinTime: " ++ h
---   | m < 0 || m > 59 -> error $ "Invalid minute for HourMinTie: " ++ m
---   | otherwise = HourMinTime
---
--- instance Show HourMinTime where
---   show (HourMin h m) =
---     show h ++ ":" ++ (reverse $ take 2 $ reverse $ "0" ++ show m)
---
--- instance Num HourMinTime where
---   (HourMinTime h1 m1) + (HourMinTime h2 m2) =
---     HourMinTime (h + (m `div` 60) `mod` 24) (m `div` 60)
---     where
---     h = h1 + h2
---     m = m1 + m2
---
---   (HourMinTime h1 m1) - (HourMinTime h2 m2) =
---     HourMinTime (h + (m `div` 60) `mod` 24) (m `div` 60)
---     where
---     h = h1 + h2
---     m = m1 + m2
+tm = either error id . parseTimeLit . ("0:" ++)
 :}
 -- END HASKELL CODE
 
--- Use cp/ncp to turn on/off color printing (off by default)
+-- Use cp/ncp to turn on/off color printing
 :def cp (\_ -> return ":set -interactive-print=colorPrint")
 :def ncp (\_ -> return ":set -interactive-print=print")
+-- color printing on by default
+:cp
+

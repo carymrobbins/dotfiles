@@ -73,3 +73,6 @@
 [submodule "shared/.vim/bundle/vim-indent-guides"]
 	path = shared/.vim/bundle/vim-indent-guides
 	url = git://github.com/nathanaelkane/vim-indent-guides.git
+[submodule "shared/.vim/bundle/fzf.vim"]
+	path = shared/.vim/bundle/fzf.vim
+	url = https://github.com/junegunn/fzf.vim
