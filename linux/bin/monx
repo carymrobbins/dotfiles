@@ -7,6 +7,13 @@ monitor_layout=$1
 cmd_name=$(basename $0)
 cmd_args=("$@")
 
+RESOLUTION_STANDARD_X=1920
+RESOLUTION_STANDARD_Y=1080
+RESOLUTION_STANDARD=${RESOLUTION_STANDARD_X}x${RESOLUTION_STANDARD_Y}
+RESOLUTION_4K_X=3840
+RESOLUTION_4K_Y=2160
+RESOLUTION_4K=${RESOLUTION_4K_X}x${RESOLUTION_4K_Y}
+
 abort() {
   notify-send "$cmd_name ${cmd_args[@]}: $1"
   >&2 echo "$1"
@@ -25,10 +32,11 @@ xrandr_args=(-d "$DISPLAY")
 main() {
   case "$monitor_layout" in
     auto) handleAuto;;
+    noscale) handleNoScale; num_monitors=1;;
     0) handle0;;
-    1) handle1;;
-    2) handle2;;
-    3) handle3;;
+    1) handle1; num_monitors=1;;
+    2) handle2; num_monitors=2;;
+    3) handle3; num_monitors=3;;
     mirror) handleMirror;;
     *) abort "Invalid monitor layout: $monitor_layout";;
   esac
@@ -38,9 +46,6 @@ main() {
 
   output=$(xmonad --restart 2>&1)
   [ $? -eq 0 ] || abort "$output"
-
-  # Reload x settings to fix wallpaper and screen refreshing
-  reload-x-settings
 
   # Poll/sleep until 3 monitors detected, stop trying after 5 seconds.
   # This is so stalonetray/polybar can be positioned properly for the new layout.
@@ -54,8 +59,33 @@ main() {
     ((++elapsed))
   done
 
+  : ${DISPLAY:=:0}
+  export DISPLAY=$DISPLAY
+
   # systemctl --user restart stalonetray
   systemctl --user restart polybar
+
+  # NOTE: Moving this to the end to try to ensure it actually
+  # happens. I seem to have to manually run reload-x-settings
+  # otherwise.
+  # Reload x settings to fix wallpaper and screen refreshing
+  reload-x-settings
+}
+
+monitorHasResolution() {
+  local monitor=$1
+  local resolution=$2
+  xrandr \
+    | awk -v monitor="^${monitor} connected" '/connected/ {p = 0} $0 ~ monitor {p = 1} p' \
+    | tail -n+2 \
+    | tr -s ' ' \
+    | cut -d ' ' -f 2 \
+    | grep "^${resolution}$" \
+    > /dev/null
+}
+
+has4kMonitor() {
+  monitorHasResolution DP-1 "$RESOLUTION_4K"
 }
 
 handleAuto() {
@@ -66,13 +96,31 @@ handleAuto() {
   fi
 }
 
+handleNoScale() {
+  xrandr_args+=(
+    --output eDP-1 --primary --mode "$RESOLUTION_STANDARD" --pos 0x0 --rotate normal
+    --output HDMI-1 --off
+    --output DP-1 --off
+    --output DP-2 --off
+  )
+}
+
 handle0() {
   xrandr_args+=(
     --output HDMI-1 --off
-    --output DP-1 --primary --mode 3840x2160 --pos 0x0 --rotate normal
-    --output eDP-1 --same-as DP-1 --scale 2x2 # mirror displays
     --output DP-2 --off
   )
+  if [ -z "$NOSCALE" ]; then
+    xrandr_args+=(
+      --output DP-1 --primary --mode "$RESOLUTION_4K" --pos 0x0 --rotate normal
+      --output eDP-1 --same-as DP-1 --scale 2x2 # mirror displays
+    )
+  else
+    xrandr_args+=(
+      --output DP-1 --primary --mode "$RESOLUTION_STANDARD" --pos 0x0 --rotate normal
+      --output eDP-1 --same-as DP-1 # mirror displays
+    )
+  fi
   num_monitors=1
 }
 
@@ -80,26 +128,50 @@ handle1() {
   xrandr_args+=(
     --output HDMI-1 --off
     --output DP-1 --off
-    --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 2x2
     --output DP-2 --off
   )
+  if [ -z "$NOSCALE" ]; then
+    xrandr_args+=(
+      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 2x2
+    )
+  else
+    xrandr_args+=(
+      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 1x1
+    )
+  fi
 }
 
 handle2() {
-  # Try to detect the connected monitor
-  second_monitor=$(
-    xrandr  | grep -v eDP-1 | grep connected | grep -v disconnected | cut -d ' ' -f 1
-  )
 
-  [ $? -eq 0 ] || abort "Failed to detect second monitor"
+  local resolution
+  local resolutionY
+  if has4kMonitor; then
+    resolution=$RESOLUTION_4K
+    resolutionX=$RESOLUTION_4K_X
+    second_monitor=DP-1
+  else
+    resolution=$RESOLUTION_STANDARD
+    resolutionX=$RESOLUTION_STANDARD_X
+    # Try to detect the connected monitor
+    second_monitor=$(xrandr | grep -v eDP-1 | grep ' connected' | cut -d ' ' -f 1)
+    [ $? -eq 0 ] || abort "Failed to detect second monitor"
+  fi
+
 
   xrandr_args+=(
-    --output eDP-1 --primary --mode 1920x1080 --pos 0x1080 --rotate normal --scale 2x2
+    --output eDP-1
+      --mode "$RESOLUTION_STANDARD"
+      --pos "0x0"
+      --rotate normal
+      --scale 2x2
   )
 
-  # We'll just assume 1920x1080 for now
   xrandr_args+=(
-    --output "$second_monitor" --mode 1920x1080 --pos 0x0 --rotate normal
+    --output "$second_monitor"
+      --primary
+      --mode "$resolution"
+      --pos "${resolutionX}x0"
+      --rotate normal
   )
 
   for x in HDMI-1 HDMI-2 DP-1 DP-2; do

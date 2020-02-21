@@ -124,6 +124,7 @@ com Bgl :call Bgl()
 
 "Highlighting for custom file types
 
+au BufNewFile,BufRead .xinitrc set filetype=sh
 au BufNewFile,BufRead kwmrc set filetype=c
 au BufNewFile,BufRead .skhdrc set filetype=python
 au BufNewFile,BufRead *.json set filetype=json

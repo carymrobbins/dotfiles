@@ -218,7 +218,7 @@ log_implicits='set scalacOptions in Global += "-Xlog-implicits"'
 # Helper functions
 
 # Run --help | less
-hl() { "$@" --help 2>&1 | less;  }
+m() { man "$@" 2>/dev/null || "$@" --help 2>&1 | less;  }
 
 # Run bash's help function
 help() { bash -c "help $(printf '%q ' "$@")"; }

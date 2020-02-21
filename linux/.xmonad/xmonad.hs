@@ -21,8 +21,13 @@ import           XMonad.Util.Run
 import           Control.Monad
 import           Control.Monad.Extra (whenM)
 import           Data.Coerce
+import           Data.Maybe
 import           Data.IORef
+import           System.Environment
 import           System.IO.Unsafe
+
+envNOSCALE :: Bool
+envNOSCALE = unsafePerformIO $ isJust <$> lookupEnv "NOSCALE"
 
 useXMobar = False
 
@@ -203,7 +208,7 @@ defaultWorkspaces =
   <+> (className =? "jetbrains-idea"    <&&> title /=? "Confirm Exit" --> doShift wsDev)
   <+> (className =? "jetbrains-idea-ce" <&&> title /=? "Confirm Exit" --> doShift wsDev)
   -- Browsers
-  <+> (className =? "Google-chrome" --> doShift wsBrowse)
+  -- <+> (className =? "Google-chrome" --> doShift wsBrowse)
   -- Chat windows
   <+> (className =? "Slack"    --> doShift wsChat)
   <+> (title     =? "Gitter"   --> doShift wsChat)
@@ -294,15 +299,17 @@ myLayoutHook =
   ratio   = 1/2
 
 myTopBarTheme = def
-  { fontName = "xft:Noto:style=Bold:pixelsize=20:hinting=true"
+  { fontName = "xft:Noto:style=Bold:pixelsize=" <> fontSize <> ":hinting=true"
   , activeTextColor = activeFG
   , activeColor = activeBG
   , activeBorderColor = activeBG
   , inactiveColor = inactiveBG
   , inactiveBorderColor = inactiveBG
-  , decoHeight = 30
+  , decoHeight = if envNOSCALE then 15 else 30
   }
   where
+  fontSize = show @Int $ if envNOSCALE then 10 else 20
+
   -- green
   activeBG   = "#68c987"
 

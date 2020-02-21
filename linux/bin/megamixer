@@ -4,8 +4,8 @@
 # all sinks.
 
 if [ -z "$DEFAULT_SINK" ]; then
-  # zero is the default sink used by pamixer
-  DEFAULT_SINK=0
+  # By default, use the first sink (number, usually 0 or 1) listed by pamixer
+  DEFAULT_SINK=$(pamixer --list-sinks | tail -n+2 | head -n1 | cut -d' ' -f1)
 fi
 
 if [ "$1" = '--help' ]; then

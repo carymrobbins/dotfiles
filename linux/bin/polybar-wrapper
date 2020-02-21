@@ -6,13 +6,36 @@ is_mirroring_4k() {
     && xrandr | grep '^eDP-1 connected 3840x2160' >/dev/null
 }
 
+is_mirroring_std() {
+  xrandr | grep '^DP-1 connected primary 1920x1080+0+0' >/dev/null \
+    && xrandr | grep '^eDP-1 connected 1920x1080+0+0' >/dev/null
+}
+
 primary_monitor=$(xrandr | grep primary | cut -d ' ' -f1)
 if [ -n "$primary_monitor" ]; then
-  if is_mirroring_4k; then
+  if [ -z "$NOSCALE" ] && is_mirroring_4k; then
     # For some reason, telling polybar to use DP-1 doesn't work.
     export MONITOR=eDP-1
+    export HEIGHT=54
+    # Used in the FONT_0-5 vars below.
+    STD_FONT_SIZE=22
+    ICOMOON_FONT_SIZE=30
   else
-    export MONITOR=$primary_monitor
+    if is_mirroring_std; then
+      export MONITOR=eDP-1
+    else
+      export MONITOR=$primary_monitor
+    fi
+    export HEIGHT=27
+    # Used in the FONT_0-5 vars below.
+    STD_FONT_SIZE=11
+    ICOMOON_FONT_SIZE=15
   fi
+  export FONT_0="Noto Sans:size=${STD_FONT_SIZE};1"
+  export FONT_1="Noto Sans Mono:size=${STD_FONT_SIZE};1"
+  export FONT_2="unifont:fontformat=truetype:size=${STD_FONT_SIZE}:antialias=false;0"
+  export FONT_3="WunconSiji:size=${STD_FONT_SIZE};1"
+  export FONT_4="FontAwesome:size=${STD_FONT_SIZE};1"
+  export FONT_5="icomoon:style=Regular:size=${ICOMOON_FONT_SIZE};1"
 fi
 exec polybar "$@"

@@ -1,5 +1,9 @@
-# Load resources
-[ -f $HOME/.Xresources ] && xrdb -merge -I$HOME $HOME/.Xresources
+# Run with `NOSCALE=1 startx` to disable hidpi scaling
+
+if [ -z "$NOSCALE" ]; then
+  # Load resources
+  [ -f $HOME/.Xresources ] && xrdb -merge -I$HOME $HOME/.Xresources
+fi
 
 # Default screen brightness
 xleds screen -set 5%
@@ -25,7 +29,11 @@ systemctl --user start polybar
 systemctl --user start xbindkeys
 
 if command -v monx >/dev/null; then
-  monx auto
+  if [ -z "$NOSCALE" ]; then
+    monx auto
+  else
+    monx noscale
+  fi
 fi
 
 # This is needed for java apps to work properly within xmonad
