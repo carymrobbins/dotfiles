@@ -86,6 +86,13 @@ s() {
     else
         stack --color always "$@" 2>&1
     fi
+    # stack doesn't return nonzero exit codes from test failures, so
+    # detect test failures and return nonzero if applicable.
+    if [ "$1" == 'test' ]; then
+      if grep 'Test suite failure for package' "$lastOutputFile" >/dev/null; then
+        return 1
+      fi
+    fi
   fi
 }
 
@@ -332,12 +339,6 @@ venv_prompt_info() {
   echo "${ZSH_THEME_VENV_PROMPT_PREFIX}${name}${ZSH_THEME_VENV_PROMPT_SUFFIX} "
 }
 
-minikube_prompt_info() {
-  if command -v minikube >/dev/null && minikube status | grep Running >/dev/null; then
-    echo "  "
-  fi
-}
-
 stack_prompt_info() {
   if [ ! -f stack.yaml ]; then
     return
@@ -485,3 +486,7 @@ _ghc_completions() {
 }
 compdef '_ghc_completions ghc'  ghc
 compdef '_ghc_completions ghci' ghci
+
+if [ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi

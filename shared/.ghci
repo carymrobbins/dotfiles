@@ -5,14 +5,21 @@
 
 -- Allow these packages to be used even if they are not defined in
 -- the cabal file
-:set -package split
-:set -package pretty-show
+:set -package bytestring
 :set -package hscolour
 :set -package parsec
+:set -package pretty-show
+:set -package split
+:set -package time
 
-:def logoprompt (\_ -> return $ ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
+-- Just in case we're dealing with NoImplicitPrelude.
+:m + Prelude
 
-:def lambdaprompt (\_ -> return $ ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
+:def logoprompt (\_ -> pure ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
+
+:def lambdaprompt (\_ -> pure ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
+
+:def blog (\_ -> pure ":set prompt \"\x1b[35m\\n>\x1b[0m \"\n:set prompt-cont \"\x1b[34m  \x1b[0m \"")
 
 -- Purple for normal prompt
 -- :set prompt "\x1b[35m\xe677\x1b[0m "
@@ -38,18 +45,21 @@
 
 import Data.ByteString (ByteString)
 import Data.Text (Text)
+import GHC.Generics (Generic)
 
 import qualified Control.Monad.Fail
 import qualified Data.ByteString
+import qualified Data.ByteString.Char8 as Char8
 import qualified Data.ByteString.Lazy
+import qualified Data.ByteString.Lazy as Lazy (ByteString)
+import qualified Data.ByteString.Lazy.Char8 as Lazy.Char8
 import qualified Data.List as List
 import qualified Data.List.Split
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as Text
 import qualified Data.Typeable
+import qualified GHC.Generics
 import qualified GHC.TypeLits
-
-type LazyByteString = Data.ByteString.Lazy.ByteString
 
 -- Default extensions
 :set -XDataKinds
@@ -64,6 +74,7 @@ type LazyByteString = Data.ByteString.Lazy.ByteString
 :set -XPolyKinds
 :set -XStandaloneDeriving
 :set -XTypeApplications
+:set -XTypeOperators
 
 -- START HASKELL CODE
 :{
@@ -87,8 +98,8 @@ takeWhileM p (ma : mas) = do
     a <- ma
     if p a
       then liftM (a :) $ takeWhileM p mas
-      else return []
-takeWhileM _ _ = return []
+      else pure []
+takeWhileM _ _ = pure []
 
 getLinesWhile :: (String -> Bool) -> IO String
 getLinesWhile p = liftM unlines $ takeWhileM p (repeat getLine)
@@ -100,12 +111,9 @@ getLines = getLinesWhile (/="\"\"\"")
 -- pacman -S haskell-pretty-show haskell-hscolour
 -- or
 -- stack build pretty-show hscolour
-colorPrint =
-  System.IO.putStrLn
-  . Language.Haskell.HsColour.hscolour
-      Language.Haskell.HsColour.TTY
-      Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False
-  . Text.Show.Pretty.ppShow
+--
+-- Collapsed to one line to make it easier to paste in if need be.
+colorPrint = System.IO.putStrLn GHC.Base.. Language.Haskell.HsColour.hscolour Language.Haskell.HsColour.TTY Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False GHC.Base.. Text.Show.Pretty.ppShow 
 
 -------------------------------------------------
 -- TimeLit stuff --------------------------------
@@ -121,7 +129,7 @@ instance (IsString e) => Alternative (AltEither e) where
   empty = fail "empty"
   x@(AltEither x') <|> y = case x' of
     Left _ -> y
-    Right a -> x
+    Right _ -> x
 
 newtype TimeLit = TimeLit { unTimeLit :: DiffTime }
   deriving newtype (Num)
@@ -194,8 +202,7 @@ tm = either error id . parseTimeLit . ("0:" ++)
 -- END HASKELL CODE
 
 -- Use cp/ncp to turn on/off color printing
-:def cp (\_ -> return ":set -interactive-print=colorPrint")
-:def ncp (\_ -> return ":set -interactive-print=print")
+:def cp (\_ -> pure ":set -interactive-print=colorPrint")
+:def ncp (\_ -> pure ":set -interactive-print=print")
 -- color printing on by default
-:cp
-
+-- :cp

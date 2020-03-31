@@ -33,11 +33,16 @@ validate_extra_args() {
 while [ $# -gt 0 ]; do
   case "$1" in
     --help|-h) usage; exit;;
+    pr) open_pr=1; shift;;
     -o) open_in_browser=1; shift;;
     -b) use_branch=1;      shift;;
     -u) validate_extra_args "$1" "$2"; remote=$2; shift; shift;;
     -r) validate_extra_args "$1" "$2"; rev=$2;    shift; shift;;
     *)
+      if [ -n "$open_pr" ]; then
+        >&2 echo "Too many arguments supplied to pr"
+        exit 1
+      fi
       if [ -z "$file" ]; then
         if [ -f "$1" ]; then
           # Resolve path to file relative to repo root.
@@ -61,6 +66,19 @@ while [ $# -gt 0 ]; do
       fi
   esac
 done
+
+if [ -n "$open_pr" ]; then
+  if [ -n "$rev" ]; then
+    >&2 echo "Cannot use pr and -r together"
+    exit 1
+  fi
+
+  if [ -n "$use_branch" ]; then
+    >&2 echo "-b is always implied with pr thus is unnecessary"
+    exit 1
+  fi
+  use_branch=1
+fi
 
 if [ -n "$rev" -a "$use_branch" ]; then
   >&2 echo "Cannot use -b and -r together"
@@ -92,10 +110,14 @@ url=$(
     | sed 's/\(https\{0,1\}:\/\/[^:]*\):/\1\//'
 )
 
-if [ -z "$file" ]; then
-  url=$url/tree/$rev
+if [ -n "$open_pr" ]; then
+  url="$url/compare/$rev?expand=1"
 else
-  url=$url/tree/$rev/$file
+  if [ -z "$file" ]; then
+    url=$url/tree/$rev
+  else
+    url=$url/tree/$rev/$file
+  fi
 fi
 
 if [ "$open_in_browser" ]; then
