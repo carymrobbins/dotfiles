@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+
+github_user=carymrobbins
+
+usage() {
+  echo "Usage: $0 [-ie] [pattern]"
+}
+
+if [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+pattern=
+
+case "$1" in
+  -*) ;;
+  *) pattern=$1; shift;;
+esac
+
+OPTIND=1
+while getopts "h?e:i" opt; do
+  case "$opt" in
+  h|\?) usage; exit;;
+  e) pattern=$OPTARG;;
+  i) case_insensitive=1;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [ -z "$pattern" ]; then
+  if [ $# -eq 0 ]; then
+    >&2 echo "Missing pattern argument"
+    >&2 usage
+    exit 1
+  else
+    pattern=$1
+    shift
+  fi
+fi
+
+if [ $# -ne 0 ]; then
+    >&2 echo "Unexpected argument: '$1'"
+    >&2 usage
+    exit 1
+fi
+
+if [ "$case_insensitive" ]; then
+  pattern="(?i)$pattern"
+fi
+
+curl -sS "https://api.github.com/users/$github_user/gists" | jq --arg pattern "$pattern" '
+  .[]
+    | select(
+        (.files | keys) + [.description]
+          | map(test($pattern))
+          | any
+      )
+    | . as $x
+    | {
+        html_url: $x.html_url,
+        description: $x.description,
+        files: $x.files | keys
+      }
+'
