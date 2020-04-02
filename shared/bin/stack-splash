@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+args=()
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --splash-dry-run)
+      # Don't run the splash, just print it.
+      splash_dry_run=1
+      shift
+      ;;
+
+    package-regex:*)
+      # Expand package regex for project packages.
+      pattern=$(cut -d: -f2- <<< "$1")
+      packages=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | grep "$pattern"))
+      if [ ${#packages[@]} -eq 0 ]; then
+        >&2 echo "No matching packages for $1"
+        exit 1
+      fi
+      args+=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | grep "$pattern"))
+      shift
+      ;;
+
+    *)
+      # Evaluate bash expression (e.g. brace expansion).
+      args+=($(eval echo "$1"))
+      shift
+      ;;
+  esac
+done
+
+if [ -n "$splash_dry_run" ]; then
+  echo stack "${args[@]}"
+  exit
+fi
+
+set -x
+
+eval stack "${args[@]}"
