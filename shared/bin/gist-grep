@@ -5,7 +5,7 @@ set -e
 github_user=carymrobbins
 
 usage() {
-  echo "Usage: $0 [-ie] [pattern]"
+  echo "Usage: $0 [-i] [-e pattern] [pattern]"
 }
 
 if [ "$1" = '--help' ]; then
