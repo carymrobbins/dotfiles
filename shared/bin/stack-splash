@@ -14,12 +14,12 @@ while [ $# -ne 0 ]; do
     package-regex:*)
       # Expand package regex for project packages.
       pattern=$(cut -d: -f2- <<< "$1")
-      packages=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | grep "$pattern"))
+      packages=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | perl -nle"print if m{$pattern}"))
       if [ ${#packages[@]} -eq 0 ]; then
         >&2 echo "No matching packages for $1"
         exit 1
       fi
-      args+=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | grep "$pattern"))
+      args+=("${packages[@]}")
       shift
       ;;
 
