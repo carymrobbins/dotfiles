@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+
+# How do I get these? Do this -
+# % bluetoothctl scan on
+# Tap the sync buttons on each wiimote
+# % bluetoothctl devices | grep Nintendo
+wiimote_ids=(
+  '00:1A:E9:E5:E3:DF'
+  'E0:E7:51:B5:D2:57'
+)
+
+if [ "$1" = '-d' ]; then
+  echo "Disconnecting from wiimotes..."
+  for id in "${wiimote_ids[@]}"; do
+    bluetoothctl disconnect "$id"
+  done
+  echo "Disconnect complete"
+  exit
+fi
+
+i=1
+total=${#wiimote_ids[@]}
+for id in "${wiimote_ids[@]}"; do
+  echo "Wiimote $i/$total"
+  while ! bluetoothctl connect "$id"; do
+    echo "Failed to connect, retrying wiimote $i/$total"
+  done
+  ((++i))
+done
+
+echo "All wiimotes have been paired!"
+
+# Tricks with the LEDs
+if ! command -v xwiishow >/dev/null; then
+  echo 'Skipping LED setting; xwiishow not installed'
+  exit
+fi
+
+echo "Setting player leds on each wiimote"
+devices=($(sudo xwiishow list | grep Found | cut -d: -f2- | cut -d' ' -f2-))
+i=1
+for device in "${devices[@]}"; do
+  device_id=$(basename $device)
+  for ((j=1; j<=4; ++j)); do
+    led=$device/leds/$device_id:blue:p$((j-1))/brightness
+    echo "$(($((i%4))==$((j%4))))" | sudo tee "$led" >/dev/null
+  done
+  ((++i))
+done
+echo "Wiimote leds configuration complete!"
