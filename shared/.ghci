@@ -53,28 +53,24 @@ import qualified Data.ByteString.Char8 as Char8
 import qualified Data.ByteString.Lazy
 import qualified Data.ByteString.Lazy as Lazy (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as Lazy.Char8
+import qualified Data.Char as Char
 import qualified Data.List as List
 import qualified Data.List.Split
+import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
 import qualified Data.Text.Encoding as Text
 import qualified Data.Typeable
 import qualified GHC.Generics
 import qualified GHC.TypeLits
 
--- Default extensions
-:set -XDataKinds
-:set -XDeriveAnyClass
-:set -XDeriveGeneric
+-- Needed for some stuff later in this file.
 :set -XDerivingStrategies
-:set -XDerivingVia
 :set -XFlexibleContexts
 :set -XGeneralizedNewtypeDeriving
-:set -XKindSignatures
-:set -XOverloadedStrings
-:set -XPolyKinds
-:set -XStandaloneDeriving
 :set -XTypeApplications
-:set -XTypeOperators
+
+-- Load "default" extensions with a macro
+:def xd (\_ -> do { home <- System.Directory.getHomeDirectory ; Debug.Trace.traceId . unlines . map (":set -X" <>) . lines <$> readFile (home <> "/.ghci-default-extensions") })
 
 -- START HASKELL CODE
 :{
@@ -114,6 +110,22 @@ getLines = getLinesWhile (/="\"\"\"")
 --
 -- Collapsed to one line to make it easier to paste in if need be.
 colorPrint = System.IO.putStrLn GHC.Base.. Language.Haskell.HsColour.hscolour Language.Haskell.HsColour.TTY Language.Haskell.HsColour.Colourise.defaultColourPrefs False False "" False GHC.Base.. Text.Show.Pretty.ppShow 
+
+-- Yeah I did it, so what. Many are partial but whatever.
+instance Num Char where
+  x + y = Char.chr $ Char.ord x + Char.ord y
+  x - y = Char.chr $ Char.ord x - Char.ord y
+  x * y = Char.chr $ Char.ord x * Char.ord y
+  abs = Char.chr . abs . Char.ord
+  signum = Char.chr . signum . Char.ord
+  fromInteger = Char.chr . fromInteger
+
+instance Real Char where
+  toRational = toRational . Char.ord
+
+instance Integral Char where
+  quotRem n d = let (q, r) = Char.ord n `quotRem` Char.ord d in (Char.chr q, Char.chr r)
+  toInteger = toInteger . Char.ord
 
 -------------------------------------------------
 -- TimeLit stuff --------------------------------
@@ -205,4 +217,4 @@ tm = either error id . parseTimeLit . ("0:" ++)
 :def cp (\_ -> pure ":set -interactive-print=colorPrint")
 :def ncp (\_ -> pure ":set -interactive-print=print")
 -- color printing on by default
--- :cp
+:cp

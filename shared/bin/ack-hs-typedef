@@ -8,4 +8,4 @@ fi
 pat=$1
 shift
 
-ack --haskell "^(?:data|newtype|type|class|type family) ($pat)\\b" "$@"
+ack --haskell "^(?:data|newtype|type|class (?:.*=\\>)?|type family) +($pat)\\b" "$@"

@@ -54,7 +54,11 @@ alias rm=trash
 # Function for a magical stack
 s() {
   local args=()
-  local saveOutput=1
+
+  # Disable saving output for now
+  #local saveOutput=1
+  local saveOutput=
+
   # Relative to pwd
   local lastOutputFile=.stack-work/last-stack-output
 
@@ -225,7 +229,10 @@ log_implicits='set scalacOptions in Global += "-Xlog-implicits"'
 # Helper functions
 
 # Run --help | less
-m() { man "$@" 2>/dev/null || "$@" --help 2>&1 | less;  }
+hl() { "$@" --help 2>&1 | less;  }
+
+# Try to run man, doing '--help|less' if that fails.
+m() { man "$@" 2>/dev/null || hl "$@";  }
 
 # Run bash's help function
 help() { bash -c "help $(printf '%q ' "$@")"; }
@@ -344,18 +351,49 @@ stack_prompt_info() {
     return
   fi
   local resolver=$(stack_find_resolver stack.yaml)
-  # Resolver can point to a yaml file, so resolve this if need be.
-  if grep '\.yaml' <<< "$resolver" >/dev/null; then
-    local resolver=$(stack_find_resolver "$resolver")
-  fi
+  local cache_dir="$HOME/.cache/zsh-stack-prompt/$resolver"
+  local cached_ghc_version_file=$cache_dir/ghc-version
   # Special hack to make lts-123 become ʟᴛs-123 because it's pretty
   if grep '^lts-' <<< "$resolver" >/dev/null; then
-    local resolver=$(sed 's/lts/ʟᴛs/' <<< "$resolver")
+    local pretty_resolver=$(sed 's/lts/ʟᴛs/' <<< "$resolver")
+  else
+    local pretty_resolver=$resolver
   fi
-  echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}${resolver}${ZSH_THEME_STACK_PROMPT_SUFFIX} "
+  # Get the GHC version, but cache it so we only have to do it once.
+  local ghc_version=$(cat "$cached_ghc_version_file" 2>/dev/null)
+  if [ $? -ne 0 -o -z "$ghc_version" ]; then
+    # Quite a hack. Could use 'stack exec ghc -- --numeric-version' but stack might try
+    # to download a bunch of stuff. I don't want to deal with that.
+    ghc_version=$(
+      curl -sS 'https://www.stackage.org/lts-15.6' \
+        | grep -o '(ghc-[^)]*)' \
+        | head -n1 \
+        | tail -c+6 | rev | cut -c2- | rev
+    )
+    # Ignoring if we failed to get the ghc_version, this way we won't retry and fail
+    # every time. If we need to retry, we can just manually delete from this cache.
+    mkdir -p "$cache_dir"
+    echo -n "$ghc_version" > "$cached_ghc_version_file"
+  fi
+  local pretty_ghc_version=
+  if [ -n "$ghc_version" ]; then
+    # Add a space so it's separated from the resolver in the prompt.
+    pretty_ghc_version=" ɢʜᴄ-$ghc_version"
+  fi
+
+  echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}${pretty_resolver}${pretty_ghc_version}${ZSH_THEME_STACK_PROMPT_SUFFIX} "
 }
 
 stack_find_resolver() {
+  local resolver=$(stack_find_resolver_ "$1")
+  # Resolver can point to a yaml file, so resolve this if need be.
+  if grep '\.yaml' <<< "$resolver" >/dev/null; then
+    resolver=$(stack_find_resolver_ "$resolver")
+  fi
+  echo -n "$resolver"
+}
+
+stack_find_resolver_() {
   # Parse between the ':' and before the '#', if applicable.
   grep '^resolver' "$1" | cut -d: -f2 | cut -d'#' -f1 | xargs
 }

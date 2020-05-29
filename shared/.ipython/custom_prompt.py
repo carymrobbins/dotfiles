@@ -11,7 +11,10 @@ class CustomPrompt(Prompts):
     elif os.environ.get('IPYTHON_UNICODE_PROMPT'):
         __CUSTOM_PROMPT = '🐍 '
     else:
-        __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', ' ')
+        __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', '𝕡𝕪 ')
+        # __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', 'ᴘʏ ')
+        # __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', '⋙ ')
+        # __CUSTOM_PROMPT = os.environ.get('IPYTHON_PROMPT', ' ')
 
     def in_prompt_tokens(self, cli=None):
         return [(Token.Prompt, self.__CUSTOM_PROMPT), ]
