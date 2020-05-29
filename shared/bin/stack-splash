@@ -2,6 +2,30 @@
 
 set -e
 
+cached_package_list=
+
+get_package_list() {
+  if [ -z "$cached_package_list" ]; then
+    cached_package_list=$(stack ide packages --stdout)
+    if [ -z "$cached_package_list" ]; then
+      >&2 echo "Failed to get project packages from stack"
+      exit 1
+    fi
+  fi
+  echo "$cached_package_list"
+}
+
+packages=($(stack ide packages --stdout))
+
+expand_package_regex() {
+  local res=$(get_package_list | perl -nle"print if m{$1}")
+  if [ -z "$res" ]; then
+    >&2 echo "No matching packages for $1"
+    exit 1
+  fi
+  echo "$res"
+}
+
 args=()
 while [ $# -ne 0 ]; do
   case "$1" in
@@ -14,18 +38,20 @@ while [ $# -ne 0 ]; do
     package-regex:*)
       # Expand package regex for project packages.
       pattern=$(cut -d: -f2- <<< "$1")
-      packages=($(stack ide targets 2>&1 | cut -d: -f1 | uniq | perl -nle"print if m{$pattern}"))
-      if [ ${#packages[@]} -eq 0 ]; then
-        >&2 echo "No matching packages for $1"
-        exit 1
-      fi
-      args+=("${packages[@]}")
+      args+=($(expand_package_regex "$pattern"))
       shift
       ;;
 
     *)
+      # Detect * and auto-expand it as a package regex.
+      arg=$1
+      if [[ $arg =~ \* ]]; then
+        pattern=^$(sed 's/\*/.*/g' <<< "$arg")$
+        arg=$(expand_package_regex "$pattern")
+      fi
       # Evaluate bash expression (e.g. brace expansion).
-      args+=($(eval echo "$1"))
+      arg=$(eval echo "$(xargs <<< $arg)")
+      args+=("$arg")
       shift
       ;;
   esac
