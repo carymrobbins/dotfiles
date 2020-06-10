@@ -3,6 +3,11 @@ ctrl + alt + cmd - 2 : refocus 2
 ctrl + alt + cmd - 3 : refocus 3
 ctrl + alt + cmd - 4 : refocus 4
 ctrl + alt + cmd - 5 : refocus 5
+ctrl + alt + cmd - 6 : refocus 6
+ctrl + alt + cmd - 7 : refocus 7
+ctrl + alt + cmd - 8 : refocus 8
+ctrl + alt + cmd - 9 : refocus 9
+ctrl + alt + cmd - 0 : refocus 0
 shift + cmd - 4 : refocus 4 --reverse
 
 # Lock the screen; requires Security & Privacy setting to require password

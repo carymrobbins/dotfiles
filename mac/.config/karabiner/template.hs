@@ -1,6 +1,6 @@
 #!/usr/bin/env stack
 {- stack
-  --resolver lts-12.11
+  --resolver lts-15.6
   --install-ghc runghc
   --package aeson
   --package aeson-pretty
@@ -161,7 +161,7 @@ root = Root "Linux Compat" [rule]
       ]
     ) ??! [macterm, iterm, intellij]
 
-  skhdRemaps = [One, Two, Three, Four, Five] >>= \n ->
+  skhdRemaps = numbers >>= \n ->
     [ -- Mapped in ~/.skhdrc
       Command |+| n !> chunkMod |+| n
     ]
