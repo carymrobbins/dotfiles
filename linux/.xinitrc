@@ -1,11 +1,11 @@
 # Run with `NOSCALE=1 startx` to disable hidpi scaling
 
-# TODO: Here for now
-export NOSCALE=1
-
 if [ -z "$NOSCALE" ]; then
   # Load resources
   [ -f $HOME/.Xresources ] && xrdb -merge -I$HOME $HOME/.Xresources
+  # Some hacks to make apps like unity render better in hidpi
+  export GDK_SCALE=2
+  export GDK_DPI_SCALE=0.5
 fi
 
 # Default screen brightness
