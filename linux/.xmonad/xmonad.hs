@@ -22,6 +22,7 @@ import           Control.Monad
 import           Control.Monad.Extra (whenM)
 import           Data.Coerce
 import           Data.Maybe
+import qualified Data.List as List
 import           Data.IORef
 import           System.Environment
 import           System.IO.Unsafe
@@ -239,6 +240,8 @@ specificWindowManageHooks =
     , windowRole =? "autoconfig" -- thunderbird config windows
     , windowRole =? "gimp-action-search-dialog"
     , className =? "Unity" <&&> title =? "Starting Unity..."
+    -- Android emulator
+    , title =? "Emulator"
     ]
 
   ignoreQueries =
