@@ -7,7 +7,8 @@ wallpaper=$HOME/dotfiles/linux/resources/wallpaper
 # Key repeat: ms delay, cps
 xset r rate 150 50
 
-xkb-reload
+# TODO: Rather call this manually
+#xkb-reload
 
 # Enable natural scrolling and two-finger right-click.
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Natural Scrolling Enabled' 1

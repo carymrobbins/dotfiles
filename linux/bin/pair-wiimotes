@@ -2,6 +2,9 @@
 
 set -e
 
+# Make sure we can get sudo for later.
+sudo true
+
 # How do I get these? Do this -
 # % bluetoothctl scan on
 # Tap the sync buttons on each wiimote
@@ -26,6 +29,7 @@ for id in "${wiimote_ids[@]}"; do
   echo "Wiimote $i/$total"
   while ! bluetoothctl connect "$id"; do
     echo "Failed to connect, retrying wiimote $i/$total"
+    sleep 1
   done
   ((++i))
 done
@@ -45,6 +49,10 @@ for device in "${devices[@]}"; do
   device_id=$(basename $device)
   for ((j=1; j<=4; ++j)); do
     led=$device/leds/$device_id:blue:p$((j-1))/brightness
+    while ! [ -f "$led" ]; do
+      echo "LED directory not found, retrying: $led"
+      sleep 1
+    done
     echo "$(($((i%4))==$((j%4))))" | sudo tee "$led" >/dev/null
   done
   ((++i))

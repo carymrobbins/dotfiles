@@ -129,14 +129,15 @@ handle1() {
     --output HDMI-1 --off
     --output DP-1 --off
     --output DP-2 --off
+    --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal
   )
   if [ -z "$NOSCALE" ]; then
     xrandr_args+=(
-      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 2x2
+      --scale 2x2
     )
   else
     xrandr_args+=(
-      --output eDP-1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --scale 1x1
+      --scale 1x1
     )
   fi
 }
