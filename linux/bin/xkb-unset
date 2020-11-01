@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Unsets our custom keyboard configuration
+# Useful when using an external keyboard that
+# already has the button remaps programmed in.
+setxkbmap us
