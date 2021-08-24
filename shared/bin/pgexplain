@@ -2,6 +2,7 @@
 
 from itertools import dropwhile, islice
 import os
+import platform
 import re
 import requests
 import subprocess
@@ -18,8 +19,22 @@ COOKIE_FILE = os.path.join(EXPLAIN_DIR, 'cookie')
 def main():
     cookie = get_cookie()
     plan = get_plan()
-    url = post_explain(cookie, get_title(), plan)
-    print(explain_url(url))
+    location = post_explain(cookie, get_title(), plan)
+    url = explain_url(location)
+    print(url)
+    if '--open' in sys.argv:
+        open_browser(url)
+
+
+def open_browser(url):
+    system = platform.system()
+    if system == 'Darwin':
+        subprocess.run(['open', url])
+        return
+    if system == 'linux':
+        subprocess.run(['xdg-open', url])
+        return
+    error(f"Cannot --open for unsupported OS: {system}")
 
 
 def get_psql_args():
