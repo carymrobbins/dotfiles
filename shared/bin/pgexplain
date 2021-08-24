@@ -4,6 +4,7 @@ from itertools import dropwhile, islice
 import os
 import re
 import requests
+import subprocess
 import sys
 
 
@@ -16,9 +17,33 @@ COOKIE_FILE = os.path.join(EXPLAIN_DIR, 'cookie')
 
 def main():
     cookie = get_cookie()
-    plan = sys.stdin.read()
+    plan = get_plan()
     url = post_explain(cookie, get_title(), plan)
     print(explain_url(url))
+
+
+def get_psql_args():
+    res = []
+    for i, arg in enumerate(sys.argv):
+        if arg == '--psql':
+            res.append(sys.argv[i + 1])
+    return res
+
+
+def get_plan():
+    psql_args = get_psql_args()
+    if psql_args:
+        return auto_plan(psql_args)
+    return sys.stdin.read()
+
+
+def auto_plan(psql_args):
+    sql = sys.stdin.read()
+    sql = 'explain analyze ' + sql
+    p = subprocess.run(['psql', '-X'] + psql_args + ['-c', sql], capture_output=True)
+    if p.returncode != 0:
+        error(f"psql process exited with status code {p.returncode}\nstdout: {p.stdout}\nstderr: {p.stderr}")
+    return p.stdout
 
 
 def get_title():
