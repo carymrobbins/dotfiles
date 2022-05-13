@@ -1,0 +1,20 @@
+#!/bin/bash
+
+regex=$1
+flag=$2
+
+run() {
+  ps aux \
+    | fgrep -v "egrep $regex" \
+    | fgrep -v "$(basename $0) $regex" \
+    | egrep "$regex" \
+    | tr -s ' '
+}
+
+if [ "$flag" = "-p" ]; then
+  run | cut -d ' ' -f 2
+elif [ "$flag" = "-n" ]; then
+  run | cut -d ' ' -f 11-
+else
+  run
+fi

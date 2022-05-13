@@ -1,0 +1,19 @@
+#!/bin/bash
+
+usage() {
+  cat <<HERE
+Example:
+$ $(basename "$0") <<< '"Hello\\nWorld!"'
+Hello
+World!
+HERE
+}
+
+if [ $# -ne 0 ]; then
+  >&2 usage
+  exit 1
+fi
+
+input_str=$(cat)
+
+printf "module Main where\nmain = putStrLn %s" "$input_str" | runghc

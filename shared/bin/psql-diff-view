@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+  >&2 echo "Usage: $0 <db> <view>"
+  exit 1
+fi
+
+db=$1
+view=$2
+
+pg_get_viewdef() {
+  psql -XtA "$db" <<< "select pg_get_viewdef('$view', true)"
+}
+
+pg_get_viewdef_from_stdin() {
+  psql -XtA "$db" -v view="$1" < <(
+    echo "begin;"
+    echo "create or replace view $view as ("
+    cat /dev/stdin
+    echo ");"
+    echo "select pg_get_viewdef('$view', true);"
+    echo "rollback;"
+  ) | grep -Ev '^(BEGIN|CREATE VIEW|ROLLBACK)$'
+}
+
+diffcmd=$(command -v colordiff >/dev/null && echo colordiff || echo diff)
+
+"$diffcmd" -u <(pg_get_viewdef | pg_format) <(pg_get_viewdef_from_stdin | pg_format)

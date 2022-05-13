@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# stack-cw is a mnemonic for "clean with"
+
+nextcmd=$1
+if [ -z "$1" ]; then
+  >&2 echo "Usage: stack cw <command> [opts]"
+fi
+shift
+
+clean_args=()
+for arg in "$@"; do
+  case "$arg" in
+    --pedantic);;
+    *) clean_args+=("$arg");;
+  esac
+done
+
+(
+  set -x
+  stack clean "${clean_args[@]}"
+)
+if [ $? -ne 0 ]; then
+  >&2 echo "stack clean failed, skipping requested $nextcmd command"
+  exit 1
+fi
+(
+  set -x
+  stack "$nextcmd" "$@"
+)

@@ -1,0 +1,62 @@
+#!/bin/bash
+
+usage() {
+  cat <<HERE
+Git Grep Finder
+
+Usage: $0 [options] <pattern> [files]
+HERE
+}
+
+main() {
+  if [ "$1" = '--help' ]; then
+    usage
+    exit
+  fi
+  if [ $# -eq 0 ]; then
+    >&2 usage
+    exit 1
+  fi
+  local options=$(git grep -n "$@")
+  if [ -z "$options" ]; then
+    >&2 echo "No results found"
+    exit 1
+  fi
+
+  local selection=$(fzf <<< "$options")
+  if [ $? -ne 0 -o -z "$selection" ]; then
+    >&2 echo 'No selection, aborting'
+    exit 1
+  fi
+
+  local filename=$(cut -d: -f1 <<< "$selection")
+  local linenumber=$(cut -d: -f2 <<< "$selection")
+  local str=$(get_string "$filename" "$linenumber")
+  if [ -z "$str" ]; then
+    >&2 echo "No file string reported"
+    exit 1
+  fi
+
+  echo -n "$str" | get_copy
+  echo "String copied to clipboard: $str"
+}
+
+get_string() {
+  local filename=$1
+  local linenumber=$2
+  case "$EDITOR" in
+    vi|vim|nvim) printf ' +%d %s' "$linenumber" "$filename";;
+    *) >&2 echo "Unsupported EDITOR: '$EDITOR'"; exit 1;;
+  esac
+}
+
+get_copy() {
+  local os=$(uname)
+  case "$os" in
+    linux) xsel -ib;;
+    Darwin) pbcopy;;
+    *) >&2 echo "Unsupported OS: '$os'"; exit 1;;
+  esac
+}
+
+main "$@"

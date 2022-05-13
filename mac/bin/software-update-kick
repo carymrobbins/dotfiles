@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Fixes the Software Update dialog when it seems to never finish
+# checking for updates.
+
+sudo /bin/launchctl kickstart -k system/com.apple.softwareupdated

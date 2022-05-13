@@ -1,0 +1,50 @@
+#!/bin/bash
+
+usage() {
+  echo "Opens symbol on hackage"
+  echo "Usage: $0 <Fully.Qualified.Symbol>"
+}
+
+if [ $# -ne 1 ]; then
+  >&2 usage
+  exit 1
+elif [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
+module=$(rev <<< "$1" | cut -d. -f2- | rev)
+symbol=$(rev <<< "$1" | cut -d. -f1 | rev)
+
+package=$(
+  stack exec -- ghc-pkg find-module "$module" \
+    | grep '^ ' | grep -v 'no packages' | head -n1 | tr -d ' '
+)
+
+if [ -z "$package" ]; then
+  >&2 echo "Module not found: $1"
+  exit 1
+fi
+
+m=$(tr . - <<< "$module")
+
+if [[ "$symbol" =~ ^[A-Z] ]]; then
+  s=t:$symbol
+elif [[ "$symbol" =~ ^[a-z] ]]; then
+  s=v:$symbol
+else
+  s=v:$(
+    for ((i=0; i<${#symbol}; ++i)); do
+      printf -- '-%d-' "'${symbol:$i:1}"
+    done
+  )
+fi
+
+set -x
+"$OPEN" "https://hackage.haskell.org/package/$package/docs/$m.html#$s"

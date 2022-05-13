@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  >&2 echo "Usage: $0 <file.sql> [psql-opts]"
+  exit 1
+fi
+
+file=$1
+shift
+
+extra_psql_opts=()
+
+trap cleanup EXIT
+
+cleanup() {
+  rm -f "$genscript"
+}
+
+genscript=$(mktemp)
+
+while IFS= read -r line; do
+  case "$line" in
+    '#!'*) echo ;; # shebang
+    '#'*) extra_psql_opts+=(${line:1}); echo ;;
+    '--'*) echo ;; # comment
+    *) echo "$line";;
+  esac
+done < "$file" > "$genscript"
+
+psql "${extra_psql_opts[@]}" "$@" -f "$genscript"

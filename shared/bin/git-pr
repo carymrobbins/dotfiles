@@ -1,0 +1,20 @@
+#!/bin/bash
+
+case "$(uname)" in
+  Darwin) OPEN_LINK=open;;
+  linux) OPEN_LINK=xdg-open;;
+  *) >&2 echo "Unexpected OS: $(uname)"
+esac
+
+remote_url=$(git remote get-url origin)
+
+if ! [[ $remote_url =~ ^git@ ]]; then
+  >&2 echo "Unexpected remote url: $remote_url"
+fi
+
+repo_path=$(cut -d @ -f 2- <<< "$remote_url" | sed 's/\.git$//' | sed 's/:/\//')
+branch=$(git rev-parse --abbrev-ref HEAD)
+pr_url="https://$repo_path/compare/$branch?expand=1"
+
+set -x
+"$OPEN_LINK" "$pr_url"

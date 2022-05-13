@@ -1,0 +1,14 @@
+#!/bin/bash
+
+rev=$1
+file=$2
+
+tmpdir=$(mktemp -d)
+
+trap "rm -rf $tmpdir" EXIT
+
+tmpfile=$tmpdir/$(basename "$file")
+
+git show "$rev:$file" > "$tmpfile"
+
+"$EDITOR" "$tmpfile"

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+foreach-idea-files find

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+DEFAULT_RESOLVER=15.6
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <file>"
+  exit 1
+fi
+
+if [ -f "$1" ]; then
+  >&2 echo "Already exists: $1"
+  exit 1
+fi
+
+resolver=$(
+  grep '^resolver' "$HOME/.stack/global-project/stack.yaml" | head -n1 | cut -d: -f2- | tr -d ' '
+)
+if [ -z "$resolver" ]; then
+  resolver=$DEFAULT_RESOLVER
+fi
+
+cat > "$1" <<HERE
+#!/usr/bin/env stack
+{- stack
+  --resolver $resolver
+  --install-ghc runghc
+-}
+
+{-# OPTIONS_GHC -Wall #-}
+
+main :: IO ()
+main = error "todo"
+HERE
+
+chmod +x "$1"
+
+"$EDITOR" "$1"

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <search-term>"
+  exit 1
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
+urlencode() {
+  local s=$1
+  local res=""
+  local i
+  local c
+  for ((i=0; i < ${#s}; ++i)); do
+    c="${s:$i:1}"
+    if [[ "$c" =~ [A-Za-z0-9\.] ]]; then
+      res+="$c"
+    elif [ "$c" = ' ' ]; then
+      res+='+'
+    else
+      res+="$(printf '%%%X' "'$c")"
+    fi
+  done
+  echo -n "$res"
+}
+
+"$OPEN" "https://hoogle.haskell.org/?hoogle=$(urlencode "$1")"

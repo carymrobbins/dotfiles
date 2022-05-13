@@ -1,0 +1,21 @@
+#!/bin/bash
+
+files_to_be_deleted=$(foreach-idea-files find)
+
+if [ -z "$files_to_be_deleted" ]; then
+  echo 'No idea files found'
+  exit
+fi
+
+echo 'Files to be deleted:'
+echo "$files_to_be_deleted"
+echo -n 'Ok? [y/N] '
+read -n1
+echo
+case "$REPLY" in
+  y|Y) foreach-idea-files rm -rf;;
+  *)
+    echo 'Aborting per user request'
+    exit 1
+    ;;
+esac

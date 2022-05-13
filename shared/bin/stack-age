@@ -1,0 +1,69 @@
+#!/bin/bash
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --resolver=*)
+      RESOLVER=$(cut -d= -f2- <<< "$1")
+      shift
+      ;;
+    -m)
+      MODULE=$2
+      shift
+      shift
+      ;;
+    *)
+      if [ -n "$SEARCH_CRITERIA" ]; then
+        >&2 echo "Unexpected argument: $1"
+        exit 1
+      fi
+      SEARCH_CRITERIA=$1
+      shift
+      ;;
+  esac
+done
+
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
+if [ -n "$MODULE" ]; then
+  PACKAGE=$(
+    stack exec -- ghc-pkg find-module "$MODULE" \
+      | grep '^ ' | grep -v 'no packages' | head -n1 | tr -d ' '
+  )
+  URL="https://hackage.haskell.org/package/$PACKAGE/docs/"
+  URL+="$(tr '.' '-' <<< "$MODULE").html"
+  "$OPEN" "$URL"
+  exit
+fi
+
+if [ -f stack.yaml ]; then
+  stack_yaml=stack.yaml
+elif [ -f ~/.stack/global-project/stack.yaml ]; then
+  stack_yaml=~/.stack/global-project/stack.yaml
+else
+  >&2 echo "No local or global stack.yaml found"
+  exit 1
+fi
+
+find_resolver() {
+  grep '^resolver' "$1" | cut -d: -f2 | xargs
+}
+
+if [ -z "$RESOLVER" ]; then
+  RESOLVER=$(find_resolver "$stack_yaml")
+  # Resolver can point to a yaml file, so resolve this if need be.
+  if grep '\.yaml' <<< "$RESOLVER" >/dev/null; then
+    RESOLVER=$(find_resolver "$RESOLVER")
+  fi
+fi
+
+url=https://www.stackage.org/$RESOLVER
+
+if [ -n "$SEARCH_CRITERIA" ]; then
+  url=$url/hoogle?q=$SEARCH_CRITERIA
+fi
+
+"$OPEN" "$url"

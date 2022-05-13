@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source insert-macos11ghcwa
+
+exec stack test --no-run-tests "$@"

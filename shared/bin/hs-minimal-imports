@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+ghc_flags=(
+  -XDataKinds
+  -XNamedFieldPuns
+  -XNoImplicitPrelude
+  -XOverloadedStrings
+  -XRecordWildCards
+  -XScopedTypeVariables
+  -XTypeApplications
+)
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <src/file.hs>"
+  exit 1
+fi
+
+srcfile=$1
+
+if ! [ -f "$srcfile" ]; then
+  >&2 echo "Source file does not exist: $srcfile"
+  exit 1
+fi
+
+dumpdir=$(mktemp -d)
+
+stack ghc --test -- "${ghc_flags[@]}" "$srcfile" -fno-code -ddump-minimal-imports -dumpdir "$dumpdir"
+echo
+echo '---------------------------------------------------------'
+echo
+cat "$dumpdir"/*
+
+rm -r "$dumpdir"

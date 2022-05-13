@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+ticket=
+args=()
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --ticket)
+      if [ $# -lt 2 ]; then
+        >&2 echo "Missing argument to --ticket"
+        exit 1
+      fi
+      ticket=$2
+      shift
+      shift
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [ -z "$ticket" ]; then
+  ticket=$(jira -g)
+fi
+
+git commit -t <(printf '[%s] ' "$ticket") "${args[@]}"

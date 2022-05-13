@@ -1,0 +1,59 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 [-g | -o]"
+}
+
+if [ "$1" == "--help" ]; then
+  usage
+  exit
+fi
+
+ticket_number=($(git rev-parse --abbrev-ref HEAD | grep -Eo '\b[A-Z]+-[0-9]+\b'))
+if [ -z "$ticket_number" ]; then
+  case "$1" in
+    -g)
+      shift
+      ticket_number=$(
+        git log --oneline \
+          | head -n1 \
+          | cut -d' ' -f2- \
+          | sed -E 's/^(fixup|squash)! //' \
+          | grep -Eo '^\[[A-Z]+-[0-9]+\]' \
+          | tr -d [ \
+          | tr -d ]
+      )
+      if [ -z "$ticket_number" ]; then
+        >&2 echo "No ticket number found in branch name nor previous commit message"
+        exit 1
+      fi
+      ;;
+    *)
+      >&2 echo "No ticket number found in branch name"
+      exit 1
+      ;;
+  esac
+fi
+
+if [ $# -eq 0 ]; then
+  ( IFS=, ; echo "${ticket_number[*]}" )
+else
+  case "$1" in
+    -o)
+      if [ -z "$JIRA_TICKET_URL_TEMPLATE" ]; then
+        >&2 echo "Please set JIRA_TICKET_URL_TEMPLATE before running '$0 -o'"
+        exit 1
+      fi
+      for n in "${ticket_number[@]}"; do
+        url=$(printf "$JIRA_TICKET_URL_TEMPLATE" "$n")
+        echo "Opening JIRA ticket: $url"
+        open "$url"
+      done
+      ;;
+
+    *)
+      >&2 echo "Invalid argument: $1"
+      exit 1
+      ;;
+  esac
+fi

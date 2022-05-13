@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <src-dir>"
+  exit 1
+fi
+
+search_dir=$1
+
+search_files=()
+while IFS=  read -r -d $'\0'; do
+    search_files+=("$REPLY")
+done < <(find "$search_dir" -name \*.hs -print0)
+
+get_import() {
+  grep -ho '^import  *[A-Z][A-Za-z0-9\._]*' "${search_files[@]}" | tr -s ' ' | cut -d' ' -f2-
+}
+
+get_import_qualified() {
+  grep -ho '^import  *qualified  *[A-Z][A-Za-z0-9\._]*' "${search_files[@]}" | tr -s ' ' | cut -d' ' -f3-
+}
+
+all_imports=( $( (get_import && get_import_qualified) | sort -u ) )
+
+get_packages() {
+  local i=0
+  local len=${#all_imports[@]}
+  >&2 echo -n "Progress: 0/$len"
+  for imp in "${all_imports[@]}"; do
+    stack exec ghc-pkg find-module "$imp" | grep '    [a-z].*' | tr -d ' '
+    ((++i))
+    # Using \r to overwrite the previous progress.
+    >&2 echo -en "\rProgress: $i/$len"
+  done | sort -u
+}
+
+pkgs=$(get_packages)
+# Overwrite the previous progress.
+echo -en "\r"
+echo "$pkgs"

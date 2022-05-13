@@ -1,0 +1,5 @@
+#!/bin/bash
+
+grep '^--  While building package' \
+  | cut -d' ' -f6- \
+  | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+ using://g'

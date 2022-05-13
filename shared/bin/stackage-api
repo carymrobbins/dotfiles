@@ -1,0 +1,6 @@
+#!/bin/bash
+
+STACKAGE_HOST=https://www.stackage.org
+
+# curl -i -sS "$STACKAGE_HOST/download/lts-snapshots.json"
+curl -i -sS "$STACKAGE_HOST/system"

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+div() {
+  local n=$1
+  local d=$2
+  local ni=${n%.*}
+  local nf=${n#*.}
+  local di=${d%.*}
+  local df=${d#*.}
+  local dotloc=$((${#ni} + ${#di}))
+  local nv=${ni}${nf}
+  local dv=${di}${df}
+}
+
+div "$@"

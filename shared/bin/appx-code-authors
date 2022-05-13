@@ -1,0 +1,50 @@
+#!/usr/bin/env stack
+{- stack
+  --resolver lts-16.8
+  --install-ghc runghc
+  --package rosebud
+-}
+
+{-# LANGUAGE BlockArguments #-}
+
+{-# OPTIONS_GHC -Wall #-}
+
+import Control.Monad
+import Data.Foldable
+import Data.Tree (Tree(Node, rootLabel, subForest))
+import System.Environment (getArgs)
+import System.FilePath (takeDirectory)
+import System.Process (readProcess)
+import qualified Data.List as List
+import qualified Data.Tree as Tree
+import qualified Rosebud
+import qualified System.FilePath as FilePath
+
+main :: IO ()
+main = do
+  filePatterns <- getArgs
+  when (null filePatterns) do
+    error "Missing argument: filePatterns"
+  srcTree <- mkSrcTree . expandSrcPaths <$> findSrcPaths filePatterns
+  putStrLn $ Tree.drawTree srcTree
+
+mkSrcTree :: [FilePath] -> Tree FilePath
+mkSrcTree = Rosebud.unsafeTreeFromLabels isImmediateChild ""
+  where
+  nSeps = length . filter (== '/')
+
+  c `isImmediateChild` p =
+    p `List.isPrefixOf` c
+      && (nSeps c - 1 == nSeps p)
+
+expandSrcPaths :: [FilePath] -> [FilePath]
+expandSrcPaths srcPaths = List.nub do
+  p <- srcPaths
+  map FilePath.joinPath
+    $ tail
+    $ List.inits
+    $ FilePath.splitPath p
+
+findSrcPaths :: [String] -> IO [FilePath]
+findSrcPaths filePatterns = do
+  lines <$> readProcess "git" ("ls-files" : filePatterns) ""

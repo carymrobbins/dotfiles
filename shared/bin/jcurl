@@ -1,0 +1,6 @@
+#!/bin/bash
+
+curl "$@" \
+  -Hcontent-type:application/json \
+  -w "HTTP/%{http_version} %{http_code}\n" \
+  -o >(jq -Rsr '. as $x | try fromjson catch $x')

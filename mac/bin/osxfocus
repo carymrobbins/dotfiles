@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <app>"
+  exit 1
+fi
+
+exec osascript -e "tell application \"$1\" to activate"

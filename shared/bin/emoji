@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ ! -f "$HOME/.cache/activities_emoji_map.json" ]; then
+  curl -sS \
+    "https://raw.githubusercontent.com/JECSand/emoji_unicode_json_mapping/master/emoji_map_files/activities_emoji_map.json" \
+    > "$HOME/.cache/activities_emoji_map.json"
+fi
+
+

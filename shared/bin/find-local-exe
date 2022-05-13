@@ -1,0 +1,22 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 <exe-name>"
+}
+
+if [ $# -ne 1 ]; then
+  >&2 usage
+  exit 1
+fi
+
+if [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+case "$(uname)" in
+  Darwin) exe_params=(-perm +111);;
+  *) exe_params=(-executable);;
+esac
+
+exec find . -name "$1" -type f "${exe_params[@]}"

@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  echo "Usage: $0 <exe> [args...]"
+}
+
+if [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+if [ "$#" -eq 0 ]; then
+  >&2 usage
+  exit 1
+fi
+
+trap 'echo error' ERR
+
+exe=$1
+shift
+
+targets=($(stack ide targets --stdout | grep ":test:$exe$"))
+
+if [ "${#targets[@]}" -ne 1 ]; then
+  >&2 echo "Expected exactly one target for $exe; found: ${#targets[@]}"
+  >&2 printf ' * %s\n' "${targets[@]}"
+  exit 1
+fi
+
+stack test --no-run-tests "${targets[0]}"
+
+case "$(uname)" in
+  Darwin) exe_params=(-perm +111);;
+  *) exe_params=(-executable);;
+esac
+
+found=()
+while IFS=  read -r -d $'\0'; do
+    found+=("$REPLY")
+done < <(find . -name "$exe" -type f "${exe_params[@]}" -print0)
+
+if [ "${#found[@]}" -ne 1 ]; then
+  >&2 echo "Expected exactly one binary for $exe; found: ${#found[@]}"
+  >&2 printf ' * %s\n' "${found[@]}"
+  exit 1
+fi
+
+set -x
+exec "${found[0]}" "$@"

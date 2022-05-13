@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  echo "git-up - Updates a local branch to match the latest remote"
+  echo "Usage: git up <branch>"
+  echo "       git up <remote> <branch>"
+  echo
+  echo "Examples: git up master"
+  echo "          git up origin master"
+  echo
+  echo "Note that both of the above examples are essentially macros for"
+  echo "  git fetch origin master:master"
+}
+
+case $# in
+  1)
+    branch=$1
+    remote=$(git remote)
+    if [ $(wc -l <<< "$remote") -ne 1 ]; then
+      >&2 echo "Ambigous remote; please specifiy one:"
+      >&2 echo "$remote"
+      >&2 echo
+      >&2 usage
+      exit 1
+    fi
+    ;;
+  2)
+    remote=$1
+    branch=$2
+    ;;
+  *)
+    >&2 echo "Invalid arguments"
+    >&2 usage
+    exit 1
+    ;;
+esac
+
+exec git fetch "$remote" "$branch:$branch"

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+args=(blame)
+
+while [ $# -ne 0 ]; do
+  case $# in
+    1) args+=(--line-porcelain "$1");;
+    2) args+=("$1");;
+    *) >&2 echo "Unexpected arguments; expected 1 or 2, got $#"; exit 1;;
+  esac
+  shift
+done
+
+exec git "${args[@]}" | sed -n 's/^author-mail //p' | sort | uniq -c | sort -r

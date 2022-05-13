@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while IFS= read -r -d $'\n'; do
+  rm "$REPLY"
+done < <(
+  git ls-files --others --exclude-standard \
+    | fzf -m \
+        --header='Select untracked files to delete (press TAB to select multiple)' \
+        --layout=reverse
+)

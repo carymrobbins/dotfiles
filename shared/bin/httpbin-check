@@ -1,0 +1,33 @@
+#!/bin/bash
+
+interval=2
+
+while getopts ":n:" opt; do
+  case "$opt" in
+    n )
+      interval=$OPTARG
+      ;;
+    \? )
+      >&2 echo "Invalid option: $OPTARG"
+      exit 1
+      ;;
+    : )
+      >&2 echo "Invalid option: $OPTARG requires an argument"
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+while true; do
+  out=$(
+    printf 'Every %ss: curl httpbin.org | %s\n' "$interval" "$(date)"
+    curl -f -sS httpbin.org/post \
+      -Hcontent-type:application/json \
+      -d '{"res":"OK"}' \
+      -w 'Time: %{time_total}s\nStatus: ' \
+      -o >(jq -Rsr '. as $x | try (fromjson|.json.res) catch $x')
+  )
+  clear && echo "$out"
+  sleep "$interval"
+done

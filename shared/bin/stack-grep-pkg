@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: stack grep-pkg <pattern>"
+  exit 1
+fi
+
+exec stack ide targets 2>&1 | cut -d: -f1 | sort | uniq | grep "$1"

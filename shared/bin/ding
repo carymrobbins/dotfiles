@@ -1,0 +1,17 @@
+#!/bin/bash
+
+: ${DING_SOUND:=/System/Library/Sounds/Ping.aiff}
+
+n=${1:-3}
+t=${2:-0.2}
+
+go() {
+  afplay "$DING_SOUND" &
+}
+
+for ((i=1; i <= n; ++i)); do
+  go
+  if [ $i -ne $n ]; then
+    sleep $t
+  fi
+done

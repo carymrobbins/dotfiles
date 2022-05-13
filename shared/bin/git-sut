@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# sut = set-upstream-to
+
+local_branch=$(git rev-parse --abbrev-ref HEAD)
+if [ -z "$1" ]; then
+  remote=origin
+else
+  remote=$1
+fi
+if [ -z "$2" ]; then
+  remote_branch=$local_branch
+else
+  remote_branch=$2
+fi
+
+set -x
+exec git branch --set-upstream-to="$remote/$remote_branch" "$local_branch"

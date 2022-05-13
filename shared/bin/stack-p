@@ -1,0 +1,32 @@
+#!/bin/bash
+
+usage() {
+  echo "Opens package on hackage"
+  echo "Usage: $0 <package>"
+}
+
+if [ $# -ne 1 ]; then
+  >&2 usage
+  exit 1
+elif [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+if [ "$(uname)" = "Darwin" ]; then
+  OPEN=open
+else
+  OPEN=xdg-open
+fi
+
+package=$(
+  stack exec -- ghc-pkg list "$1" \
+    | grep '^ ' | grep -v 'no packages' | head -n1 | tr -d ' '
+)
+
+if [ -z "$package" ]; then
+  >&2 echo "Package not found: $1"
+  exit 1
+fi
+
+"$OPEN" "https://hackage.haskell.org/package/$package"

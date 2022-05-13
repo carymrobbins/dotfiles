@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ $# -ne 0 ]; then
+  echo "git branch delete interactive"
+  echo "Usage: $0"
+  exit
+fi
+
+branches=($(git branch | grep '^  ' | fzf -m))
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+for b in "${branches[@]}"; do
+  git branch -d "$b"
+  if [ $? -ne 0 ]; then
+    echo -n "Delete with git branch -D ? [y/N] "
+    read -n1 yn
+    echo
+    case "$yn" in
+      Y|y) git branch -D "$b";;
+      *) echo skipping;;
+    esac
+  fi
+done

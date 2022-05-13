@@ -1,0 +1,46 @@
+#!/bin/bash
+
+case $# in
+  1)
+    package=$1
+    if [ ! -f stack.yaml ]; then
+      >&2 echo \
+        "Could not find stack.yaml; please specify resolver" \
+        "manually or cd to a directory with a stack.yaml"
+      exit 1
+    fi
+    resolver=$(grep ^resolver: stack.yaml | cut -d: -f2- | tr -d ' ')
+    ;;
+  2)
+    resolver=$1
+    package=$2
+    ;;
+  *)
+    >&2 echo "Usage: $(basename "$0") <resolver> <package>"
+    exit 1
+    ;;
+esac
+
+if [ "$resolver" = 'global' ]; then
+  resolver=$(
+    grep ^resolver: "$HOME/.stack/global-project/stack.yaml" \
+      | head -n1 | cut -d: -f2 | tr -d ' '
+  )
+fi
+
+url="https://www.stackage.org/$resolver/package/$package"
+res=$(curl -sS -i "$url")
+
+response_status=$(head -n1 <<< "$res" | cut -d' ' -f2)
+
+case "$response_status" in
+  3**)
+    res=$(grep -i ^location: <<< "$res" | cut -d/ -f6)
+    echo "${res%%$'\r'}"
+    ;;
+  *)
+    >&2 echo "Unexpected HTTP response status: $response_status"
+    >&2 echo "URI: $url"
+    exit 1
+    ;;
+esac

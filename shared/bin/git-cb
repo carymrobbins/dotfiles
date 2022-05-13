@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+
+git commit -t <(printf '[%s] ' "$(git rev-parse --abbrev-ref HEAD)") "$@"

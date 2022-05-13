@@ -1,0 +1,17 @@
+#!/usr/bin/env runhaskell
+
+import Control.Monad
+import Data.Foldable
+import System.Environment
+
+main = do
+  args <- getArgs
+  when (length args < 2) $ error "Usage: adtj <top> <super> [ctors...]"
+  let top : super : ctors = args
+  putStr $ "  public static class " <> top
+  when (not $ null super) $ putStr $ " extends " <> super
+  putStrLn " {"
+  when (not $ null super) $ putStrLn $ "    " <> top <> "(@NotNull String name) { super(name); }"
+  putStrLn "  }"
+  for_ ctors $ \ctor -> do
+    putStrLn $ "  public static " <> top <> " " <> ctor <> " = new " <> top <> "(" <> show ctor <> ");"

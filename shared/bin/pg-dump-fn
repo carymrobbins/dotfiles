@@ -1,0 +1,22 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 <fn-name> [psql-opts...]"
+}
+
+if [ $# -eq 0 ]; then
+  >&2 usage
+  exit 1
+fi
+
+for arg in "$@"; do
+  if [ "$arg" = '--help' ]; then
+    usage
+    exit
+  fi
+done
+
+fn=$1
+shift
+
+psql -X "$@" <<< "\\sf $fn"

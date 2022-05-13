@@ -1,0 +1,13 @@
+#!/bin/bash
+
+: ${MISTLETOE_DIR=$HOME/build/mistletoe}
+
+if ! [ -d "$MISTLETOE_DIR" ]; then
+  >&2 echo "MISTLETOE_DIR not found, you can set it up like this -"
+  >&2 echo
+  >&2 echo "    % cd $(dirname "$MISTLETOE_DIR")"
+  >&2 echo "    % git clone https://github.com/miyuchina/mistletoe.git"
+  exit 1
+fi
+
+PYTHONPATH="$MISTLETOE_DIR" "$MISTLETOE_DIR/contrib/md2jira.py" "$@"
