@@ -69,6 +69,10 @@ map <C-n> :NERDTreeToggle<CR>
 inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
 "Redraw the screen, useful for fixing bad highlighting
 nmap <Leader>r :redraw!<CR>
+"fzf/ripgrep
+noremap <Leader>rg :Rg!
+noremap <Leader>frg :Files<CR>
+noremap <Leader>grg :GFiles<CR>
 
 "Also deals with vim-tmux-navigator
 fun! Automax()
@@ -134,6 +138,7 @@ au BufNewFile,BufRead *.json set filetype=json
 au BufNewFile,BufRead xmobarrc set filetype=haskell
 au BufNewFile,BufRead .ghci set filetype=haskell
 au BufNewFile,BufRead *.hsfiles set filetype=haskell
+au BufNewFile,BufRead *.haskell set filetype=haskell
 au BufNewFile,BufRead *.zsh-theme set filetype=zsh
 au BufNewFile,BufRead *.x set filetype=alex
 au BufNewFile,BufRead *.sh.sql set filetype=sh
@@ -174,6 +179,10 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=253
 
 let g:syntastic_python_checkers = ['pylint']
 let g:vim_json_syntax_conceal = 0
+let g:ctrlp_use_caching = 1
+let g:ctrlp_max_files = 1000000
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|stack-work)$'
+let g:ctrlp_cache_dir = '~/.cache/ctrlp'
 
 "Highlight trailing whitespace
 match Todo /\s\+$/

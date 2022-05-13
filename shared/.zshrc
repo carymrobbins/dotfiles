@@ -26,12 +26,23 @@ export TERM=xterm-256color
 # Disable virtualenv prompt
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
-# nvm junk, lazy load it
+# https://github.com/nvm-sh/nvm
+_nvm_loaded=
 nvm() {
-  echo "NVM is not enabled, enabling..."
-  source ~/.zsh-nvm/zsh-nvm.plugin.zsh
+  if [ -z "$_nvm_loaded" ]; then
+    _nvm_loaded=1
+    if [ -d "$HOME/.nvm" ]; then
+      export NVM_DIR="$HOME/.nvm"
+    fi
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh" --no-use
+  fi
   nvm "$@"
 }
+
+if [ -d "$HOME/.nvm" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh" --no-use
+fi
 
 # ZSH disabled features
 # The 'r' command isn't really used
@@ -51,28 +62,52 @@ alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
 
+with_ding() {
+  "$@"
+  local returncode=$?
+  if ! command -v ding >/dev/null || [ -n "$NO_DING" ]; then
+    return "$returncode"
+  fi
+  if [ -n "$DING_SOUND" ]; then
+    DING_SOUND="$DING_SOUND" ding
+  elif [ "$returncode" -ne 0 ]; then
+    DING_SOUND=/System/Library/Sounds/Sosumi.aiff ding
+  else
+    ding
+  fi
+  return "$returncode"
+}
+
 # Function for a magical stack
 s() {
+  case "$1" in
+    ghci|age|m|p|s) stack "$@";;
+    *) with_ding _magical_stack "$@";;
+  esac
+}
+
+_magical_stack() {
   local args=()
 
   # Disable saving output for now
-  #local saveOutput=1
-  local saveOutput=
+  #local save_output=1
+  local save_output=
+  local NO_DING=
 
   # Relative to pwd
-  local lastOutputFile=.stack-work/last-stack-output
+  local last_output_file=.stack-work/last-stack-output
 
   for arg in "$@"; do
-    if [ "$arg" = "--no-save-output" ]; then
-      saveOutput=
-    else
-      args+=("$arg")
-    fi
+    case "$arg" in
+      --no-save-output) save_output=;;
+      --no-ding) NO_DING=1;;
+      *) args+=("$arg");;
+    esac
   done
 
-  if [ $# -eq 1 ] && [[ $1 =~ ^l(ast)?$ ]] && [ -f "$lastOutputFile" ]; then
-    less -R "$lastOutputFile"
-  elif [ -z "$saveOutput" ]; then
+  if [ $# -eq 1 ] && [[ $1 =~ ^l(ast)?$ ]] && [ -f "$last_output_file" ]; then
+    less -R "$last_output_file"
+  elif [ -z "$save_output" ]; then
     stack "${args[@]}"
   # Detect custom stack commands, don't run these through our magic.
   elif command -v "stack-$1" >/dev/null; then
@@ -84,8 +119,8 @@ s() {
           printf "%% stack"
           printf ' %q' "${args[@]}"
           echo
-        ) > "$lastOutputFile"
-        stack --color always "$@" 2>&1 | tee -a "$lastOutputFile"
+        ) > "$last_output_file"
+        stack --color always "$@" 2>&1 | tee -a "$last_output_file"
       )
     else
         stack --color always "$@" 2>&1
@@ -93,7 +128,7 @@ s() {
     # stack doesn't return nonzero exit codes from test failures, so
     # detect test failures and return nonzero if applicable.
     if [ "$1" == 'test' ]; then
-      if grep 'Test suite failure for package' "$lastOutputFile" >/dev/null; then
+      if grep 'Test suite failure for package' "$last_output_file" >/dev/null; then
         return 1
       fi
     fi
@@ -185,7 +220,9 @@ auto_vnv() {
 gr() {
   (
     export TERM=xterm-color
-    if [ -f .javaversion ]; then
+    if [ -f .java_home ]; then
+      export JAVA_HOME=$(cat .java_home)
+    elif [ -f .javaversion ]; then
       export JAVA_HOME=$(/usr/libexec/java_home -v $(cat .javaversion))
     fi
     $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi) "$@"
@@ -327,6 +364,8 @@ fi
 
 source $ZSH/oh-my-zsh.sh
 
+source $HOME/.fonts/*.sh
+
 # User configuration
 
 # Use ~/.path to manage the PATH variable.  Each path should be on a new line.
@@ -365,7 +404,7 @@ stack_prompt_info() {
     # Quite a hack. Could use 'stack exec ghc -- --numeric-version' but stack might try
     # to download a bunch of stuff. I don't want to deal with that.
     ghc_version=$(
-      curl -sS 'https://www.stackage.org/lts-15.6' \
+      curl -sS "https://www.stackage.org/$resolver" \
         | grep -o '(ghc-[^)]*)' \
         | head -n1 \
         | tail -c+6 | rev | cut -c2- | rev
@@ -516,6 +555,9 @@ _psql_completions() {
 }
 compdef _psql_completions psql
 
+# https://github.com/nvm-sh/nvm
+[ -n "$NVM_DIR" -a -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+
 _ghc_completions() {
   if command -v ghc >/dev/null; then
     local opts=($(ghc --show-options))
@@ -523,8 +565,12 @@ _ghc_completions() {
   fi
 }
 compdef '_ghc_completions ghc'  ghc
-compdef '_ghc_completions ghci' ghci
+
+# This breaks file name completion; annoying...
+#compdef '_ghc_completions ghci' ghci
 
 if [ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+if [ -e /Users/crobbins/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/crobbins/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+[ -f "/Users/crobbins/.ghcup/env" ] && source "/Users/crobbins/.ghcup/env" # ghcup-env

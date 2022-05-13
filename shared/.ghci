@@ -37,6 +37,7 @@
 :m + Control.Applicative
 :m + Control.Monad
 :m + Data.Coerce
+:m + Data.Functor.Const
 :m + Data.Monoid
 :m + Data.Proxy
 :m + Data.String
@@ -55,6 +56,7 @@ import qualified Data.ByteString.Lazy as Lazy (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as Lazy.Char8
 import qualified Data.Char as Char
 import qualified Data.List as List
+import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as Text
@@ -218,3 +220,23 @@ tm = either error id . parseTimeLit . ("0:" ++)
 :def ncp (\_ -> pure ":set -interactive-print=print")
 -- color printing on by default
 :cp
+
+-- Like :m but imports qualified
+:def mq (Control.Applicative.pure . Data.List.intercalate "\n" . Data.List.map ("import qualified " <>) . Data.List.words)
+
+-- Evaluates a file. This can be useful when you want to load a scratch file
+-- in the context of an already loaded package.
+:{
+:def evalfile \filepath -> do
+  contents <- System.IO.readFile filepath
+  let isImportSection line =
+           null line
+        || "import " `Data.List.isPrefixOf` line
+        || "-- " `Data.List.isPrefixOf` line
+  let (importSection, body) = break (not . isImportSection) (lines contents)
+  pure $
+    unlines importSection
+      <> ":{\n"
+      <> unlines body
+      <> "\n:}"
+:}

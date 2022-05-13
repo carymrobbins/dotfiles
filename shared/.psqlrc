@@ -5,5 +5,5 @@
 \set PROMPT1 '%[%033[34;1m%][%/] \n𝔭𝔤 %[%033[0m%]%'
 -- \set PROMPT1 '%[%033[34;1m%][%/] \nᴘɢ %[%033[0m%]%'
 -- \set PROMPT1 '%[%033[34;1m%][%/] \n𝕡𝕘 %[%033[0m%]%'
-\set PROMPT2 '  '
-\set PROMPT3 '  '
+\set PROMPT2 '   '
+\set PROMPT3 '   '

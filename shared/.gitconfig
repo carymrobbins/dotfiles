@@ -50,6 +50,7 @@
 	pf = push --force-with-lease
         rh = rebase-helper
         rho = rebase-helper origin/master
+        size = count-objects -vH
         tt = !git tag | sort -V
 [core]
 	commentchar = "#"

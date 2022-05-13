@@ -1,11 +1,33 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]; then
-  >&2 echo "Usage: $0 <typename>"
-  exit 1
+usage() {
+  echo "Usage: $(basename "$0") <typename> [--no-git] [--files file1.hs file2.hs ...]"
+}
+
+pat=
+files=()
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --help) usage; exit;;
+    --no-git) no_git=1; shift;;
+    --files) shift; files=("$@"); break;;
+    *)
+      if [ -z "$pat" ]; then
+        pat=$1; shift; continue
+      fi
+      >&2 echo "Unexpected argument: $1"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+done
+
+regex="^(?:data|newtype|type|class (?:.*=\\>)?|type family) +($pat)\\b"
+
+if [ "${#files[@]}" -gt 0 ]; then
+  ack "$regex" "${files[@]}"
+elif [ -n "$no_git" ]; then
+  ack --haskell "$regex"
+else
+  git ls-files \*.hs | ack -x "$regex"
 fi
-
-pat=$1
-shift
-
-ack --haskell "^(?:data|newtype|type|class (?:.*=\\>)?|type family) +($pat)\\b" "$@"

@@ -1946,6 +1946,35 @@
         {
           "type": "basic",
           "from": {
+            "key_code": "0",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "0",
+              "modifiers": [
+                "right_command"
+              ]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$",
+                "^com\\.jetbrains\\.intellij$"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
             "key_code": "1",
             "modifiers": {
               "mandatory": [
@@ -2364,50 +2393,6 @@
           "to": [
             {
               "key_code": "k",
-              "modifiers": [
-                "right_shift",
-                "right_control",
-                "right_option",
-                "right_command"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "basic",
-          "from": {
-            "key_code": "spacebar",
-            "modifiers": {
-              "mandatory": [
-                "command"
-              ]
-            }
-          },
-          "to": [
-            {
-              "key_code": "spacebar",
-              "modifiers": [
-                "right_control",
-                "right_option",
-                "right_command"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "basic",
-          "from": {
-            "key_code": "spacebar",
-            "modifiers": {
-              "mandatory": [
-                "shift",
-                "command"
-              ]
-            }
-          },
-          "to": [
-            {
-              "key_code": "spacebar",
               "modifiers": [
                 "right_shift",
                 "right_control",
