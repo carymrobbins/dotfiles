@@ -1,0 +1,40 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $(basename "$0") <src.hs> [-o <exe>]"
+}
+
+if [ "$1" = '--help' ]; then
+  >&2 usage
+  exit
+fi
+
+case $# in
+  1)
+    src=$1
+    dst=${src%*.hs}
+    ;;
+  3)
+    if [ "$2" != '-o' ]; then
+      >&2 usage
+      exit 1
+    fi
+    src=$1
+    dst=$3
+    ;;
+  *)
+    >&2 usage
+    exit 1
+    ;;
+esac
+
+flags=$(
+  sed -n '/^{- stack/,$p' "$src" \
+    | sed -n '/^-}/q;p' \
+    | tail -n+2 \
+    | grep -v -- --install-ghc
+)
+
+set -x
+
+stack ghc $flags -- "$src" -o "$dst"
