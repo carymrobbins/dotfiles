@@ -20,6 +20,7 @@
 
 import Control.Applicative
 import Data.Foldable
+import System.Exit
 import Text.HTML.Scalpel
 
 import qualified Data.ByteString.Lazy as Lazy (ByteString)
@@ -43,7 +44,7 @@ main = do
       response <- HTTP.httpLbs request manager
       pure $ HTTP.responseBody response
   case scraper body of
-    Nothing -> error "Failed to scrape!"
+    Nothing -> exitFailure
     Just ss ->
       for_ (Lazy.Text.split (== ',') $ Lazy.Text.decodeUtf8 ss) \s -> do
         Lazy.Text.putStrLn $ Lazy.Text.strip s
