@@ -1,0 +1,128 @@
+#!/bin/bash
+
+DEFAULT_RESOLVER=18.27
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 <file>"
+  exit 1
+fi
+
+if [ -f "$1" ]; then
+  >&2 echo "Already exists: $1"
+  exit 1
+fi
+
+resolver=$(
+  grep '^resolver' "$HOME/.stack/global-project/stack.yaml" | head -n1 | cut -d: -f2- | tr -d ' '
+)
+if [ -z "$resolver" ]; then
+  resolver=$DEFAULT_RESOLVER
+fi
+
+cat > "$1" <<HERE
+#!/usr/bin/env stack
+{- stack
+  --resolver $resolver
+  --install-ghc runghc
+  --package aeson
+  --package containers
+  --package servant-server
+-}
+
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE TypeOperators #-}
+
+{-# OPTIONS_GHC -Wall #-}
+
+import Servant
+
+import Control.Monad.IO.Class (MonadIO(liftIO))
+import Data.Aeson (FromJSON, ToJSON)
+import Data.IORef (IORef, atomicModifyIORef', newIORef, readIORef)
+import Data.Map.Strict (Map)
+import GHC.Generics (Generic)
+import Network.Wai.Handler.Warp (run)
+import System.Environment (lookupEnv)
+import System.IO.Unsafe (unsafePerformIO)
+
+import qualified Data.Map.Strict as Map
+
+port :: Int
+port = unsafePerformIO do
+  flip fmap (lookupEnv "PORT") \\case
+    Just s -> read s :: Int
+    Nothing -> 8080
+{-# NOINLINE port #-}
+
+main :: IO ()
+main = do
+  putStrLn $ "$1 running on port " <> show port
+  run port app
+
+api :: Proxy API
+api = Proxy
+
+app :: Application
+app = serve api server
+
+db :: IORef (Map Int Foo)
+db = unsafePerformIO $ newIORef mempty
+{-# NOINLINE db #-}
+
+server :: Server API
+server =
+       getFoos
+  :<|> postFoo
+  :<|> getFoo
+  where
+  getFoos :: Handler FooList
+  getFoos = do
+    liftIO $ FooList . Map.elems <$> readIORef db
+
+  postFoo :: PostFoo -> Handler Foo
+  postFoo PostFoo { message } = do
+    liftIO $ atomicModifyIORef' db \\foos ->
+      let key = if null foos then 1 else fst (Map.findMin foos) + 1
+          foo = Foo { key, message }
+       in (Map.insert key foo foos, foo)
+
+  getFoo :: Int -> Handler Foo
+  getFoo key = do
+    foos <- liftIO $ readIORef db
+    case Map.lookup key foos of
+      Just foo -> pure foo
+      Nothing -> throwError err404
+
+
+type API =
+       "foos" :> Get '[JSON] FooList
+  :<|> "foos" :> ReqBody '[JSON] PostFoo :> Post '[JSON] Foo
+  :<|> "foo" :> Capture "foo-id" Int :> Get '[JSON] Foo
+
+data Foo = Foo
+  { key :: Int
+  , message :: String
+  } deriving stock (Generic)
+    deriving anyclass (ToJSON, FromJSON)
+
+data FooList = FooList
+  { items :: [Foo]
+  } deriving stock (Generic)
+    deriving anyclass (ToJSON, FromJSON)
+
+newtype PostFoo = PostFoo
+  { message :: String
+  } deriving stock (Generic)
+    deriving anyclass (ToJSON, FromJSON)
+HERE
+
+chmod +x "$1"
+
+"$EDITOR" "$1"

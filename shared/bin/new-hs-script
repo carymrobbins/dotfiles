@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_RESOLVER=15.6
+DEFAULT_RESOLVER=18.27
 
 if [ $# -ne 1 ]; then
   >&2 echo "Usage: $0 <file>"
