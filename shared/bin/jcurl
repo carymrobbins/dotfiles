@@ -1,6 +1,70 @@
 #!/bin/bash
 
-curl "$@" \
-  -Hcontent-type:application/json \
-  -w "HTTP/%{http_version} %{http_code}\n" \
-  -o >(jq -Rsr '. as $x | try fromjson catch $x')
+set -e
+
+http_version=
+http_status_code=
+http_status_description=
+in_headers=
+headers=()
+headers_length=0
+body=
+line=
+while IFS= read -r line || [ -n "$line" ]; do
+  line=${line%$'\r'}
+  if [ -z "$http_version" ]; then
+    parts=($line)
+    if ! [[ ${parts[0]} =~ ^HTTP/ ]]; then
+      >&2 echo "Expected '^HTTP/', got: ${parts[0]}"
+      exit 1
+    fi
+    http_version=${parts[0]#HTTP/}
+    http_status_code=${parts[1]}
+    http_status_description=${parts[@]:2}
+    in_headers=1
+    continue
+  fi
+  if [ -n "$in_headers" ]; then
+    if [ -z "$line" ]; then
+      in_headers=
+      continue
+    fi
+    headers+=(
+      --arg "header_key_$headers_length" "${line%%:*}"
+      --arg "header_value_$headers_length" "${line#*: }"
+    )
+    ((++headers_length))
+    continue
+  fi
+  body+=$line
+done < <(curl -sS -i -Hcontent-type:application/json "$@")
+
+if [ "$headers_length" -eq 0 ]; then
+  headers_template='{}'
+else
+  headers_template='{'
+  for ((i=0; i < headers_length; ++i)); do
+    if [ "$i" -gt 0 ]; then
+      headers_template+=,
+    fi
+    headers_template+="(\$header_key_$i|ascii_downcase): \$header_value_$i"
+  done
+  headers_template+='}'
+fi
+
+jq_template='{
+  "http_version": $http_version,
+  "status": {
+    "code": $http_status_code|tonumber,
+    "description": $http_status_description
+  },
+  "headers": '$headers_template',
+  "body": (try ($body|fromjson) catch $body)
+}'
+
+jq "${headers[@]}" \
+  --arg http_version "$http_version" \
+  --arg http_status_code "$http_status_code" \
+  --arg http_status_description "$http_status_description" \
+  --arg body "$body" \
+  -n "$jq_template"
