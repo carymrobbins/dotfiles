@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+
+if [ "$1" = '--help' ]; then
+  echo "Sorts packages in order of interdependency (least to greatest)"
+  echo
+  echo "Useful when making refactorings to a set of packages and you need"
+  echo "to know the best place to start"
+  echo
+  echo "Usage: $0 [packages...]"
+  exit
+fi
+
+ps=("$@")
+
+while true; do
+  if [ "${#ps[@]}" -eq 1 ]; then
+    echo "${ps[0]}"
+    break
+  fi
+  for ((i=0; i < ${#ps[@]}; ++i)); do
+    p=${ps[$i]}
+    pat=
+    for d in "${ps[@]}"; do
+      if [ "$d" = "$p" ]; then
+        continue
+      fi
+      if [ -z "$pat" ]; then
+        pat+=$d
+        continue
+      fi
+      pat+="|$d"
+    done
+    if ! stack ls dependencies --test --bench "$p" \
+          | cut -d' ' -f1 | grep -E "$pat" \
+          >/dev/null; then
+      echo "$p"
+      unset 'ps[i]'
+      ps=("${ps[@]}")
+      break
+    fi
+  done
+done
