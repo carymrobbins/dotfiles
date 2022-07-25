@@ -1,0 +1,259 @@
+#!/bin/bash
+
+set -e
+
+prop_mapping=(
+  --author=author
+  --category=category
+  --maintainer=maintainer
+  --oss-url=oss_url
+  --oss-user=oss_user
+  --owner=owner
+  --synopsis=synopsis
+  --year=year
+)
+
+usage() {
+  echo "Usage: $0 <project-name> [options]"
+  echo
+  echo "Options:"
+  (
+    echo '  --subproject'
+    for x in "${prop_mapping[@]}"; do
+      k=${x%%=*}
+      echo "  $k"
+    done
+  ) | sort
+}
+
+if [ "$1" = '--help' ]; then
+  usage
+  exit
+fi
+
+if [ $# -eq 0 ]; then
+  >&2 usage
+  exit 1
+fi
+
+assert_valid_project_name() {
+  if ! [[ $1 =~ ^[a-z]([a-z0-9\-])*$ ]]; then
+    >&2 echo "Invalid project name: $1"
+    exit 1
+  fi
+}
+
+project_name=$1
+assert_valid_project_name "$project_name"
+shift
+
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --subproject)
+      if [ -z "$2" ]; then
+        >&2 echo "Missing value for $1"
+        exit 1
+      fi
+      assert_valid_project_name "$2"
+      subprojects+=("$2")
+      ;;
+    *)
+      found=
+      for x in "${prop_mapping[@]}"; do
+        k=${x%%=*}
+        v=${x##*=}
+        if [ "$1" = "$k" ]; then
+          if [ -z "$2" ]; then
+            >&2 echo "Missing value for $1"
+            exit 1
+          fi
+          eval "$v=\"$2\""
+          found=1
+          shift
+          shift
+          break
+        fi
+      done
+      if [ -z "$found" ]; then
+        >&2 echo "Unexpected argument: $1"
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+TODO='{{{TODO}}}'
+: ${category:="$TODO"}
+: ${oss_url:=https://github.com/$oss_user/$project_name}
+: ${synopsis:="$TODO"}
+: ${year:=$(date +%Y)}
+
+missing_arguments=()
+for x in "${prop_mapping[@]}"; do
+  k=${x%%=*}
+  v=${x##*=}
+  value=$(eval echo "\$$v")
+  [ -n "$value" ] || missing_arguments+=("$k")
+done
+if [ ${#missing_arguments[@]} -gt 0 ]; then
+  >&2 echo "Missing value for arguments:"
+  for k in "${missing_arguments[@]}"; do
+    >&2 echo "  $k"
+  done
+  exit 1
+fi
+
+if ! [[ $maintainer =~ @ ]]; then
+  >&2 echo "Maintainer should be an email address"
+  exit 1
+fi
+
+if [ ${#subprojects[@]} -eq 0 ]; then
+  subprojects=("$project_name")
+fi
+
+mkdir "$project_name"
+cd "$project_name"
+
+cat <<END_README > README.md
+# $project_name
+
+TODO
+END_README
+
+for subproject in "${subprojects[@]}"; do
+
+cat <<END_README >> README.md
+
+## $subproject [![$subproject](https://img.shields.io/hackage/v/$subproject.svg?logo=haskell&color=blueviolet)](https://hackage.haskell.org/package/$subproject)
+
+TODO
+END_README
+done
+
+cat <<END_LICENSE > LICENSE
+Copyright $owner (c) $year
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of $owner nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+END_LICENSE
+
+cat <<END_CABAL_PROJECT > cabal.project
+packages: */*.cabal
+END_CABAL_PROJECT
+
+for subproject in "${subprojects[@]}"; do
+
+mkdir "$subproject"
+cd "$subproject"
+
+ln -s ../LICENSE
+ln -s ../README.md
+
+mkdir src test
+
+cat <<END_CHANGELOG > CHANGELOG.md
+# Changelog for $subproject
+
+## 0.0.0.0
+
+* First release
+END_CHANGELOG
+
+cat <<END_CABAL > "$subproject.cabal"
+cabal-version: 1.12
+
+name:           $subproject
+version:        0.0.0.0
+description:    Please see the README on GitHub at <$oss_url#readme>
+synopsis:       {{{TODO}}}
+category:       {{{TODO}}}
+homepage:       $oss_url#readme
+bug-reports:    $oss_url/issues
+author:         $author
+maintainer:     $maintainer
+copyright:      $year $owner
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: $oss_url
+
+library
+  exposed-modules:
+  other-modules:
+      Paths_$(echo "$subproject" | tr - _)
+  hs-source-dirs: src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+  ghc-options:
+    -Wall -fwarn-tabs -Wincomplete-uni-patterns
+    -Werror=missing-home-modules -eventlog +RTS -A32M -RTS
+
+test-suite $subproject-test
+  type: exitcode-stdio-1.0
+  main-is: $subproject-test.hs
+  hs-source-dirs: test
+  ghc-options:
+    -Wall -fwarn-tabs -Wincomplete-uni-patterns
+    -Werror=missing-home-modules -eventlog +RTS -A32M -RTS
+    -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hspec
+    , $subproject
+  default-language: Haskell2010
+END_CABAL
+
+cat <<END_TEST_HS > "test/$subproject-test.hs"
+{-# LANGUAGE BlockArguments #-}
+module Main where
+
+import Test.Hspec (expectationFailure, describe, hspec, it)
+
+main :: IO ()
+main = hspec do
+  describe "TODO" do
+    it "TODO" do
+      expectationFailure "TODO"
+END_TEST_HS
+
+cd ..
+
+done
+
+cd ..
+
+tree -F "$project_name"
