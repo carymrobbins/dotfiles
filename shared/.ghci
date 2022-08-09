@@ -69,6 +69,7 @@ import qualified GHC.TypeLits
 :set -XDerivingStrategies
 :set -XFlexibleContexts
 :set -XGeneralizedNewtypeDeriving
+:set -XNumericUnderscores
 :set -XTypeApplications
 
 -- Load "default" extensions with a macro

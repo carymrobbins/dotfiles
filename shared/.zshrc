@@ -223,7 +223,12 @@ gr() {
     if [ -f .java_home ]; then
       export JAVA_HOME=$(cat .java_home)
     elif [ -f .javaversion ]; then
-      export JAVA_HOME=$(/usr/libexec/java_home -v $(cat .javaversion))
+      local os=$(uname)
+      local javaversion=$(cat .javaversion)
+      case os in
+        Darwin) export JAVA_HOME=$(/usr/libexec/java_home -v "$javaversion");;
+        *) export JAVA_HOME="$javaversion";;
+      esac
     fi
     $(if [ -f ./gradlew ]; then echo ./gradlew; else echo gradle; fi) "$@"
   )

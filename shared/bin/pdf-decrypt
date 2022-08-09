@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# This requires ghostscript.  It can probably be installed via your package manager.
-# e.g. `brew install ghostscript`
+set -e
 
-if [ $# -lt 2 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+: ${PDF_CRYPT_BACKEND:=qpdf}
+
+if [ $# -eq 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   cat <<HERE
-Usage: $0 <file.pdf> [-p | <password>]
+Usage: $0 <file.pdf> [--password password | -p] [-b backend]
 
-Creates a new file named 'file.pdf-decrypted.pdf'
+Creates a new file named 'file.decrypted.pdf'
 
 Use -p instead of <password> to input it with a password prompt.
 Omit the password argument to decrypt without a password.
@@ -15,30 +16,74 @@ HERE
   exit 1
 fi
 
-args=(
-  -q
-  -dNOPAUSE
-  -dBATCH
-  -sDEVICE=pdfwrite
-  -sOutputFile="$1-decrypted.pdf"
-)
-
-if [ -n "$2" ]; then
-  case "$2" in
+in_file=$1
+out_file=${in_file%.pdf}-decrypted.pdf
+password=
+shift
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --password)
+      password=$2
+      shift; shift;;
     -p)
       read -p "PDF Password: " -s password
       echo
+      shift
       ;;
+    -b)
+      PDF_CRYPT_BACKEND=$2
+      shift; shift;;
     *)
-      password=$2
+      >&2 echo "Bad argment: $1"
+      exit 1
   esac
-  args+=("-sPDFPassword=$password")
-fi
+done
 
-args+=(
-  -c
-  .setpdfwrite
-  -f "$1"
-)
+main() {
+  case "$PDF_CRYPT_BACKEND" in
+    gs) run_gs;;
+    pdftk) run_pdftk;;
+    qpdf) run_qpdf;;
+    *)
+      >&2 echo "Unknown PDF_CRYPT_BACKEND: $PDF_CRYPT_BACKEND"
+      exit 1
+  esac
+}
 
-gs "${args[@]}"
+run_gs() {
+  args=(
+    -q
+    -dNOPAUSE
+    -dBATCH
+    -sDEVICE=pdfwrite
+    -sOutputFile="$out_file"
+  )
+
+  if [ -n "$password" ]; then
+    args+=("-sPDFPassword=$(get_password)")
+  fi
+
+  args+=(-c .setpdfwrite -f "$1")
+
+  gs "${args[@]}"
+}
+
+run_pdftk() {
+  args=("$in_file")
+  if [ -n "$password" ]; then
+    args+=(input_pw "$password")
+  fi
+  args+=(output "$out_file")
+  pdftk "${args[@]}"
+}
+
+run_qpdf() {
+  args=()
+  if [ -n "$password" ]; then
+    args+=(--password="$password")
+  fi
+  args+=(--decrypt "$in_file" "$out_file")
+  qpdf "${args[@]}"
+}
+
+main
