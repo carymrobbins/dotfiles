@@ -4,6 +4,10 @@
 gnome-screensaver-command -l
 
 
-# Turn off the screen
 sleep 1
-xset dpms force off
+
+# Turn off the screen
+# xset dpms force off
+
+# Suspend the OS
+systemctl suspend

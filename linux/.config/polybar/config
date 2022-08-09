@@ -392,11 +392,11 @@ ramp-capacity-4 = %{F#3bd04a}%{F-}
 ;
 
 ; Disabled color changes when charging
-;animation-charging-0 = %{F#e86742}%{F-}
-;animation-charging-1 = %{F#e18d32}%{F-}
-;animation-charging-2 = %{F#e1ca32}%{F-}
-;animation-charging-3 = %{F#80b44f}%{F-}
-;animation-charging-4 = %{F#3bd04a}%{F-}
+; animation-charging-0 = %{F#e86742}%{F-}
+; animation-charging-1 = %{F#e18d32}%{F-}
+; animation-charging-2 = %{F#e1ca32}%{F-}
+; animation-charging-3 = %{F#80b44f}%{F-}
+; animation-charging-4 = %{F#3bd04a}%{F-}
 animation-charging-0 = %{F#3bd04a}%{F-}
 animation-charging-1 = %{F#3bd04a}%{F-}
 animation-charging-2 = %{F#3bd04a}%{F-}

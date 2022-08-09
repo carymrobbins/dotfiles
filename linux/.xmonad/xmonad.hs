@@ -43,9 +43,8 @@ myModKey = mod4Mask
 -- 2 monitors
 myScreenKeys = zip [xK_w, xK_e, xK_r, xK_d] [1,0,1,0]
 
-myWorkspaces@
-  [ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5,   ws6, ws7, ws8, ws9 ] =
-  [ prompt,   rocket,   earth,    chats,    cal,   "6", "7", "8", "9" ]
+myWorkspaces@[ wsTerm,   wsDev,    wsBrowse, wsChat,   ws5,   ws6, ws7, ws8, ws9 ] =
+             [ prompt,   rocket,   earth,    chats,    cal,   "6", "7", "8", "9" ]
   where
   -- prompt = "\xf120" -- FontAwesome
   prompt = "\xe695" -- icomoon

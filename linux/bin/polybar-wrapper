@@ -13,13 +13,13 @@ is_mirroring_std() {
 
 primary_monitor=$(xrandr | grep primary | cut -d ' ' -f1)
 if [ -n "$primary_monitor" ]; then
-  # I used to check && is_mirroring_4k here in the if condition but
-  # I don't remember why. Removing it and just relying on $NOSCALE
-  # seems to work more reliably for both when we are mirroring 4k and
-  # when we are just using the built-in display.
   if [ -z "$NOSCALE" ]; then
     # For some reason, telling polybar to use DP-1 doesn't work.
-    export MONITOR=eDP-1
+    if is_mirroring_4k; then
+      export MONITOR=eDP-1
+    else
+      export MONITOR=$primary_monitor
+    fi
     export HEIGHT=54
     # Used in the FONT_0-5 vars below.
     STD_FONT_SIZE=22
@@ -42,4 +42,5 @@ if [ -n "$primary_monitor" ]; then
   export FONT_4="FontAwesome:size=${STD_FONT_SIZE};1"
   export FONT_5="icomoon:style=Regular:size=${ICOMOON_FONT_SIZE};1"
 fi
+echo "monitor=$MONITOR"
 exec polybar "$@"

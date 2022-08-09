@@ -7,11 +7,9 @@ wallpaper=$HOME/dotfiles/linux/resources/wallpaper
 # Key repeat: ms delay, cps
 xset r rate 150 50
 
-# TODO: Rather call this manually
-#xkb-reload
-
 # Enable natural scrolling and two-finger right-click.
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Natural Scrolling Enabled' 1
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Click Method Enabled' 0 1
 # Increase pointer speed
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Accel Speed' 0.75
+xinput set-prop 'Mitsumi Electric Apple Optical USB Mouse' 'libinput Accel Speed' 1.00

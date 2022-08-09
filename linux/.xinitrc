@@ -1,3 +1,7 @@
+# https://wiki.archlinux.org/title/NVIDIA_Optimus#Available_methods
+xrandr --setprovideroutputsource modesetting NVIDIA-0
+xrandr --auto
+
 # Run with `NOSCALE=1 startx` to disable hidpi scaling
 
 if [ -z "$NOSCALE" ]; then
@@ -13,6 +17,7 @@ xleds screen -set 5%
 
 # Load our x settings (xset, xkb, xinput, etc.)
 reload-x-settings
+xkb-reload
 
 # TODO: wm.target doesn't seem to work
 # systemctl --user start wm.target

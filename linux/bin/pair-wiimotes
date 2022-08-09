@@ -11,7 +11,7 @@ sudo true
 # % bluetoothctl devices | grep Nintendo
 wiimote_ids=(
   '00:1A:E9:E5:E3:DF'
-  'E0:E7:51:B5:D2:57'
+  #'E0:E7:51:B5:D2:57'
 )
 
 if [ "$1" = '-d' ]; then
