@@ -51,6 +51,7 @@ SHARED_FILES=(
   .vim
   .vimrc
   .zshrc
+  .fonts
 )
 
 LINUX_FILES=(
