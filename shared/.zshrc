@@ -367,10 +367,6 @@ if [ "$(uname -s)" = "Darwin" ]; then
   plugins+=(brew)
 fi
 
-source $ZSH/oh-my-zsh.sh
-
-source $HOME/.fonts/*.sh
-
 # User configuration
 
 # Use ~/.path to manage the PATH variable.  Each path should be on a new line.
@@ -451,6 +447,10 @@ stack_find_resolver_() {
   # Parse between the ':' and before the '#', if applicable.
   grep '^resolver' "$1" | cut -d: -f2 | cut -d'#' -f1 | xargs
 }
+
+source "$ZSH/oh-my-zsh.sh"
+
+[ ! -f "$HOME/.fonts" ] || source "$HOME/.fonts/*.sh"
 
 # Allow end-of-line comments (i.e. `echo foo # bar` should echo "foo", not "foo # bar")
 setopt interactivecomments
