@@ -1,0 +1,77 @@
+#!/usr/bin/env zsh
+
+me=$(basename "$0")
+
+if [ "$1" = '--help' ]; then
+  ghc=$(ghcup run -q -- ghc --numeric-version)
+  [ -n "$ghc" ] || ghc=9.2.3
+  cabal=$(ghcup run -q -- cabal --numeric-version)
+  [ -n "$cabal" ] || cabal=3.6.2.0
+  cat <<HERE
+Usage: $me [command]
+
+Reads a local .ghcup.yaml file to determine the environment to run with using ghcup.
+
+You can create an initial .ghcup.yaml with: $me --init
+HERE
+  exit
+fi
+
+if [ -n "$GHCUP_SHELL" ]; then
+  >&2 echo "Already in a ghcup shell!"
+  exit 1
+fi
+
+if ! command -v ghcup >/dev/null; then
+  >&2 echo "The $me tool requires ghcup to be installed but could not be found"
+  exit 1
+fi
+
+if [ $# -eq 1 ] && [ "$1" = '--init' ]; then
+  if [ -f .ghcup.yaml ]; then
+    >&2 echo '.ghcup.yaml already exists'
+    exit 1
+  fi
+  ghc=$(ghcup run -q -- ghc --numeric-version)
+  cabal=$(ghcup run -q -- cabal --numeric-version)
+  cat <<HERE
+ghc: $ghc
+cabal: $cabal
+HERE
+  exit
+fi
+
+if ! [ -f .ghcup.yaml ]; then
+  >&2 echo "No .ghcup.yaml found"
+  exit 1
+fi
+
+args=()
+
+export GHCUP_GHC_VERSION=$(grep ^ghc: .ghcup.yaml | cut -d: -f2 | tr -d ' ')
+if [ -n "$GHCUP_GHC_VERSION" ]; then
+  args+=(--ghc "$GHCUP_GHC_VERSION")
+else
+  export GHCUP_GHC_VERSION=$(ghcup run -q -- ghc --numeric-version)
+fi
+
+export GHCUP_CABAL_VERSION=$(grep ^cabal: .ghcup.yaml | cut -d: -f2 | tr -d ' ')
+if [ -n "$GHCUP_CABAL_VERSION" ]; then
+  args+=(--cabal "$GHCUP_CABAL_VERSION")
+else
+  export GHCUP_CABAL_VERSION=$(ghcup run -q -- cabal --numeric-version)
+fi
+
+if [ $# -eq 0 ]; then
+  >&2 echo -n "Starting ghcup shell ghc-${GHCUP_GHC_VERSION} cabal-${GHCUP_CABAL_VERSION}"
+  if [ ${#args[@]} -eq 0 ]; then
+    echo
+  else
+    echo " with ${args[@]}"
+  fi
+  args+=(-- zsh)
+else
+  args+=(-- "$@")
+fi
+
+GHCUP_SHELL=1 ghcup run -q "${args[@]}"
