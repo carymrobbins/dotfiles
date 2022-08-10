@@ -13,10 +13,12 @@ elif [ "$1" = '--help' ]; then
   exit
 fi
 
-if [ "$(uname)" = "Darwin" ]; then
-  OPEN=open
-else
-  OPEN=xdg-open
+if [ -z "$OPEN" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    OPEN=open
+  else
+    OPEN=xdg-open
+  fi
 fi
 
 module=$(rev <<< "$1" | cut -d. -f2- | rev)

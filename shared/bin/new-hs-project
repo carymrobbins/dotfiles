@@ -168,6 +168,63 @@ cat <<END_CABAL_PROJECT > cabal.project
 packages: */*.cabal
 END_CABAL_PROJECT
 
+cat <<END_GITIGNORE > .gitignore
+*.swp
+dist-newstyle/
+END_GITIGNORE
+
+mkdir -p .github/workflows
+
+cat <<'END_GITHUB_WORKFLOWS_BUILD_YML' > .github/workflows/build.yml
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CONFIG: "--enable-tests --enable-benchmarks"
+
+    strategy:
+      matrix:
+        ghc: ['8.10.7']
+        cabal: ['3.6.0.0']
+        os: [ubuntu-latest]
+
+    name: ghc-${{ matrix.ghc }} cabal-${{ matrix.cabal }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: haskell/actions/setup@v1
+        id: setup-haskell-cabal
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: ${{ matrix.cabal }}
+
+      - run: cabal v2-update
+      - run: cabal v2-freeze $CONFIG
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
+            dist-newstyle
+          key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.ghc }}-
+
+      - run: cabal v2-build all $CONFIG
+      - run: cabal v2-test all $CONFIG
+      - run: cabal v2-haddock all $CONFIG
+      - run: cabal v2-sdist all
+END_GITHUB_WORKFLOWS_BUILD_YML
+
 for subproject in "${subprojects[@]}"; do
 
 mkdir "$subproject"

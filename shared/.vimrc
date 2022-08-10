@@ -203,12 +203,19 @@ let g:haskell_indent_disable=1
 
 " Use :TrimWhitespace to...trim the trailing whitespace.
 fun! TrimWhitespace()
-    let l:save = winsaveview()
-    %s/\s\+$//e
-    call winrestview(l:save)
+  let l:save = winsaveview()
+  %s/\s\+$//e
+  call winrestview(l:save)
 endfun
 
 command! TrimWhitespace call TrimWhitespace()
+
+" Use :Findhs to find haskell identifiers
+fun! Findhs(name)
+  execute ':Rg! ^ *' . a:name . ' *(::|$)'
+endfun
+command! -nargs=1 Findhs call Findhs(<f-args>)
+noremap <Leader>hs :Findhs<Space>
 
 " Color test: Save this file, then enter ':so %'
 " Then enter one of following commands:

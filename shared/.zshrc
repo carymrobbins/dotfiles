@@ -386,6 +386,13 @@ venv_prompt_info() {
 }
 
 stack_prompt_info() {
+  if [ -n "$GHCUP_SHELL" ]; then
+    echo -n "${ZSH_THEME_GHCUP_PROMPT_PREFIX}"
+    echo -n "ɢʜᴄ-${GHCUP_GHC_VERSION} "
+    echo -n "ᴄᴀʙᴀʟ-${GHCUP_CABAL_VERSION}"
+    echo -n "${ZSH_THEME_GHCUP_PROMPT_SUFFIX} "
+    return
+  fi
   if [ ! -f stack.yaml ]; then
     return
   fi
@@ -420,7 +427,10 @@ stack_prompt_info() {
     pretty_ghc_version=" ɢʜᴄ-$ghc_version"
   fi
 
-  echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}${pretty_resolver}${pretty_ghc_version}${ZSH_THEME_STACK_PROMPT_SUFFIX} "
+  echo -n "${ZSH_THEME_STACK_PROMPT_PREFIX}"
+  echo -n "${pretty_resolver}"
+  echo -n "${pretty_ghc_version}"
+  echo -n "${ZSH_THEME_STACK_PROMPT_SUFFIX} "
 }
 
 stack_find_resolver() {
