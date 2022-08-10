@@ -1,6 +1,6 @@
 #!/usr/bin/env stack
 {- stack
-  --resolver lts-17.10
+  --resolver lts-18.27
   --install-ghc runghc
   --package karabiner-config-0.0.0.0
 -}
@@ -219,5 +219,5 @@ root = Root "Linux Compat" [rule]
   iterm = litPat "com.googlecode.iterm2"
   macterm = litPat "com.apple.Terminal"
   -- chrome = litPat "com.google.Chrome"
-  intellij = litPat "com.jetbrains.intellij"
+  intellij = "com.jetbrains.intellij.*"
   slack = litPat "com.tinyspeck.slackmacgap"
