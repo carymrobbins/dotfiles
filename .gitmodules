@@ -13,66 +13,6 @@
 [submodule "shared/.vim/bundle/ctrlp.vim"]
 	path = shared/.vim/bundle/ctrlp.vim
 	url = https://github.com/kien/ctrlp.vim
-[submodule "shared/.vim/bundle/purescript-vim"]
-	path = shared/.vim/bundle/purescript-vim
-	url = https://github.com/raichoo/purescript-vim.git
-[submodule "shared/.vim/bundle/vim-fugitive"]
-	path = shared/.vim/bundle/vim-fugitive
-	url = https://github.com/tpope/vim-fugitive
-[submodule "shared/.vim/bundle/vim-markdown"]
-	path = shared/.vim/bundle/vim-markdown
-	url = https://github.com/plasticboy/vim-markdown.git
-[submodule "shared/.vim/bundle/vim-sbt"]
-	path = shared/.vim/bundle/vim-sbt
-	url = https://github.com/derekwyatt/vim-sbt
-[submodule "shared/.vim/bundle/vim-scala"]
-	path = shared/.vim/bundle/vim-scala
-	url = https://github.com/derekwyatt/vim-scala
-[submodule "shared/.vim/bundle/vim-tmux-navigator"]
-	path = shared/.vim/bundle/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator
-[submodule "shared/.vim/bundle/vim-frege-syntax"]
-	path = shared/.vim/bundle/vim-frege-syntax
-	url = https://github.com/melrief/vim-frege-syntax
-[submodule "shared/.vim/bundle/vim-syntax-extra"]
-	path = shared/.vim/bundle/vim-syntax-extra
-	url = https://github.com/justinmk/vim-syntax-extra
-[submodule "shared/.vim/bundle/vim-colors-solarized"]
-	path = shared/.vim/bundle/vim-colors-solarized
-	url = https://github.com/altercation/vim-colors-solarized
-[submodule "shared/.vim/bundle/haskell-vim"]
-	path = shared/.vim/bundle/haskell-vim
-	url = https://github.com/neovimhaskell/haskell-vim.git
-[submodule "shared/.vim/bundle/nerdtree"]
-	path = shared/.vim/bundle/nerdtree
-	url = https://github.com/scrooloose/nerdtree
-[submodule "shared/.vim/bundle/hexmode"]
-	path = shared/.vim/bundle/hexmode
-	url = https://github.com/fidian/hexmode.git
-[submodule "shared/.vim/bundle/vim-csharp"]
-	path = shared/.vim/bundle/vim-csharp
-	url = git://github.com/OrangeT/vim-csharp.git
 [submodule "linux/.xmonad/xmonad-dbus"]
 	path = linux/.xmonad/xmonad-dbus
 	url = git@github.com:carymrobbins/xmonad-dbus.git
-[submodule "shared/.vim/bundle/vim-lastplace"]
-	path = shared/.vim/bundle/vim-lastplace
-	url = https://github.com/farmergreg/vim-lastplace
-[submodule "shared/.vim/swift.vim"]
-	path = shared/.vim/swift.vim
-	url = https://github.com/keith/swift.vim
-[submodule "shared/.vim/bundle/rust.vim"]
-	path = shared/.vim/bundle/rust.vim
-	url = https://github.com/rust-lang/rust.vim
-[submodule "shared/.vim/bundle/typescript-vim"]
-	path = shared/.vim/bundle/typescript-vim
-	url = https://github.com/leafgarland/typescript-vim
-[submodule "shared/.vim/bundle/vim-json"]
-	path = shared/.vim/bundle/vim-json
-	url = https://github.com/elzr/vim-json
-[submodule "shared/.vim/bundle/vim-indent-guides"]
-	path = shared/.vim/bundle/vim-indent-guides
-	url = git://github.com/nathanaelkane/vim-indent-guides.git
-[submodule "shared/.vim/bundle/fzf.vim"]
-	path = shared/.vim/bundle/fzf.vim
-	url = https://github.com/junegunn/fzf.vim

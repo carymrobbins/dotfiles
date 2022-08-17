@@ -1,0 +1,81 @@
+#!/bin/bash
+
+MY_DIR=$(readlink -f "$(dirname "$0")")
+PLUGINS_FILE=$MY_DIR/plugins.txt
+START_DIR=$MY_DIR/start
+
+usage() {
+  cat <<HERE
+My stupid script for managing vim plugins
+
+Usage: $0 <command>
+
+Commands:
+  dump        Dumps current plugin list to a file
+  load        Loads current plugin list from a file
+HERE
+}
+
+main() {
+  if [ $# -eq 0 ]; then
+    >&2 usage
+    exit 1
+  fi
+
+  case "$1" in
+    --help)
+      usage
+      exit
+      ;;
+    dump)
+      shift
+      go_dump "$@"
+      exit
+      ;;
+    load)
+      shift
+      go_load "$@"
+      exit
+      ;;
+    *)
+      >&2 echo "Unsupported command: $1"
+      >&2 usage
+      exit 1
+      ;;
+  esac
+}
+
+go_dump() {
+  if [ $# -ne 0 ]; then
+    >&2 echo "Unsupported argument: $1"
+  fi
+  if [ -f "$PLUGINS_FILE" ]; then
+    >&2 echo "$PLUGINS_FILE exists, please delete it first"
+    exit 1
+  fi
+  find "$START_DIR"/* -type d -maxdepth 0 -print0 \
+    | while IFS= read -r -d ''; do
+        cd "$REPLY"
+        git remote get-url origin >> "$PLUGINS_FILE"
+      done
+}
+
+go_load() {
+  if [ $# -ne 0 ]; then
+    >&2 echo "Unsupported argument: $1"
+  fi
+  if [ ! -f "$PLUGINS_FILE" ]; then
+    >&2 echo "$PLUGINS_FILE does not exist"
+    exit 1
+  fi
+  mkdir -p "$START_DIR"
+  cd "$START_DIR"
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    name=$(basename "$line" | sed 's/\.git$//')
+    if [ ! -d "$name" ]; then
+      git clone "$line"
+    fi
+  done < "$PLUGINS_FILE"
+}
+
+main "$@"

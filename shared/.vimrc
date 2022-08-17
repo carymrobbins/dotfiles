@@ -1,5 +1,3 @@
-execute pathogen#infect()
-
 source ~/dotfiles/shared/common.vimrc
 
 syntax on
