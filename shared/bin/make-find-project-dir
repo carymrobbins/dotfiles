@@ -14,4 +14,5 @@ cp $(dirname $0)/find-project-dir.hs .
 
 "${GHC[@]}" --make -dynamic find-project-dir
 
+mkdir -p ~/bin
 cp find-project-dir ~/bin
