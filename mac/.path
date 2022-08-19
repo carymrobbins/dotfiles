@@ -11,4 +11,4 @@ $HOME/.node/bin
 $HOME/build/ansible/bin
 $HOME/opt/terraform
 $HOME/.node/lib/node_modules
-/usr/local/Cellar/postgresql@12/12.8/bin
+/usr/local/opt/postgresql@12/bin
