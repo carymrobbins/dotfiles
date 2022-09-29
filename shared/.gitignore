@@ -14,3 +14,6 @@ ScratchPad.scala
 
 # Ignore GHC profile output
 *.prof
+
+# My ghcup project configs
+.ghcup.yaml

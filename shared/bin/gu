@@ -34,7 +34,7 @@ if [ $# -eq 1 ] && [ "$1" = '--init' ]; then
   fi
   ghc=$(ghcup run -q -- ghc --numeric-version)
   cabal=$(ghcup run -q -- cabal --numeric-version)
-  cat <<HERE
+  cat <<HERE > .ghcup.yaml
 ghc: $ghc
 cabal: $cabal
 HERE

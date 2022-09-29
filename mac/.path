@@ -6,6 +6,7 @@ $HOME/opt/eta
 $HOME/.local/bin
 $HOME/.cargo/bin
 $HOME/.node/bin
+$HOME/.cabal/bin
 /usr/local/bin
 /usr/local/sbin
 $HOME/build/ansible/bin

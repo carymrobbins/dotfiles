@@ -18,3 +18,4 @@ https://github.com/derekwyatt/vim-sbt
 https://github.com/derekwyatt/vim-scala
 https://github.com/justinmk/vim-syntax-extra
 https://github.com/christoomey/vim-tmux-navigator
+https://github.com/tpope/vim-fugitive

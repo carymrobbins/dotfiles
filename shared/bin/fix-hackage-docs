@@ -23,7 +23,9 @@ trap 'rm -r "$dir"' EXIT
 
 set -x
 
-# assumes cabal 2.4 or later
-cabal v2-haddock --builddir="$dir" --haddock-for-hackage --enable-doc "$1"
+# Assumes cabal 2.4 or later
+# Using --allow-newer because at this point we should probably already
+# have a working build.
+cabal v2-haddock --builddir="$dir" --haddock-for-hackage --enable-doc --allow-newer "$1"
 
 cabal upload -d --publish $dir/$1-*-docs.tar.gz
