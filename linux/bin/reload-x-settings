@@ -7,6 +7,10 @@ wallpaper=$HOME/dotfiles/linux/resources/wallpaper
 # Key repeat: ms delay, cps
 xset r rate 150 50
 
+# Prevent the screen from going to sleep automatically
+# https://wiki.archlinux.org/title/Display_Power_Management_Signaling#Disabling_DPMS
+xset s off
+
 # Enable natural scrolling and two-finger right-click.
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Natural Scrolling Enabled' 1
 xinput set-prop 'DLL07BE:01 06CB:7A13 Touchpad' 'libinput Click Method Enabled' 0 1

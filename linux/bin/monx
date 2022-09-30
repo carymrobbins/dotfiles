@@ -53,7 +53,7 @@ main() {
   elapsed=0
   timeout=5
   while [ "$elapsed" -lt "$timeout" ]; do
-    if [ "$(xrandr | fgrep '*+' | wc -l)" -eq "$num_monitors" ]; then
+    if [ "$(xrandr | grep -F '*+' | wc -l)" -eq "$num_monitors" ]; then
       break
     fi
     sleep 1

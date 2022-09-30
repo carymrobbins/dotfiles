@@ -49,7 +49,7 @@ while read line; do
     continue
   fi
   # Ignore comments, then check for unhandled sections
-  if [ -n "$(echo "$line" | egrep -v '\ *\-\-' | egrep '\ *(\w|[\-])+\ *\:')" ]; then
+  if [ -n "$(echo "$line" | grep -E -v '\ *\-\-' | grep -E '\ *(\w|[\-])+\ *\:')" ]; then
     in_extensions=
     in_packages=
     in_ghc_options=
@@ -57,7 +57,7 @@ while read line; do
   fi
   if [ -n "$in_extensions" ]; then
     # Ignore commented lines
-    extension="$(echo "$line" | egrep -v '^\ *\-\-' | egrep '\w+' -o | head -n1)"
+    extension="$(echo "$line" | grep -E -v '^\ *\-\-' | grep -E '\w+' -o | head -n1)"
     if [ -n "$extension" ]; then
       extensions+=("$extension")
     fi
@@ -65,7 +65,7 @@ while read line; do
   fi
   if [ -n "$in_packages" ]; then
     # Ignore commented lines
-    package="$(echo "$line" | egrep -v '^\ *\-\-' | egrep -o '([\-]|\w)+' | head -n1)"
+    package="$(echo "$line" | grep -E -v '^\ *\-\-' | grep -E -o '([\-]|\w)+' | head -n1)"
     if [ -n "$package" ]; then
       packages+=("$package")
     fi
@@ -73,7 +73,7 @@ while read line; do
   fi
   if [ -n "$in_ghc_options" ]; then
     # Ignore commented lines
-    ghc_option="$(echo "$line" | egrep -v '^\ *\-\-' | egrep -o '[^ ]+')"
+    ghc_option="$(echo "$line" | grep -E -v '^\ *\-\-' | grep -E -o '[^ ]+')"
     if [ -n "$ghc_option" ]; then
       ghc_options+=("$ghc_option")
     fi

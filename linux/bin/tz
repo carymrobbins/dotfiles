@@ -25,7 +25,7 @@ case "$1" in
   ct) run America/Chicago;;
   et) run America/New_York;;
   *)
-    if ! list | fgrep "$1"; then
+    if ! list | grep -F "$1"; then
       >&2 echo "Invalid time zone '$1'"
       >&2 echo "To list time zones: $0 -l"
       exit 1

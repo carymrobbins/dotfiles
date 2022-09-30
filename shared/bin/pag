@@ -5,9 +5,9 @@ flag=$2
 
 run() {
   ps aux \
-    | fgrep -v "egrep $regex" \
-    | fgrep -v "$(basename $0) $regex" \
-    | egrep "$regex" \
+    | grep -F -v "grep -E $regex" \
+    | grep -F -v "$(basename $0) $regex" \
+    | grep -E "$regex" \
     | tr -s ' '
 }
 

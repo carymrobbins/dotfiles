@@ -27,12 +27,12 @@ each_other_sink() {
 }
 
 update_volume() {
-  if ! egrep '^[0-9]+$' <<< "$2" >/dev/null; then
+  if ! grep -E '^[0-9]+$' <<< "$2" >/dev/null; then
     >&2 echo "Invalid amount: $2"
     exit 1
   fi
   # $1 should be -d or -i, checked by caller
-  # $2 has been verified via egrep to be an int
+  # $2 has been verified via grep -E to be an int
   pamixer --sink "$DEFAULT_SINK" "$1" "$2"
   # get the updated sink volume
   local v=$(pamixer --sink "$DEFAULT_SINK" --get-volume)

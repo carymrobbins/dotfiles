@@ -487,7 +487,7 @@ fi
 
 # Add all of our ssh keys to the agent.
 for key in $(find ~/.ssh -name '*_rsa'); do
-  if ! ssh-add -l | fgrep "$key" >/dev/null; then
+  if ! ssh-add -l | grep -F "$key" >/dev/null; then
     ssh-add "$key"
   fi
 done
