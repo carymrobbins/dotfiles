@@ -88,8 +88,8 @@ myKeys =
   & ((shiftMask .|. myModKey, xK_l), scratch "wunderlist")
 
   -- Cycle through workspaces
-  & ((myModKey,               xK_n), moveTo Next NonEmptyWS)
-  & ((shiftMask .|. myModKey, xK_n), moveTo Prev NonEmptyWS)
+  & ((myModKey,               xK_n), moveTo Next (Not emptyWS))
+  & ((shiftMask .|. myModKey, xK_n), moveTo Prev (Not emptyWS))
 
   -- Toggle mouse-follows-focus(-like) behavior
   & ((myModKey, xK_m), toggleMouseFollowsFocus >> refocusMouse)
@@ -129,18 +129,19 @@ myKeys =
   -- reports compilation errors instead of silently failing to restart.
   -- Adapted logic from -
   -- https://www.stackage.org/haddock/lts-11.14/xmonad-0.13/src/XMonad.Config.html#keys
+  xmonadBin = "xmonad"
   restartXMonad = spawn $ unlines
-    [ "if type xmonad; then"
-    , "  out=$(xmonad --recompile 2>&1)"
+    [ "if type " <> xmonadBin <> "; then"
+    , "  out=$(" <> xmonadBin <> " --recompile 2>&1)"
     , "  if [ $? -ne 0 ]; then"
-    , "    term  XMonad \"$out\""
+    , "    term XMonad \"$out\""
     , "  else"
-    , "    xmonad --restart &&"
+    , "    " <> xmonadBin <> " --restart &&"
     , "      sleep 1 &&"
     , "      systemctl --user restart polybar"
     , "  fi"
     , "else"
-    , "  notify-send XMonad \"xmonad not in \\$PATH: $PATH\""
+    , "  notify-send XMonad \"" <> xmonadBin <> " not in \\$PATH: $PATH\""
     , "fi"
     ]
 

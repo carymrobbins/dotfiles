@@ -1,5 +1,5 @@
-xmonad-x86_64-linux
+out/
 xmonad.errors
-xmonad.hi
-xmonad.o
-xmonad.state
+dist/
+dist-newstyle/
+xmonad-x86_64-linux

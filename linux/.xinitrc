@@ -48,7 +48,5 @@ fi
 # e.g. visualvm, yourkit
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-xmonad --recompile
-
 # Start xmonad with `startx` from a tty
 exec xmonad
