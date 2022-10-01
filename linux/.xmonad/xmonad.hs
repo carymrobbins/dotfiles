@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+
 import           XMonad
 import           XMonad.Actions.CopyWindow
 import           XMonad.Actions.CycleWS
@@ -19,7 +20,6 @@ import           XMonad.Util.EZConfig
 import           XMonad.Util.Run
 
 import           Control.Monad
-import           Control.Monad.Extra (whenM)
 import           Data.Coerce
 import           Data.Maybe
 import qualified Data.List as List
@@ -29,6 +29,7 @@ import           System.IO.Unsafe
 
 envNOSCALE :: Bool
 envNOSCALE = unsafePerformIO $ isJust <$> lookupEnv "NOSCALE"
+{-# NOINLINE envNOSCALE #-}
 
 useXMobar = False
 
@@ -144,6 +145,11 @@ myKeys =
     , "  notify-send XMonad \"" <> xmonadBin <> " not in \\$PATH: $PATH\""
     , "fi"
     ]
+
+whenM :: (Monad m) => m Bool -> m () -> m ()
+whenM mb f = do
+  b <- mb
+  when b f
 
 newtype MouseFollowsFocus = MouseFollowsFocus Bool
   deriving (Typeable, Read, Show)
