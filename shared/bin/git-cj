@@ -23,7 +23,7 @@ while [ $# -ne 0 ]; do
 done
 
 if [ -z "$ticket" ]; then
-  ticket=$(jira -g)
+  ticket=$(jira)
 fi
 
-git commit -t <(printf '[%s] ' "$ticket") "${args[@]}"
+git commit -t <(printf '%s: ' "$ticket") "${args[@]}"
