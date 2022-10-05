@@ -1,0 +1,56 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 <org/repo> [commit]"
+  echo
+  echo "By default, commit is HEAD"
+}
+
+repo=
+commit=
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --help) usage; exit;;
+    *)
+      if [ -z "$repo" ]; then
+        repo=$1
+        shift
+        continue
+      fi
+      if [ -z "$commit" ]; then
+        commit=$1
+        shift
+        continue
+      fi
+      >&2 echo "Unexpected argument: $1"
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$repo" ]; then
+  >&2 echo "Missing repo"
+  >&2 usage
+  exit 1
+fi
+
+if [ -z "$commit" ]; then
+  commit=HEAD
+fi
+
+export head_sha=$(git rev-parse "$commit")
+o=$(
+  gh api "/repos/$repo/actions/artifacts" \
+    | jq -c '.artifacts[]|select(.workflow_run.head_sha == env.head_sha)'
+)
+
+echo "SHA: $head_sha"
+while read x; do
+  echo '-------------------------------------'
+  created_at=$(jq -r '.created_at' <<< "$x")
+  date -d "$created_at"
+  jq -r '.url' <<< "$x"
+  url=$(jq -r '.archive_download_url' <<< "$x")
+  echo '-------------------------------------'
+  gh api "$url" | zcat
+done <<< "$o"
