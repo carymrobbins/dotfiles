@@ -1,0 +1,34 @@
+#!/bin/bash
+
+export klocrc=$HOME/.klocrc
+export fmt='+%I:%M:%S %p %Z'
+font_dir=$HOME/dotfiles/shared/resources/figlet
+export font_0=$font_dir/mono12.tlf
+export font_1=$font_dir/mono9.tlf
+export font_2=$font_dir/smmono9.tlf
+export font_3=term
+
+watch -tn1 '
+  (
+    date "$fmt"
+    if [ -f "$klocrc" ]; then
+      while read tz; do
+        if ! [[ $tz =~ ^# ]]; then
+          TZ="$tz" date "$fmt"
+        fi
+      done < "$klocrc"
+    fi
+  ) | figlet \
+        -w "$(tput cols)" \
+        -f "$(
+                cols=$(tput cols)
+                if [ $cols -lt 65 ]; then
+                  echo "$font_3"
+                elif [ $cols -lt 114 ]; then
+                  echo "$font_2"
+                elif [ $cols -lt 161 ]; then
+                  echo "$font_1"
+                else
+                  echo "$font_0"
+                fi
+             )"'
