@@ -34,6 +34,7 @@ systemctl --user start xcompmgr
 systemctl --user start geoclue-redshift-agent
 systemctl --user start redshift
 systemctl --user start polybar
+systemctl --user start public-wifi.timer
 systemctl --user start xbindkeys
 
 if command -v monx >/dev/null; then

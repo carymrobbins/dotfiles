@@ -1,0 +1,20 @@
+#!/bin/bash
+
+location_url=$(
+  curl -sSIk https://google.com \
+    | grep ^Location: \
+    | cut -d ' ' -f2- \
+    | tr -d $'\r'
+)
+
+case "$location_url" in
+  https://10.255.0.1:4502/index.cgi)
+    echo "Public wifi detected: $location_url"
+    curl -sSi \
+      -XPOST 'http://10.255.0.1:4501/index.cgi?action=login&accept=true' \
+      | head -n1
+    ;;
+  *)
+    echo 'No public wifi found, skipping'
+    ;;
+esac

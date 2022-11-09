@@ -1,0 +1,8 @@
+[Unit]
+Description=Run public-wifi every minute
+
+[Timer]
+OnCalendar=minutely
+
+[Install]
+WantedBy=wm.target

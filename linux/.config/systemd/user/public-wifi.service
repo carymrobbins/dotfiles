@@ -1,0 +1,10 @@
+[Unit]
+Description=Connect to public-wifi automagically
+
+[Service]
+Environment=DISPLAY=:0
+Type=oneshot
+ExecStart=/bin/bash -c "%h/dotfiles/linux/bin/public-wifi"
+
+[Install]
+WantedBy=wm.target
