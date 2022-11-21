@@ -1,0 +1,43 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0"
+}
+
+if [ "$1" == "--help" ]; then
+  usage
+  exit
+fi
+
+ticket_number=($(git rev-parse --abbrev-ref HEAD | grep -Eo '\b[A-Z]+-[0-9]+\b'))
+if [ -n "$ticket_number" ]; then
+  echo "$ticket_number"
+  exit
+fi
+
+ticket_number=$(
+  git log --oneline \
+    | head -n1 \
+    | sed -E 's/^(fixup|squash)! //' \
+    | cut -d' ' -f2
+)
+case "$ticket_number" in
+  *:|\[*\])
+    # Matches two cases -
+    #   *:      Ends with colon, e.g. my-feature: my commit message
+    #   \[*\]   Surrounded by brackets, e.g. [my-feature] my commit message
+
+    # Remove [] and :
+    # N.B. The ] character has to come first in the character class
+    # per the Character Classes section of the sed manual.
+    sed 's/[]:\[]//g' <<< "$ticket_number"
+    ;;
+  '')
+    >&2 echo "No ticket number found in branch name nor previous commit message"
+    exit 1
+    ;;
+  *)
+    >&2 echo "Unexpected ticket number: $ticket_number"
+    exit 1
+    ;;
+esac

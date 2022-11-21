@@ -23,7 +23,19 @@ while [ $# -ne 0 ]; do
 done
 
 if [ -z "$ticket" ]; then
-  ticket=$(jira)
+  ticket=$(git get-ticket-number)
 fi
 
-git commit -t <(printf '%s: ' "$ticket") "${args[@]}"
+template_file=$(git rev-parse --show-toplevel)/.gcj-template
+
+if [ -f "$template_file" ]; then
+  template=$(cat "$template_file")
+else
+  >&2 echo "Please create $template_file"
+  >&2 echo "e.g. echo '\$ticket:' > $template_file"
+  exit 1
+fi
+
+git commit -t \
+  <(echo -n "$template " | sed "s/\$ticket/$ticket/g") \
+  "${args[@]}"
