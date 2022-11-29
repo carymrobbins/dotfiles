@@ -536,7 +536,9 @@ _vnv_completions() {
 compdef _vnv_completions vnv
 
 # The REAL stack completions
-eval "$(stack --bash-completion-script stack)"
+if command -v stack >/dev/null; then
+  eval "$(stack --bash-completion-script stack)"
+fi
 # Piggy-back off of generated _stack function to
 # add completion to our 's' stack alias-function thing.
 complete -o filenames -F _stack s
