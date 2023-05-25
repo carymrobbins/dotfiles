@@ -26,6 +26,25 @@
         {
           "type": "basic",
           "from": {
+            "key_code": "0",
+            "modifiers": {
+              "mandatory": [
+                "control"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "0",
+              "modifiers": [
+                "right_command"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
             "key_code": "1",
             "modifiers": {
               "mandatory": [
@@ -487,7 +506,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -515,7 +534,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -544,7 +563,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -575,7 +594,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -606,7 +625,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -637,7 +656,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -668,7 +687,7 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -967,7 +986,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -996,7 +1015,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1025,7 +1044,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1054,7 +1073,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1083,7 +1102,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1112,7 +1131,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1141,7 +1160,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1170,7 +1189,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1199,7 +1218,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1228,7 +1247,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1257,7 +1276,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1288,7 +1307,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1317,7 +1336,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1346,7 +1365,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1375,7 +1394,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1404,7 +1423,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1435,7 +1454,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1464,7 +1483,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1493,7 +1512,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1522,7 +1541,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1553,7 +1572,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1582,7 +1601,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1611,7 +1630,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1640,7 +1659,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1671,7 +1690,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1702,7 +1721,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1731,7 +1750,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1760,7 +1779,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1789,7 +1808,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1820,7 +1839,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1851,7 +1870,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1880,7 +1899,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1909,7 +1928,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1938,7 +1957,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]
@@ -1967,7 +1986,7 @@
               "bundle_identifiers": [
                 "^com\\.apple\\.Terminal$",
                 "^com\\.googlecode\\.iterm2$",
-                "com.jetbrains.intellij.*"
+                "com.jetbrains.*"
               ]
             }
           ]

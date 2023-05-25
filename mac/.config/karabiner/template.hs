@@ -39,6 +39,7 @@ root = Root "Linux Compat" [rule]
   generalRemaps =
     [ -- Spotlight
       Command |+| P !> RightCommand |+| Spacebar
+    , Control |+| Zero !> RightCommand |+| Zero
     ]
 
   terminalRemaps = concat
@@ -219,5 +220,5 @@ root = Root "Linux Compat" [rule]
   iterm = litPat "com.googlecode.iterm2"
   macterm = litPat "com.apple.Terminal"
   -- chrome = litPat "com.google.Chrome"
-  intellij = "com.jetbrains.intellij.*"
+  intellij = "com.jetbrains.*"
   slack = litPat "com.tinyspeck.slackmacgap"
