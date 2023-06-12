@@ -1,0 +1,17 @@
+#!/bin/bash
+
+out=$(mktemp)
+err=$(mktemp)
+
+trap 'rm -f $out $err' EXIT
+
+buf=$(cat)
+echo -n "$buf" | fourmolu -q --stdin-input-file "$1" >"$out" 2>"$err"
+exitcode=$?
+
+if [ "$exitcode" -eq 0 ]; then
+  cat "$out"
+else
+  echo -n "$buf"
+  exit "$exitcode"
+fi
