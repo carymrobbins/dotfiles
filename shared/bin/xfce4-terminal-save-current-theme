@@ -1,0 +1,68 @@
+#!/bin/bash
+
+set -e
+
+terminalrc=$HOME/.config/xfce4/terminal/terminalrc
+colorschemes_dir=$HOME/.config/xfce4/terminal/colorschemes
+
+if [ ! -f "$terminalrc" ]; then
+  >&2 echo "Config not found: $terminalrc"
+  exit 1
+fi
+
+keys=(
+  FontName
+  FontAllowBold
+  ColorForeground
+  ColorPalette
+  BackgroundMode
+  BackgroundDarkness
+  ColorBackground
+)
+
+joined=$(IFS='|'; echo "${keys[*]}")
+scheme=$(grep -E "^($joined)=" "$terminalrc")
+choice=$( (find colorschemes/*.theme -type f -printf "%f\n" && echo new...) | fzf )
+
+if [ -z "$choice" ]; then
+  exit 1
+fi
+
+if [ "$choice" = 'new...' ]; then
+  echo -n 'Name of theme: '
+  read theme_name
+  theme_file=$colorschemes_dir/$(echo -n "$theme_name" | sed 's/ /-/g').theme
+  echo '[Scheme]' > "$theme_file"
+  echo "Name=$theme_name" >> "$theme_file"
+  echo "$scheme" >> "$theme_file"
+  echo "Wrote to $theme_file"
+  exit
+fi
+
+target_file=$colorschemes_dir/$choice
+tmp_new_file=/tmp/new-$choice
+head -n2 "$target_file" > "$tmp_new_file"
+echo "$scheme" >> "$tmp_new_file"
+
+set +e
+
+git diff --no-index "$target_file" "$tmp_new_file"
+
+if [ $? -eq 0 ]; then
+  echo 'No changes to be applied'
+  exit
+fi
+
+set -e
+
+echo -n 'Changes ok? [y/N] '
+read -n1
+echo
+case "$REPLY" in
+  y|Y) ;;
+  *) exit 1;;
+esac
+
+cp "$target_file" "${target_file}.bak"
+mv "$tmp_new_file" "$target_file"
+echo "Wrote to $theme_file; backup at $theme_file.bak"
