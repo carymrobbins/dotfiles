@@ -48,7 +48,9 @@ debug = unsafePerformIO $ isJust . lookup "FPD_DEBUG_LOG" <$> getEnvironment
 
 main :: IO ()
 main = getArgs >>= \case
-  ["--show-config"] -> print _CONFIG
+  ["--help"] -> putStrLn usage
+  ["--init-config"] -> initConfig
+  ["--show-config"] -> printConfig
   ["--print-project-vars"] -> printProjectVars
   [pat, "--notify"] -> runWithArgs pat True
   [pat, "--complete"] -> runComplete pat
@@ -70,7 +72,7 @@ main = getArgs >>= \case
 
   runComplete :: String -> IO ()
   runComplete pat = do
-    let Config {..} = _CONFIG
+    let Config {..} = globalConfig
     aliasCompletions <- fmap concat $
       for configAliases $ \(alias, _) ->
         pure $ if pat `isPrefixOf` alias then [alias] else []
@@ -105,19 +107,51 @@ instance Monoid Config where
   mempty = Config mempty mempty
 
 {-# NOINLINE homeDir #-}
-homeDir :: String
+homeDir :: FilePath
 homeDir = unsafePerformIO getHomeDirectory
 
-{-# NOINLINE _CONFIG #-}
-_CONFIG :: Config
-_CONFIG = unsafePerformIO readConfig
+globalConfigPath :: FilePath
+globalConfigPath = homeDir </> ".find-project-dir"
+
+{-# NOINLINE globalConfig #-}
+globalConfig :: Config
+globalConfig = unsafePerformIO readConfig
+
+printConfig :: IO ()
+printConfig = print globalConfig
+
+initConfig :: IO ()
+initConfig = do
+  ifM (doesFileExist globalConfigPath)
+    ( do
+        hPutStrLn stderr $
+          "Config already exists at " <> globalConfigPath
+          <> ":\n"
+          <> show globalConfig
+        exitFailure
+    )
+    ( do
+        writeFile globalConfigPath $ unlines
+          [ "roots:"
+          , "$HOME/projects"
+          , ""
+          , "aliases:"
+          , "dot=dotfiles"
+          ]
+    )
 
 readConfig :: IO Config
 readConfig = do
-  let path = homeDir </> ".find-project-dir"
-  ifM (doesFileExist path)
-    (parse parseInit mempty . lines <$> readFile path)
-    (pure mempty)
+  ifM (doesFileExist globalConfigPath)
+    ( do
+        parse parseInit mempty . lines <$> readFile globalConfigPath
+    )
+    ( do
+        hPutStrLn stderr $
+          "Config does not exist at " <> globalConfigPath
+          <> "\nYou can create it with find-project-dir --init-config"
+        exitFailure
+    )
   where
   parse p config fileLines = case fileLines of
     [] -> config
@@ -138,7 +172,7 @@ readConfig = do
 
 run :: String -> IO [[Maybe String]]
 run pat = do
-  let Config {..} = _CONFIG
+  let Config {..} = globalConfig
   case lookup pat configAliases of
     Just found -> do
       pure $ [[Just $ homeDir </> found]]
@@ -200,7 +234,7 @@ printProjectVars = do
         when inserted $ putStrLn $
           "export PROJ_" <> k <> "=" <> root <> "/" <> project
   where
-  Config {..} = _CONFIG
+  Config {..} = globalConfig
 
   getRootsAndProjects :: IO [(FilePath, [FilePath])]
   getRootsAndProjects = traverse (\r -> (r,) <$> listDirectoryIfExists r) configRoots

@@ -590,4 +590,5 @@ if [ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; 
   source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 if [ -e /Users/crobbins/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/crobbins/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-[ -f "/Users/crobbins/.ghcup/env" ] && source "/Users/crobbins/.ghcup/env" # ghcup-env
+
+[ -f "/home/cary/.ghcup/env" ] && . "/home/cary/.ghcup/env" # ghcup-env

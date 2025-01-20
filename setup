@@ -36,7 +36,7 @@ git submodule update --init --recursive
 # Files and dirs to symlink in HOME.
 SHARED_FILES=(
   .ackrc
-  .config/nvim
+  #.config/nvim
   .ghci
   .gitconfig
   .gitignore
@@ -55,28 +55,28 @@ SHARED_FILES=(
 )
 
 LINUX_FILES=(
-  .config/terminator/config
-  .config/systemd/user/blueman-applet.service
-  .config/systemd/user/geoclue-redshift-agent.service
-  .config/systemd/user/gnome-screensaver.service
-  .config/systemd/user/low-battery.service
-  .config/systemd/user/low-battery.timer
-  .config/systemd/user/notify-osd.service
-  .config/systemd/user/nm-applet.service
-  .config/systemd/user/redshift.service
-  .config/systemd/user/stalonetray.service
-  .config/systemd/user/time-to-move.service
-  .config/systemd/user/time-to-move.timer
-  .config/systemd/user/xcompmgr.service
-  .config/systemd/user/wm.target
-  .config/systemd/user/xbindkeys.service
-  .IntelliJIdea2017.2
+  # .config/terminator/config
+  # .config/systemd/user/blueman-applet.service
+  # .config/systemd/user/geoclue-redshift-agent.service
+  # .config/systemd/user/gnome-screensaver.service
+  # .config/systemd/user/low-battery.service
+  # .config/systemd/user/low-battery.timer
+  # .config/systemd/user/notify-osd.service
+  # .config/systemd/user/nm-applet.service
+  # .config/systemd/user/redshift.service
+  # .config/systemd/user/stalonetray.service
+  # .config/systemd/user/time-to-move.service
+  # .config/systemd/user/time-to-move.timer
+  # .config/systemd/user/xcompmgr.service
+  # .config/systemd/user/wm.target
+  # .config/systemd/user/xbindkeys.service
+  # .IntelliJIdea2017.2
   .path
-  .xbindkeysrc
-  .xinitrc
-  .XCompose
-  .Xresources
-  .xmonad
+  # .xbindkeysrc
+  # .xinitrc
+  # .XCompose
+  # .Xresources
+  # .xmonad
 )
 
 MAC_FILES=(
