@@ -1,0 +1,21 @@
+# See https://starship.rs/config/#git-status
+
+[git_branch]
+# Remove "on"
+format = ' [$branch]($style) '
+
+[rust]
+# Use Rust logo from Nerd Fonts
+symbol = " "
+# Remove "via"
+format = '[$symbol($version )]($style)'
+
+[haskell]
+# Remove "via"
+format = '[$symbol $version]($style)'
+# Use Haskell logo from Nerd Fonts
+symbol = " "
+
+[cmd_duration]
+# Use hourglass instead of "took"
+format = "[ $duration]($style)"
