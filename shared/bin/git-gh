@@ -34,10 +34,30 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --help|-h) usage; exit;;
     pr) open_pr=1; shift;;
-    -o) open_in_browser=1; shift;;
-    -b) use_branch=1;      shift;;
     -u) validate_extra_args "$1" "$2"; remote=$2; shift; shift;;
     -r) validate_extra_args "$1" "$2"; rev=$2;    shift; shift;;
+    --*)
+      >&2 echo "Unknown option: $1"
+      >&2 echo
+      >&2 usage
+      exit 1
+      ;;
+    -*)
+      for (( i=1; i < ${#1}; i++ )); do
+        c="${1:$i:1}"
+        case "$c" in
+          o) open_in_browser=1;;
+          b) use_branch=1;;
+          *)
+            >&2 echo "Unknown option: -$c"
+            >&2 echo
+            >&2 usage
+            exit 1
+            ;;
+        esac
+      done
+      shift
+      ;;
     *)
       if [ -n "$open_pr" ]; then
         >&2 echo "Too many arguments supplied to pr"
@@ -61,9 +81,11 @@ while [ $# -gt 0 ]; do
         shift
       else
         >&2 echo "Unexpected argument: $1"
+        >&2 echo
         >&2 usage
         exit 1
       fi
+      ;;
   esac
 done
 
@@ -120,15 +142,27 @@ else
   fi
 fi
 
+is_wsl() {
+  if [[ "$(uname -r)" =~ WSL.$ ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 if [ "$open_in_browser" ]; then
-  os_type=$(uname -s)
-  case "$os_type" in
-    Darwin) open "$url";;
-    Linux) xdg-open "$url";;
-    *)
-      >&2 echo "Unsupported OS: $os_type"
-      exit 1
-  esac
+  if is_wsl; then
+    wslview "$url"
+  else
+    os_type=$(uname -s)
+    case "$os_type" in
+      Darwin) open "$url";;
+      Linux) xdg-open "$url";;
+      *)
+        >&2 echo "Unsupported OS: $os_type"
+        exit 1
+    esac
+  fi
 else
   echo "$url"
 fi

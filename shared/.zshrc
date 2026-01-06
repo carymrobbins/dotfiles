@@ -29,6 +29,11 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 # https://github.com/nvm-sh/nvm
 _nvm_loaded=
 nvm() {
+  if [ ! -d "$HOME/.nvm" ]; then
+    >&2 echo "Does not exist: $HOME/.nvm"
+    >&2 echo "You may need to: git clone https://github.com/nvm-sh/nvm $HOME/.nvm"
+    return 1
+  fi
   if [ -z "$_nvm_loaded" ]; then
     _nvm_loaded=1
     if [ -d "$HOME/.nvm" ]; then
@@ -61,6 +66,7 @@ alias ssh-add-all="ssh-add ~/.ssh/*_rsa"
 alias zsv='v ~/.zshrc'
 alias sca='bash -c '"'"'(cd ~/dump/scaling ; sbt "$@" consoleQuick)'"'"' sca'
 alias rm=trash
+alias b=batcat
 
 with_ding() {
   "$@"
@@ -191,7 +197,14 @@ ipy() {
   if [ -f Pipfile ]; then
     pipenv run ipython
   elif [ -z "$VIRTUAL_ENV" ]; then
-    ipython
+    if command -v ipython >/dev/null; then
+      ipython
+    elif command -v ipython3 >/dev/null; then
+      ipython3
+    else
+      >&2 echo 'Neither ipython nor ipython3 does not appear to be installed'
+      return 1
+    fi
   else
     "$VIRTUAL_ENV/bin/ipython"
   fi
@@ -458,7 +471,8 @@ setopt interactivecomments
 unsetopt nomatch
 
 # You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 if command -v nvim >/dev/null; then
   export EDITOR='nvim'

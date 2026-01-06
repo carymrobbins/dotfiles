@@ -12,9 +12,6 @@
 :set -package split
 :set -package time
 
--- Just in case we're dealing with NoImplicitPrelude.
-:m + Prelude
-
 :def logoprompt (\_ -> pure ":set prompt \"\x1b[35m\xe677\x1b[0m \"\n:set prompt-cont \"\x1b[34m\xe677 |\x1b[0m \"")
 
 :def lambdaprompt (\_ -> pure ":set prompt \"\x1b[35mλ\x1b[0m \"\n:set prompt-cont \"\x1b[34mλ |\x1b[0m \"")
@@ -33,7 +30,13 @@
 
 -- :set prompt "\x1b[35mλ\x1b[0m "
 
+-- Disable annoying warnings
+:set -Wno-missing-import-lists
+:set -Wno-missing-export-lists
+:set -Wno-orphans
+
 -- Default imports
+:m + Prelude
 :m + Control.Applicative
 :m + Control.Monad
 :m + Data.Coerce
@@ -44,26 +47,26 @@
 :m + Data.Time
 :m + Data.Typeable
 
-import Data.ByteString (ByteString)
-import Data.Text (Text)
-import GHC.Generics (Generic)
 
-import qualified Control.Monad.Fail
-import qualified Data.ByteString
-import qualified Data.ByteString.Char8 as Char8
-import qualified Data.ByteString.Lazy
-import qualified Data.ByteString.Lazy as Lazy (ByteString)
-import qualified Data.ByteString.Lazy.Char8 as Lazy.Char8
-import qualified Data.Char as Char
-import qualified Data.List as List
-import qualified Data.List.NonEmpty as NonEmpty
-import qualified Data.List.Split
-import qualified Data.Map.Strict as Map
-import qualified Data.Text as Text
-import qualified Data.Text.Encoding as Text
-import qualified Data.Typeable
-import qualified GHC.Generics
-import qualified GHC.TypeLits
+import Control.Monad.Fail qualified
+import Data.ByteString (ByteString)
+import Data.ByteString qualified
+import Data.ByteString.Char8 qualified as Char8
+import Data.ByteString.Lazy qualified
+import Data.ByteString.Lazy qualified as Lazy (ByteString)
+import Data.ByteString.Lazy.Char8 qualified as Lazy.Char8
+import Data.Char qualified as Char
+import Data.List qualified as List
+import Data.List.NonEmpty qualified as NonEmpty
+import Data.List.Split qualified
+import Data.Map.Strict qualified as Map
+import Data.Text (Text)
+import Data.Text qualified as Text
+import Data.Text.Encoding qualified as Text
+import Data.Typeable qualified
+import GHC.Generics (Generic)
+import GHC.Generics qualified
+import GHC.TypeLits qualified
 
 -- Needed for some stuff later in this file.
 :set -XDerivingStrategies
@@ -104,7 +107,7 @@ getLinesWhile :: (String -> Bool) -> IO String
 getLinesWhile p = liftM unlines $ takeWhileM p (repeat getLine)
 
 getLines :: IO String
-getLines = getLinesWhile (/="\"\"\"")
+getLines = getLinesWhile (/= "\"\"\"")
 
 -- Pretty printing with :cp and :ncp
 -- pacman -S haskell-pretty-show haskell-hscolour

@@ -18,6 +18,8 @@
 	ap = add -p
 	ci = commit
 	cf = commit --fixup
+        # Copy the current rev to the clipboard
+	cpr = ! (echo -n "$(git rev-parse HEAD)" | xsel -ib) && xsel -ob && echo
         # Don't re-enable this, I always misuse this for ci -a
         # ca = commit --amend
 	fu = commit --fixup
@@ -29,6 +31,7 @@
 	d = diff
 	dc = diff --cached
 	dh = diff HEAD
+	dni = diff --no-index
 	l = log --oneline --color --no-decorate
 	ln = log --oneline --color --no-decorate -n10
 	ld = log --oneline --color --no-decorate develop..
@@ -40,9 +43,9 @@
 	f = fetch --all
 	unstage = reset HEAD --
 	r = rebase
-	ri = rebase -i
+	ri = rebase -i --autosquash
 	autosquash = rebase -i --autosquash
-	as = rebase -i --autosquash
+        #as = rebase -i --autosquash
 	p = push
 	pt = push --follow-tags
 	pf = push --force-with-lease
@@ -64,3 +67,5 @@
 	insteadOf = ssh://git@github.com/ghc/packages/
 [url "git\\@github.com:/ghc/packages-"]
 	insteadOf = git@github.com:/ghc/packages/
+[grep]
+	lineNumber = true

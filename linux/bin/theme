@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set -e
 
 # TODO:
 # lxappearance
@@ -23,6 +23,14 @@ light_desktop=white-abstract.png
 
 set_theme_type_file() {
   echo "$1" > ~/.theme-type
+}
+
+is_wsl() {
+  if [[ "$(uname -r)" =~ WSL.$ ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 set_wallpaper() {
@@ -82,14 +90,39 @@ HERE
   esac
 }
 
-do_set_all() {
-  set_theme_type_file   "$1"
-  hexchat-theme         "$1"
-  set_intellij_theme   "$1"
+switch_light_dark() {
+  case "$1" in
+    light) echo -n "$2";;
+    dark) echo -n "$3";;
+    *)
+      >*2 echo "Invalid theme type: $1"
+      exit 1
+      ;;
+  esac
+}
 
-  # dark -> dark_desktop, light -> light_desktop
-  wallpaper=$(eval 'echo $'$(echo "$(eval 'echo $1')_desktop"))
-  set_wallpaper "$wallpaper"
+set_batcat_config() {
+  local batcat_config=$HOME/.config/bat/config
+  if [ ! -f "$batcat_config" ]; then
+    return
+  fi
+  local theme_name=$(switch_light_dark "$1" Coldark-Cold Coldark-Dark)
+  sed -i \
+    "s/^--theme=.*/--theme=\"$theme_name\"/" \
+    "$batcat_config"
+}
+
+do_set_all() {
+  set_theme_type_file "$1"
+  set_batcat_config "$1"
+
+  # TODO: Remove these
+  # hexchat-theme         "$1"
+  # set_intellij_theme   "$1"
+  #
+  # # dark -> dark_desktop, light -> light_desktop
+  # wallpaper=$(eval 'echo $'$(echo "$(eval 'echo $1')_desktop"))
+  # set_wallpaper "$wallpaper"
 }
 
 case "$typ" in
@@ -101,7 +134,9 @@ case "$typ" in
     ;;
 esac
 
-xmonad --restart
-#systemctl --user restart stalonetray
-reload-x-settings
-systemctl --user restart polybar
+if ! is_wsl; then
+  xmonad --restart
+  #systemctl --user restart stalonetray
+  reload-x-settings
+  systemctl --user restart polybar
+fi

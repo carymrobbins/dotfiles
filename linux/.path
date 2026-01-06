@@ -6,7 +6,5 @@ $HOME/.cargo/bin
 $HOME/.stack/programs/x86_64-osx/ghc-8.0.1/bin
 /usr/local/bin
 /usr/local/sbin
-$HOME/build/ansible/bin
-$HOME/opt/terraform
-$HOME/Library/Python/2.7/bin
 $HOME/.node/bin
+/usr/lib/postgresql/16/bin
