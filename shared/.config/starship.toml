@@ -1,8 +1,11 @@
 # See https://starship.rs/config/#git-status
 
 [git_branch]
-# Remove "on"
-format = ' [$branch]($style) '
+format = "[$symbol$branch]($style) "  # Only display branch name
+symbol = " "
+
+[git_status]
+stashed = "" # Annoying to see [$] all the time.
 
 [rust]
 # Use Rust logo from Nerd Fonts
@@ -19,3 +22,95 @@ symbol = " "
 [cmd_duration]
 # Use hourglass instead of "took"
 format = "[ $duration]($style)"
+
+[os]
+disabled = false
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+#Ubuntu = " "
+Ubuntu = "󰕈 "
+Unknown = " "
+Void = " "
+#Windows = "󰍲 "
+Windows = "󰨡 "
+
+[c]
+symbol = " "
+
+[cpp]
+symbol = " "
+
+[cmake]
+symbol = " "
+
+[docker_context]
+symbol = " "
+
+[git_commit]
+tag_symbol = '  '
+
+[gradle]
+symbol = " "
+
+[java]
+symbol = " "
+
+[kotlin]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+
+[python]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[status]
+symbol = " "
