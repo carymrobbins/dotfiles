@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -ne 1 ]; then
+  >&2 echo "Usage: $0 [base-branch]"
+  exit 1
+fi
+
+base_branch=$1
+merge_base=$(git merge-base HEAD "$base_branch")
+
+set -x
+exec git rebase -i --autosquash "$merge_base"
