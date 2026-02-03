@@ -1,8 +1,5 @@
 # See https://starship.rs/config/#git-status
 
-[aws]
-disabled = true
-
 [git_branch]
 format = "[$symbol$branch]($style) "  # Only display branch name
 symbol = " "
@@ -25,13 +22,6 @@ symbol = " "
 [cmd_duration]
 # Use hourglass instead of "took"
 format = "[ $duration]($style)"
-
-[status]
-symbol = " "
-disabled = false
-format = '[$symbol$status]($style) '
-style = 'bold red'
-success_symbol = '' # Only show on error
 
 [os]
 disabled = false
@@ -121,3 +111,6 @@ symbol = " "
 
 [scala]
 symbol = " "
+
+[status]
+symbol = " "
