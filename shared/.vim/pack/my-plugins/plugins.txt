@@ -8,7 +8,6 @@ https://github.com/rust-lang/rust.vim
 https://github.com/keith/swift.vim
 https://github.com/leafgarland/typescript-vim
 https://github.com/altercation/vim-colors-solarized
-https://github.com/OrangeT/vim-csharp.git
 https://github.com/tpope/vim-fugitive
 https://github.com/nathanaelkane/vim-indent-guides.git
 https://github.com/elzr/vim-json
@@ -18,4 +17,3 @@ https://github.com/derekwyatt/vim-sbt
 https://github.com/derekwyatt/vim-scala
 https://github.com/justinmk/vim-syntax-extra
 https://github.com/christoomey/vim-tmux-navigator
-https://github.com/tpope/vim-fugitive
