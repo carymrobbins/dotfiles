@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# Launch claude with a tmux window name set from the current directory,
+# restoring the previous name on exit.
+
+if [[ -z $TMUX ]]; then
+  # No tmux session, replace this shell with claude.
+  exec claude "$@"
+fi
+
+for arg in "$@"; do
+  case "$arg" in
+    --help|-h) claude --help; exit;;
+  esac
+done
+
+case "$(basename "$PWD")" in
+  todo)
+    # If we're using glyph fonts, use the todo list font for the todo dir.
+    # Otherwise, use a standard emoji.
+    if [[ $GLYPH_FONT == nerd ]]; then
+      window_name=
+    else
+      window_name=📝
+    fi
+    ;;
+
+  *)
+    # By default, use the claude asterisk logo.
+    window_name=✱
+    ;;
+esac
+
+# Cache the previous tmux window name state so we can restore when claude exits.
+prev_auto=$(tmux display-message -p '#{automatic-rename}')
+prev_name=$(tmux display-message -p '#W')
+
+restore_window() {
+  case "$prev_auto" in
+    1|on) tmux set-window-option automatic-rename on;;
+    *) tmux rename-window "$prev_name";;
+  esac
+}
+
+trap restore_window EXIT
+
+tmux rename-window "$window_name"
+
+# We intentionally don't `exec` here so our trap will fire.
+claude "$@"
