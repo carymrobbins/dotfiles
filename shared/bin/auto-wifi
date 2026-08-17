@@ -4,11 +4,19 @@ set -e
 
 LOG() { echo "LOG $0: $@"; }
 
-out=$(curl -sS -I http://httpforever.com)
+connected() {
+  echo "$1" | head -n1 | grep '^HTTP.* 200' >/dev/null
+}
+
+check() {
+  curl -sS -I http://httpforever.com
+}
+
+out=$(check)
 
 status_line=$(echo "$out" | head -n1)
 
-if echo "$status_line" | grep '^HTTP.* 200' >/dev/null; then
+if connected "$out"; then
   LOG "Wifi already connected"
   exit
 fi
@@ -21,6 +29,53 @@ fi
 
 redirect_url=$(echo "$out" | grep ^Location: | cut -d' ' -f2- | tr -d $'\r')
 
+# --- cloudwifi clickthrough portal ---------------------------------------
+if echo "$redirect_url" | grep -Ei '://[^/]*\.cloudwifi\.com' >/dev/null; then
+  LOG "cloudwifi portal detected: $redirect_url"
+
+  origin=$(echo "$redirect_url" | grep -oE '^https?://[^/]+')
+  if [ -z "$origin" ]; then
+    LOG "could not parse origin from redirect url"
+    exit 1
+  fi
+
+  cookiejar=$(mktemp)
+  trap 'rm -f "$cookiejar"' EXIT
+
+  # Load the portal page to obtain the access_token cookie.
+  curl -sS -L -c "$cookiejar" -b "$cookiejar" "$redirect_url" -o /dev/null
+
+  # Accept the guest profile / marketing opt-in.
+  curl -sS -c "$cookiejar" -b "$cookiejar" \
+    -H "content-type: application/json" \
+    -H "x-requested-with: XMLHttpRequest" \
+    -H "origin: $origin" \
+    -H "referer: $redirect_url" \
+    --data-raw '{"marketing_optin":true}' \
+    "$origin/api/plugin/guest/profile" >/dev/null
+
+  # Authenticate; follow the redirect chain to the gateway logon endpoint.
+  curl -sS -L -c "$cookiejar" -b "$cookiejar" -X POST \
+    -H "content-type: application/x-www-form-urlencoded" \
+    -H "origin: $origin" \
+    -H "referer: $redirect_url" \
+    --insecure \
+    --data "" \
+    "$origin/plugin/clickthrough/auth" >/dev/null
+
+  sleep 2
+
+  out=$(check)
+  if connected "$out"; then
+    LOG "Wifi successfully auto connected (cloudwifi)"
+    exit
+  fi
+
+  LOG "Failed to auto connect to wifi (cloudwifi)"
+  exit 1
+fi
+
+# --- simple whitelisted accept portal ------------------------------------
 whitelist=(
   10.255.0.1:4501
 )
@@ -44,7 +99,7 @@ curl -s -i -XPOST "$redirect_url?action=login" \
 
 sleep 2
 
-out=$(curl -sSI http://httpforever.com)
+out=$(check)
 
 if echo "$out" | head -n1 | grep '^HTTP.* 302' >/dev/null; then
   LOG "Failed to auto connect to wifi"
