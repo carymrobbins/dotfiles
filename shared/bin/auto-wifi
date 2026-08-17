@@ -4,12 +4,16 @@ set -e
 
 LOG() { echo "LOG $0: $@"; }
 
+trap 'LOG "error on line $LINENO (exit $?)"' ERR
+
 connected() {
   echo "$1" | head -n1 | grep '^HTTP.* 200' >/dev/null
 }
 
 check() {
-  curl -sS -I http://httpforever.com
+  #
+  #
+  curl -sS -D- -o /dev/null http://httpforever.com || true
 }
 
 out=$(check)
@@ -54,14 +58,23 @@ if echo "$redirect_url" | grep -Ei '://[^/]*\.cloudwifi\.com' >/dev/null; then
     --data-raw '{"marketing_optin":true}' \
     "$origin/api/plugin/guest/profile" >/dev/null
 
-  # Authenticate; follow the redirect chain to the gateway logon endpoint.
-  curl -sS -L -c "$cookiejar" -b "$cookiejar" -X POST \
+  # Authenticate; the response body carries the gateway logon URL to hit next.
+  authbody=$(curl -sS -L -c "$cookiejar" -b "$cookiejar" -X POST \
     -H "content-type: application/x-www-form-urlencoded" \
     -H "origin: $origin" \
     -H "referer: $redirect_url" \
     --insecure \
     --data "" \
-    "$origin/plugin/clickthrough/auth" >/dev/null
+    "$origin/plugin/clickthrough/auth")
+
+  # Extract the gateway logon URL and hit it - this is what opens the connection.
+  logon_url=$(echo "$authbody" | grep -oE 'https?://[^"'"'"' ]+/logon\?[^"'"'"' ]+' | head -n1)
+  if [ -z "$logon_url" ]; then
+    LOG "no logon url found in auth response"
+    exit 1
+  fi
+  LOG "hitting logon url: $logon_url"
+  curl -sS -L --insecure "$logon_url" -o /dev/null
 
   sleep 2
 
