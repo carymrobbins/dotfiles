@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+
+LOG() { echo "LOG $0: $@"; }
+
+out=$(curl -sS -I http://httpforever.com)
+
+status_line=$(echo "$out" | head -n1)
+
+if echo "$status_line" | grep '^HTTP.* 200' >/dev/null; then
+  LOG "Wifi already connected"
+  exit
+fi
+
+if ! echo "$status_line" | grep '^HTTP.* 302' >/dev/null; then
+  LOG "No redirect detected, curl output:"
+  LOG "$out"
+  exit
+fi
+
+redirect_url=$(echo "$out" | grep ^Location: | cut -d' ' -f2- | tr -d $'\r')
+
+whitelist=(
+  10.255.0.1:4501
+)
+
+found=
+for entry in "${whitelist[@]}"; do
+  if echo "$redirect_url" | grep -F "$entry" >/dev/null; then
+    found=1
+    break
+  fi
+done
+
+if [ -z "$found" ]; then
+  LOG "redirect url not in whitelist: '$redirect_url'"
+  exit
+fi
+
+curl -s -i -XPOST "$redirect_url?action=login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "accept=true"
+
+sleep 2
+
+out=$(curl -sSI http://httpforever.com)
+
+if echo "$out" | head -n1 | grep '^HTTP.* 302' >/dev/null; then
+  LOG "Failed to auto connect to wifi"
+  exit 1
+fi
+
+LOG "Wifi successfully auto connected"
